@@ -3,7 +3,7 @@
   "deploy_path": "",
   "package": "walio-market",
   "name": "Walio Market",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "storefront": true,
   "backoffice": false,
   "description": "A blue superstore storefront for a grocery marketplace: a split hero with deal tiles, best savings, category tiles and shop-the-idea lists; aisles with a banner and a filter column; a classic product page; a cart window under the cart button; a stepped checkout; seller pages as a shop in the shop."
