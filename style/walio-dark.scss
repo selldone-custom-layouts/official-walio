@@ -39,6 +39,18 @@
   color: var(--w-band) !important;
 }
 
+/* The drawers' round buttons (Close) share the header's icon class, whose
+   white words are for the blue bar: on the drawer's white head the Close
+   cross was white on white. Ink on a soft ground, in both modes. */
+.k-drawer .k-header__icon {
+  background: var(--k-wash) !important;
+  color: var(--k-ink) !important;
+
+  .v-icon {
+    color: inherit !important;
+  }
+}
+
 html .text-red {
   color: #c4122f !important;
 }

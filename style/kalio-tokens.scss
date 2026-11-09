@@ -38,7 +38,7 @@
 
   /* Coral marks a saving. #c9431e keeps white badge text and sale prices
      above 4.5:1 on white; the brighter mockup coral did not. */
-  --k-coral: #2a8703;
+  --k-coral: #227202; /* the saving green: 5.4:1 on its tint ("You save" read 4.1 with #2a8703) */
   --k-coral-soft: #eaf5e4;
 
   /* A product tile's ground. Each aisle sets its own --k-tint; this is the
@@ -80,7 +80,7 @@
   --w-on-brand-rgb: 255, 255, 255;
   --w-on-spark: #041e42; /* navy words on the yellow cart: the same in both modes */
   --w-ink-bg: #1d1e20; /* ink used as a fill; the palette colour when dark */
-  --w-sale-solid: #2a8703; /* saving badges with white words: the same in light and dark */
+  --w-sale-solid: #227202; /* saving badges with white words: the same in light and dark */
   --k-plain: #f8f8f8; /* boxes on the well colour that hold no photo (receipts, empty states, bands): dark in dark mode */
 }
 
