@@ -685,7 +685,7 @@ $t-tablet: 1100px;
 
     .-hot {
       background: var(--k-leaf);
-      color: var(--k-ink);
+      color: var(--w-on-spark); /* navy on the yellow, in both modes */
     }
   }
 
@@ -980,6 +980,7 @@ $t-tablet: 1100px;
       padding: 3px 10px;
       border-radius: 6px;
       background: var(--k-leaf);
+      color: var(--w-on-spark); /* navy on the yellow, in both modes */
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.1em;
@@ -1633,6 +1634,7 @@ $t-tablet: 1100px;
 
       > i {
         background: var(--k-leaf);
+        color: var(--w-on-spark); /* navy on the yellow, in both modes */
       }
     }
   }
@@ -1867,6 +1869,7 @@ $t-tablet: 1100px;
       margin-bottom: 12px;
       border-radius: 50%;
       background: var(--k-leaf);
+      color: var(--w-on-spark); /* navy on the yellow, in both modes */
       font-style: normal;
       font-size: 18px;
       font-weight: 800;
