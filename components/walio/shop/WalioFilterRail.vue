@@ -34,7 +34,7 @@
         :min="price_min"
         :step="price_step"
         class="w-rail__slider"
-        color="#0071dc"
+        color="primary"
         hide-details
         @end="applyPrice(price_draft)"
       ></v-range-slider>
@@ -117,7 +117,7 @@
             </section>
             <section v-if="has_price" class="t-fgrp">
               <h5>Price</h5>
-              <v-range-slider v-model="draft_price" :max="price_max" :min="price_min" :step="price_step" color="#0071dc" hide-details />
+              <v-range-slider v-model="draft_price" :max="price_max" :min="price_min" :step="price_step" color="primary" hide-details />
               <div class="w-rail__prices">
                 <span><u-price :amount="draft_price[0]" /></span>–<span><u-price :amount="draft_price[1]" /></span>
               </div>

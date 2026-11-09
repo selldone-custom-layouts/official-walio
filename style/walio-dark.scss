@@ -1,0 +1,78 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Walio — dark mode, and the theme switcher's loose ends ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   The theme switcher (components/walio/walio-theme.ts, the header's Theme
+   button) turns the page dark by tokens and by the build step that gives
+   every fixed colour a dark value (postcss-dark-tokens). This file holds
+   what neither can know. Loaded last (storefront.scss); the build step
+   leaves rules that name html.wl-dark alone. */
+
+/* The footer's Selldone credit and GDPR link are "plain" buttons at 62%
+   opacity. Full opacity, pale words: 7:1 or more on the navy band. */
+.k-footer__base-links .v-btn {
+  opacity: 1 !important;
+
+  .v-btn__content,
+  .v-btn__content * {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+}
+
+/* Selldone's "Free shipping" line is Vuetify's green-darken-2: under 4.5:1
+   on Walio's floor. A deeper green reads 4.9:1 (a light green when dark). */
+.-shipping-box.text-green-darken-2 {
+  color: #2e7d32 !important;
+}
+
+/* Selldone's small red notes ("[Invalid]", a field's error) are Vuetify's
+   red-accent #f44336: 3.7:1 on white. A deeper red reads 5.9:1 (a light
+   red when dark). */
+/* The compare page's Copy link button is the yellow spark: navy words and
+   icon on it, in both modes. */
+.k-cmp__share .k-cmp__btn.-main,
+.k-cmp__share .k-cmp__btn.-main .v-icon {
+  color: var(--w-on-spark) !important;
+}
+
+/* The Add strip under a yellow offer tag: the link colour of a light palette
+   (teal) read 4.3:1 on the yellow; the deep shade reads 6:1 or more. */
+.k-shelf__tag.-offer button.k-shelf__strip {
+  color: var(--w-band) !important;
+}
+
+html .text-red {
+  color: #c4122f !important;
+}
+
+html.wl-dark {
+  /* ── Light islands ──
+     The home's aisle tiles and an aisle's banner keep their pastel tints,
+     the yellow offer tag stays yellow:
+     inside them the dark tokens go back to their light values, so the words
+     on them stay dark in every palette. */
+  .k-mtile:not(.-lead),
+  .k-shelf__tag.-offer,
+  .w-cat,
+  .w-banner {
+    --k-ink: #1d1e20;
+    --k-ink-2: #2e2f32;
+    --k-muted: #505257;
+    --k-card: #ffffff;
+    --w-link: var(--w-band);
+    --tsd-surface-ffffff: initial;
+    --tsd-text-8a3c1d: initial;
+    color: #1d1e20;
+  }
+
+  & .text-red {
+    color: #ff6b7d !important;
+  }
+
+  .-shipping-box.text-green-darken-2 {
+    color: #4ade80 !important;
+  }
+
+  /* The product's QR button is a dark line drawing: light on the dark page. */
+  .k-crumbs__tools img {
+    filter: invert(1);
+  }
+}

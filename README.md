@@ -67,6 +67,21 @@ Selldone's own basket, checkout, payments, vendor offers and orders keep working
 
 The wiki's source is also in [`docs/wiki/`](docs/wiki/).
 
+<!-- THEME:START -->
+### Theme and colours
+
+Choose Walio's colours in one file, `components/walio/walio-theme.settings.ts`:
+
+- `palette`: blue, green, violet, teal, orange;
+- or `brandColor`: any `#RRGGBB`, made readable automatically (`textOnBrand: "auto"` keeps a light brand such as yellow, with dark words);
+- `mode`: light or dark;
+- `themeSwitcher`: showcase, on or off.
+
+You can also tell your AI agent "use the yellow theme" or "make it dark": `AGENTS.md` (section "Theme") tells it what to change. Then build and upload. See the wiki page [Theme and colours](https://github.com/selldone-custom-layouts/official-walio/wiki/Theme-and-colours).
+
+The header's Theme button (palettes, Custom colour, Light / Dark) is a showcase feature. It shows only on Walio's own showcase shop (molino, Selldone shop 15645), so when you import Walio into your shop, your shoppers see Walio in its designed colours, with no Theme button. The Layout looks exactly as it does without the switcher, and any stored choice is ignored. To offer the switcher to your shoppers, set `themeSwitcher: "on"` in `components/walio/walio-theme.settings.ts`, then build and upload. `themeSwitcher: "off"` hides it everywhere.
+<!-- THEME:END -->
+
 ## Quick start (developers)
 
 ```bash

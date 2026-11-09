@@ -31,7 +31,7 @@
 
     &.-main {
       background: var(--k-green);
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
 
       &:hover {
         background: var(--k-green-deep);
@@ -45,12 +45,12 @@
 
       &:hover {
         border-color: var(--k-green);
-        color: var(--k-green) !important;
+        color: var(--w-link) !important;
       }
     }
 
     &.-pay {
-      background: var(--k-coral);
+      background: var(--w-sale-solid);
       color: #fff !important;
 
       &:hover {
@@ -82,7 +82,7 @@
   height: 20px;
   padding: 0 6px;
   border-radius: var(--k-pill);
-  background: var(--k-coral);
+  background: var(--w-sale-solid);
   color: #fff;
   font-size: 11.5px;
   font-weight: 700;
@@ -107,7 +107,7 @@
 
   &.-ok {
     background: var(--k-green-soft);
-    color: var(--k-green-deep);
+    color: var(--w-link);
   }
 
   &.-go {
@@ -176,7 +176,7 @@
   overflow: hidden;
   border-radius: 50%;
   background: var(--k-green);
-  color: #fff;
+  color: var(--w-on-brand);
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -189,7 +189,7 @@
 
   // a guest: a person outline, white on the green (was an empty disc)
   .v-icon {
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
   }
 
   &.-lg {
@@ -221,14 +221,14 @@
 
   &:hover {
     border-color: var(--k-green);
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 }
 
 .k-acct__in {
   border-color: var(--k-green);
   background: var(--k-green);
-  color: #fff !important;
+  color: var(--w-on-brand) !important;
 
   &:hover {
     background: var(--k-green-deep);
@@ -312,15 +312,15 @@
     }
 
     &:hover {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     &.-on {
       border-color: var(--k-green);
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
 
       .v-icon {
-        color: var(--k-green) !important;
+        color: var(--w-link) !important;
       }
     }
   }
@@ -399,7 +399,7 @@
   text-decoration: none;
 
   .v-icon {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   em {
@@ -417,10 +417,10 @@
   &.-on {
     background: #fff;
     box-shadow: 0 1px 3px rgba(20, 20, 20, 0.08), inset 3px 0 0 var(--k-green);
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
 
     em {
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 }
@@ -493,7 +493,7 @@
     display: inline-flex;
     align-items: center;
     gap: 2px;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 14.5px;
     font-weight: 700;
     text-decoration: none;
@@ -573,7 +573,7 @@
       &.-on {
         background: #fff;
         box-shadow: 0 1px 4px rgba(20, 20, 20, 0.14);
-        color: var(--k-green-deep) !important;
+        color: var(--w-link) !important;
       }
     }
   }
@@ -598,11 +598,11 @@
     padding: 46px 20px;
     border: 1px dashed var(--k-line-strong);
     border-radius: 24px;
-    background: var(--k-well);
+    background: var(--k-plain);
     text-align: center;
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     p {
@@ -637,12 +637,12 @@
     }
 
     &:hover:not(.-head) {
-      background: var(--k-well);
+      background: var(--k-plain);
     }
 
     &.-head {
       padding-block: 12px;
-      background: var(--k-well);
+      background: var(--k-plain);
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -714,7 +714,7 @@
       height: 20px;
       padding: 0 5px;
       border-radius: var(--k-pill);
-      background: var(--k-ink);
+      background: var(--w-ink-bg);
       box-shadow: 0 0 0 2px #fff;
       color: #fff;
       font-size: 10.5px;
@@ -782,7 +782,7 @@
     justify-content: center;
     gap: 2px;
     margin-top: 12px;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 14.5px;
     font-weight: 700;
     text-decoration: none;
@@ -813,7 +813,7 @@
     gap: 8px 14px;
     padding: 15px 22px;
     border-bottom: 1px solid var(--k-line-soft);
-    background: var(--k-well);
+    background: var(--k-plain);
   }
 
   &__code {
@@ -823,7 +823,7 @@
     text-decoration: none;
 
     &:hover {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -911,7 +911,7 @@
 
     .v-icon {
       flex: none;
-      color: var(--k-line-strong) !important;
+      color: var(--k-muted) !important;
     }
   }
 
@@ -923,12 +923,12 @@
     }
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
   &__trail li.-now {
-    color: var(--k-green);
+    color: var(--w-link);
 
     .k-ocardx__seg {
       background: linear-gradient(90deg, var(--k-green) 50%, var(--k-line) 50%);
@@ -939,7 +939,7 @@
     }
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -961,7 +961,7 @@
     justify-content: center;
     gap: 8px;
     height: 30px;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
@@ -989,7 +989,7 @@
   cursor: pointer;
 
   .v-icon {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   &__chev {
@@ -1022,7 +1022,7 @@
       text-decoration: none;
 
       .v-icon {
-        color: var(--k-green) !important;
+        color: var(--w-link) !important;
       }
 
       em {
@@ -1039,7 +1039,7 @@
 
       &.-on {
         background: var(--k-green-soft);
-        color: var(--k-green-deep) !important;
+        color: var(--w-link) !important;
       }
     }
   }
@@ -1087,7 +1087,7 @@
       text-align: center;
 
       .v-icon {
-        color: var(--k-green) !important;
+        color: var(--w-link) !important;
       }
 
       h2 {
@@ -1191,7 +1191,7 @@
         background: var(--k-green);
 
         .v-icon {
-          color: #fff !important;
+          color: var(--w-on-brand) !important;
         }
       }
 
@@ -1359,7 +1359,7 @@
     background: #fff;
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -1457,7 +1457,7 @@
     color: var(--k-ink);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -1477,8 +1477,8 @@
     gap: 8px;
     border-style: dashed;
     border-color: var(--k-line-strong);
-    background: var(--k-well);
-    color: var(--k-green-deep) !important;
+    background: var(--k-plain);
+    color: var(--w-link) !important;
     font-weight: 700;
 
     .v-icon {
@@ -1533,7 +1533,7 @@
     padding: 3px 9px;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: #fff;
+    color: var(--w-on-brand);
     font-size: 11.5px;
     font-weight: 700;
   }
@@ -1550,11 +1550,11 @@
     border-radius: 50%;
     background: var(--k-green);
     box-shadow: 0 6px 14px -6px rgba(20, 20, 20, 0.6);
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
     cursor: pointer;
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
 
     &:hover {
@@ -1669,11 +1669,11 @@
       &.-on {
         background: var(--k-green);
         box-shadow: none;
-        color: #fff !important;
+        color: var(--w-on-brand) !important;
 
         .v-icon,
         em {
-          color: #fff !important;
+          color: var(--w-on-brand) !important;
         }
       }
     }
@@ -1952,7 +1952,7 @@
     .v-btn.v-btn--active,
     .v-application & .v-btn.dark-flat {
       background: var(--k-green) !important;
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
   }
 
@@ -2005,7 +2005,7 @@
     background: var(--k-green-soft);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -2066,7 +2066,7 @@
     width: 76px;
     height: 76px;
     border-radius: 18px;
-    background: var(--k-well);
+    background: var(--k-plain);
     overflow: hidden;
 
     img {
@@ -2161,7 +2161,7 @@
 
     &:hover:not(:disabled) {
       border-color: var(--k-green);
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     &.-icon {
@@ -2177,7 +2177,7 @@
 
     &.-danger {
       border-color: var(--k-coral);
-      background: var(--k-coral);
+      background: var(--w-sale-solid);
       color: #fff !important;
 
       &:hover:not(:disabled) {

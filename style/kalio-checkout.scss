@@ -55,13 +55,13 @@
     height: 32px;
     border-radius: 50%;
     background: #fff;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     box-shadow: 0 4px 10px -4px rgba(20, 20, 20, 0.35);
     transition: background 0.15s, color 0.15s;
 
     &:hover:not(:disabled) {
       background: var(--k-green);
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
   }
 
@@ -120,7 +120,7 @@
       display: grid;
       place-items: center;
       background: var(--k-green-soft);
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 
@@ -206,7 +206,7 @@
   }
 
   &__offer {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   &__short {
@@ -228,7 +228,7 @@
       place-items: center;
       height: 32px;
       border-radius: var(--k-pill);
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
 
       &:hover:not(:disabled) {
         background: var(--k-wash);
@@ -315,7 +315,7 @@
     color: var(--k-ink-2, #3a3a3a);
 
     .v-icon {
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 
@@ -351,7 +351,7 @@
       &.-on {
         border-color: var(--k-green);
         background: var(--k-green-soft);
-        color: var(--k-green-deep) !important;
+        color: var(--w-link) !important;
       }
     }
   }
@@ -378,7 +378,7 @@
     padding: 0 6px !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 14px !important;
     font-weight: 700 !important;
     letter-spacing: 0 !important;
@@ -453,7 +453,7 @@
     height: 32px;
     border-radius: 10px;
     background: var(--k-green-soft);
-    color: var(--k-green);
+    color: var(--w-link);
   }
 
   &__chips {
@@ -478,7 +478,7 @@
       border-color: var(--k-green);
       background: var(--k-green-soft);
       box-shadow: inset 0 0 0 1px var(--k-green);
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -491,8 +491,8 @@
     padding: 0 16px;
     border: 1px dashed #cfc8b8;
     border-radius: 14px;
-    background: var(--k-well);
-    color: var(--k-green-deep) !important;
+    background: var(--k-plain);
+    color: var(--w-link) !important;
     font-size: 14px;
     font-weight: 600;
 
@@ -517,7 +517,7 @@
 
   &__link {
     padding: 0;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 14px;
     font-weight: 700;
 
@@ -670,7 +670,7 @@
         &.bg-primary {
           background: #fff !important;
           box-shadow: 0 1px 4px rgba(20, 20, 20, 0.15) !important;
-          color: var(--k-green-deep) !important;
+          color: var(--w-link) !important;
         }
       }
     }
@@ -720,7 +720,7 @@
     position: relative;
     padding: 24px 24px 22px;
     border-radius: 26px;
-    background: var(--k-well);
+    background: var(--k-plain);
   }
 
   &__top {
@@ -804,7 +804,7 @@
     }
 
     &.-free > span:last-child {
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 
@@ -844,7 +844,7 @@
       .v-icon {
         margin: 0 8px 0 0 !important;
         font-size: 16px !important;
-        color: var(--k-green);
+        color: var(--w-link);
       }
     }
 
@@ -1188,7 +1188,7 @@
     height: 54px;
     padding: 0 20px;
     border-radius: var(--k-pill);
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
     font-weight: 700;
   }
 
@@ -1263,7 +1263,7 @@
     border-radius: var(--k-pill);
     background: #fff;
     box-shadow: 0 10px 24px -14px rgba(20, 20, 20, 0.45);
-    color: var(--k-green);
+    color: var(--w-link);
 
     input {
       flex: 1;
@@ -1330,7 +1330,7 @@
 
       .v-icon {
         margin-top: 2px;
-        color: var(--k-green);
+        color: var(--w-link);
       }
 
       b {
@@ -1373,7 +1373,7 @@
   &__bubble {
     padding: 8px 12px;
     border-radius: 12px;
-    background: var(--k-ink);
+    background: var(--w-ink-bg);
     color: #fff;
     font-size: 13px;
     font-weight: 600;
@@ -1407,7 +1407,7 @@
     border-radius: var(--k-pill);
     background: #fff;
     box-shadow: 0 10px 24px -14px rgba(20, 20, 20, 0.45);
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
     font-size: 14px;
     font-weight: 700;
   }
@@ -1494,7 +1494,7 @@
     &.-on {
       border-color: var(--k-green);
       background: var(--k-green-soft);
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -1518,7 +1518,7 @@
     }
 
     &.-empty {
-      background: var(--k-well);
+      background: var(--k-plain);
     }
   }
 
@@ -1530,7 +1530,7 @@
     height: 38px;
     border-radius: 12px;
     background: #fff;
-    color: var(--k-green);
+    color: var(--w-link);
   }
 
   &__two {
@@ -1700,7 +1700,7 @@
   border: 1px solid var(--k-line);
   border-radius: var(--k-pill);
   background: #fff;
-  color: var(--k-green-deep) !important;
+  color: var(--w-link) !important;
   font-size: 13.5px;
   font-weight: 700;
 }
@@ -1744,7 +1744,7 @@
     color: var(--k-ink);
 
     &.-free {
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 
@@ -1817,7 +1817,7 @@
     &.-pickup {
       display: grid;
       place-items: center;
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 
@@ -1838,7 +1838,7 @@
   &__free {
     font-size: 14px;
     font-weight: 700;
-    color: var(--k-green);
+    color: var(--w-link);
     white-space: nowrap;
   }
 
@@ -1896,7 +1896,7 @@
       border-color: var(--k-green);
       background: var(--k-green-soft);
       box-shadow: inset 0 0 0 1px var(--k-green);
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
     }
 
     &:disabled {
@@ -1947,7 +1947,7 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   &__date {
@@ -2040,7 +2040,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     margin-top: 6px;
     padding: 16px 20px;
     border-radius: 22px;
-    background: var(--k-well);
+    background: var(--k-plain);
 
     > small {
       font-size: 12px;
@@ -2174,7 +2174,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     .arrow {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     &.pen {
@@ -2258,7 +2258,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     height: 64px;
     border-radius: 50%;
     background: var(--k-green);
-    color: #fff;
+    color: var(--w-on-brand);
 
     .-wait & {
       background: #b7791f;
@@ -2269,7 +2269,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     .v-icon {
-      color: #fff;
+      color: var(--w-on-brand);
     }
   }
 
@@ -2293,7 +2293,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   }
 
   &__sub a {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-weight: 700;
   }
 
@@ -2314,7 +2314,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     border-radius: var(--k-pill) !important;
     background: #fff !important;
     box-shadow: none !important;
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
     font-size: 14.5px !important;
     font-weight: 700 !important;
     letter-spacing: 0 !important;
@@ -2383,7 +2383,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       background: var(--k-green);
 
       .v-icon {
-        color: #fff;
+        color: var(--w-on-brand);
       }
     }
 
@@ -2461,7 +2461,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       color: var(--k-ink);
 
       .v-icon {
-        color: var(--k-green) !important;
+        color: var(--w-link) !important;
       }
     }
 
@@ -2477,7 +2477,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       border-radius: var(--k-pill) !important;
       background: #fff !important;
       box-shadow: none !important;
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
       font-weight: 700 !important;
       letter-spacing: 0 !important;
       text-transform: none !important;
@@ -2488,7 +2488,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 7px 12px;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: #fff;
+    color: var(--w-on-brand);
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
@@ -2530,7 +2530,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     height: 50px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
     font-weight: 700;
     text-decoration: none;
 
@@ -2653,7 +2653,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     background: var(--k-green-soft);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     &.-shop {
@@ -2728,14 +2728,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     border: 0;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
     font: inherit;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
 
     &:hover:not(:disabled) {
@@ -2760,7 +2760,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     color: var(--k-ink-2);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -2860,7 +2860,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 0;
     border: 0;
     background: none;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font: inherit;
     font-size: 14.5px;
     font-weight: 700;
@@ -2914,7 +2914,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     transform: translate(-50%, -100%) rotate(-45deg);
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
       transform: rotate(45deg);
     }
   }
@@ -2948,7 +2948,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       &.-on {
         background: #fff;
         box-shadow: 0 1px 4px rgba(20, 20, 20, 0.15);
-        color: var(--k-green-deep) !important;
+        color: var(--w-link) !important;
       }
     }
   }
@@ -3072,14 +3072,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     background: var(--k-green-soft);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     .-ok > & {
       background: var(--k-green);
 
       .v-icon {
-        color: #fff !important;
+        color: var(--w-on-brand) !important;
       }
     }
 
@@ -3270,7 +3270,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       font-size: 11px;
       font-style: normal;
       font-weight: 700;
-      color: var(--k-green);
+      color: var(--w-link);
     }
   }
 
@@ -3287,7 +3287,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     .-mine & {
       border-radius: 18px 18px 6px 18px;
       background: var(--k-green);
-      color: #fff;
+      color: var(--w-on-brand);
     }
   }
 
@@ -3368,7 +3368,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     border: 1px solid var(--k-line-strong);
     border-radius: var(--k-pill);
     background: #fff;
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
     font: inherit;
     font-size: 14px;
     font-weight: 600;
@@ -3436,7 +3436,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
 
     .v-icon,
     .v-progress-circular {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
 
     &:hover:not(:disabled) {
@@ -3495,7 +3495,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     .-wait & {
@@ -3577,14 +3577,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     border: 0;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
     font: inherit;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
 
     &:hover {
@@ -3596,7 +3596,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     height: 40px;
     border: 0;
     background: none;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font: inherit;
     font-size: 14.5px;
     font-weight: 700;
@@ -3624,7 +3624,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     color: var(--k-ink-2);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 }
@@ -3696,12 +3696,12 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   padding: 44px 24px;
   border: 1px dashed var(--k-line-strong);
   border-radius: var(--k-radius-lg);
-  background: var(--k-well);
+  background: var(--k-plain);
   font-family: var(--k-body);
   text-align: center;
 
   > .v-icon {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   h1 {

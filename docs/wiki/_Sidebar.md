@@ -6,6 +6,7 @@
 - [Build and Upload](Build-and-Upload)
 - [Go Live](Go-Live)
 - [Customize](Customize)
+- [Theme and colours](Theme-and-colours)
 - [Troubleshooting](Troubleshooting)
 
 ---

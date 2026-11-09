@@ -37,6 +37,8 @@ import {createComponents} from "@selldone/components-vue/components";
 import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
 import "@selldone/components-vue/style/fonts/material-design-fonts/material-design-icons.scss"; // Ensure your project is capable of handling css files
 import "@selldone/components-vue/style/fonts/lang/fa/lang-fa-iransans.css";
+import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher";
+import { WALIO_THEME } from "./components/walio/walio-theme";
 import "./components/kalio/kalio-fonts"; // Kalio typefaces, loaded by the app so they reach production
 import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
@@ -44,6 +46,18 @@ import {SetupService} from "@selldone/core-js/server";
 import {Shop} from "@selldone/core-js/models";
 
 const vuetify = VuetifyInstance(i18n);
+
+// The Layout's own light error red: Vuetify's #ff5252 is 3.3:1 on white.
+try {
+  vuetify.theme.themes.value.light.colors.error = "#c4122f";
+} catch (e) {
+  /* keep Vuetify's */
+}
+
+// The shopper's palette and Light / Dark (the header's Theme button), painted
+// before the first paint so the default never flashes. Only on the showcase
+// shop (molino): an imported copy never shows it.
+bootThemeSwitcher(WALIO_THEME, vuetify);
 
 //█████████████████████████████████████████████████████████████
 //―――――――――――――― Global Types ―――――――――――――――

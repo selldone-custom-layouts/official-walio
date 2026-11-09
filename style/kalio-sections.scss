@@ -87,7 +87,7 @@
   background:
     radial-gradient(520px 340px at 8% 108%, rgba(59, 170, 92, 0.28), transparent 70%),
     radial-gradient(420px 300px at 96% -10%, rgba(255, 255, 255, 0.07), transparent 70%),
-    var(--k-green-deep);
+    var(--w-band); /* the palette's light deep shade in both modes: pale words on it */
 
   &__copy {
     display: flex;
@@ -387,7 +387,7 @@
     font-family: var(--k-display);
     font-size: 26px;
     font-weight: 600;
-    color: var(--k-green);
+    color: var(--w-link);
   }
 
   &__label {
@@ -590,14 +590,14 @@
     padding: 2px 8px;
     border-radius: var(--k-pill);
     background: var(--k-green-soft);
-    color: var(--k-green);
+    color: var(--w-link);
     font-size: 11.5px;
     font-weight: 600;
   }
 }
 
 a.k-by:hover {
-  color: var(--k-green) !important;
+  color: var(--w-link) !important;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -674,7 +674,7 @@ a.k-by:hover {
     font-weight: 600;
     line-height: 1.05;
     letter-spacing: -0.02em;
-    color: var(--k-green-deep);
+    color: var(--w-link);
   }
 
   &__from {
@@ -694,7 +694,7 @@ a.k-by:hover {
     margin-top: auto;
     font-size: 14.5px;
     font-weight: 600;
-    color: var(--k-green-deep);
+    color: var(--w-link);
   }
 
   &__pics {
@@ -730,7 +730,7 @@ a.k-by:hover {
     width: 96px;
     height: 96px;
     border-radius: 50%;
-    background: var(--k-coral);
+    background: var(--w-sale-solid);
     color: #fff;
     line-height: 1;
     text-align: center;
@@ -936,7 +936,7 @@ $k-shelf-pic-phone: 150px;
     font-weight: 600;
     line-height: 1.04;
     letter-spacing: -0.03em;
-    color: var(--k-green-deep);
+    color: var(--w-link);
   }
 
   &__tabs {
@@ -1054,7 +1054,7 @@ $k-shelf-pic-phone: 150px;
         display: grid;
         place-items: center;
         gap: 8px;
-        color: var(--k-green-deep) !important;
+        color: var(--w-link) !important;
         font-size: 14.5px;
         font-weight: 600;
         text-align: center;
@@ -1120,7 +1120,7 @@ $k-shelf-pic-phone: 150px;
     inset-inline-end: 8px;
     padding: 3px 8px;
     border-radius: var(--k-pill);
-    background: var(--k-coral);
+    background: var(--w-sale-solid);
     color: #fff;
     font-size: 11.5px;
     font-weight: 700;
@@ -1197,7 +1197,7 @@ $k-shelf-pic-phone: 150px;
     gap: 4px;
     background: rgba(0, 79, 154, 0.08);
     /* !important: Selldone's [type=button] { color: inherit } loads later. */
-    color: var(--k-green-deep) !important;
+    color: var(--w-link) !important;
     font-family: var(--k-body);
     font-size: 14px;
     font-weight: 700;
@@ -1232,7 +1232,7 @@ $k-shelf-pic-phone: 150px;
     color: var(--k-ink-2);
 
     .k-more {
-      color: var(--k-green-deep) !important;
+      color: var(--w-link) !important;
     }
   }
 
@@ -1478,7 +1478,7 @@ $k-shelf-pic-phone: 150px;
     color: var(--k-muted);
 
     a {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
       font-weight: 500;
       text-decoration: none;
 
@@ -1489,7 +1489,7 @@ $k-shelf-pic-phone: 150px;
     }
 
     .v-icon {
-      color: var(--k-line-strong);
+      color: var(--k-muted);
     }
   }
 
@@ -1632,7 +1632,7 @@ $k-shelf-pic-phone: 150px;
         bottom: -1px;
         height: 2px;
         border-radius: 2px;
-        background: var(--k-ink);
+        background: var(--w-ink-bg);
       }
     }
   }
@@ -1866,12 +1866,12 @@ $k-shelf-pic-phone: 150px;
   padding: 44px 24px;
   border: 1px dashed var(--k-line-strong);
   border-radius: var(--k-radius-lg);
-  background: var(--k-well);
+  background: var(--k-plain);
   font-family: var(--k-body);
   text-align: center;
 
   > .v-icon {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   h3 {
@@ -1929,7 +1929,7 @@ $k-shelf-pic-phone: 150px;
     color: var(--k-muted);
 
     a {
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
       text-decoration: none;
 
       &:hover {
@@ -1998,7 +1998,7 @@ $k-shelf-pic-phone: 150px;
       &.-on {
         border-color: var(--k-green);
         background: var(--k-green);
-        color: #fff !important;
+        color: var(--w-on-brand) !important;
       }
     }
   }
@@ -2031,7 +2031,7 @@ $k-shelf-pic-phone: 150px;
     align-items: center;
     gap: 4px;
     margin-top: 8px;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-weight: 600;
     text-decoration: none;
   }
@@ -2062,7 +2062,7 @@ $k-shelf-pic-phone: 150px;
 
     &:hover {
       border-color: var(--k-green);
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
   }
 }

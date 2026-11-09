@@ -9,8 +9,8 @@
    Sans, white cards on light wells and a deep navy footer.
    Loaded last (storefront.scss), so it only overrides. */
 
-$walio-blue: #0071dc;
-$walio-blue-deep: #004f9a;
+$walio-blue: var(--w-blue); /* the palette's primary (components/walio/walio-theme.ts) */
+$walio-blue-deep: var(--w-blue-deep);
 $walio-navy: #041e42;
 $walio-spark: #ffc220;
 
@@ -22,7 +22,7 @@ h3 {
 
 /* ── Header: solid blue, white words, a white search, a yellow basket ── */
 .k-header {
-  background: $walio-blue !important;
+  background: var(--w-head) !important;
   box-shadow: none !important;
 
   &__bar {
@@ -32,7 +32,7 @@ h3 {
   &__brand {
     align-items: center !important;
     gap: 8px !important;
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
     font-family: var(--k-display) !important;
     font-weight: 900 !important;
     letter-spacing: -0.03em !important;
@@ -50,27 +50,27 @@ h3 {
   }
 
   &__icon {
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.14) !important;
+      background: rgba(var(--w-on-brand-rgb), 0.14) !important;
     }
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
   }
 
   &__aisles {
-    background: rgba(255, 255, 255, 0.14) !important;
-    color: #fff !important;
+    background: rgba(var(--w-on-brand-rgb), 0.14) !important;
+    color: var(--w-on-brand) !important;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.24) !important;
+      background: rgba(var(--w-on-brand-rgb), 0.24) !important;
     }
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
   }
 
@@ -90,32 +90,32 @@ h3 {
   }
 
   &__link {
-    color: #fff !important;
-    border-color: rgba(255, 255, 255, 0.45) !important;
+    color: var(--w-on-brand) !important;
+    border-color: rgba(var(--w-on-brand-rgb), 0.45) !important;
     background: transparent !important;
 
     .v-icon {
-      color: #fff !important;
+      color: var(--w-on-brand) !important;
     }
 
     &:hover {
-      background: rgba(255, 255, 255, 0.14) !important;
+      background: rgba(var(--w-on-brand-rgb), 0.14) !important;
     }
   }
 
   &__lang {
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
   }
 
   /* The basket: spark yellow with dark words. */
   &__basket {
     background: $walio-spark !important;
-    color: $walio-navy !important;
+    color: var(--w-on-spark) !important;
 
     .v-icon,
     span,
     b {
-      color: $walio-navy !important;
+      color: var(--w-on-spark) !important;
     }
 
     &:hover {
@@ -134,11 +134,11 @@ h3 {
 
     &:hover,
     &.-on {
-      color: $walio-blue !important;
+      color: var(--w-link) !important;
     }
 
     &.-deals {
-      color: $walio-blue !important;
+      color: var(--w-link) !important;
       font-weight: 800 !important;
 
       &::after {
@@ -242,7 +242,7 @@ h3 {
 
     > span {
       background: $walio-spark;
-      color: $walio-navy;
+      color: var(--w-on-spark);
     }
   }
 }

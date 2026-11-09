@@ -29,6 +29,7 @@
 @use "walio-home"; // Walio 1.1.0: the home (design B), with the shared rows and cards
 @use "walio-pages"; // Walio 1.1.0: every page after the home (the B mockups, product A)
 @use "kalio-compare"; // the compare page (design 1, 8 November 2026)
+@use "walio-dark"; // Walio: dark mode and the theme switcher's loose ends (last)
 
 // --------------------------------------------------------
 .add-marginal-side-menu-open {

@@ -17,7 +17,7 @@ $t-tablet: 1100px;
   &.-red {
     border: 0;
     background: var(--k-green);
-    color: #fff !important;
+    color: var(--w-on-brand) !important;
 
     &:hover {
       background: var(--k-green-deep);
@@ -54,7 +54,7 @@ $t-tablet: 1100px;
   color: var(--k-muted);
 
   a {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     text-decoration: none;
 
     &:hover {
@@ -99,7 +99,7 @@ $t-tablet: 1100px;
 
   input:checked + &__box {
     border-color: var(--k-ink);
-    background: var(--k-ink);
+    background: var(--w-ink-bg);
 
     .v-icon {
       opacity: 1;
@@ -495,7 +495,7 @@ $t-tablet: 1100px;
 
   &.-on {
     border-color: var(--k-ink);
-    background: var(--k-ink);
+    background: var(--w-ink-bg);
     color: #fff;
   }
 }
@@ -643,7 +643,7 @@ $t-tablet: 1100px;
   overflow: hidden;
 
   small {
-    color: var(--k-green);
+    color: var(--w-link);
     font-size: 12.5px;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -746,7 +746,7 @@ $t-tablet: 1100px;
   &__clear {
     border: 0;
     background: none;
-    color: var(--k-green);
+    color: var(--w-link);
     font-size: 14px;
     font-weight: 800;
     cursor: pointer;
@@ -761,7 +761,7 @@ $t-tablet: 1100px;
     padding: 0 6px;
     border-radius: 10px;
     background: var(--k-green);
-    color: #fff;
+    color: var(--w-on-brand);
     font-size: 12px;
     font-weight: 800;
   }
@@ -815,7 +815,7 @@ $t-tablet: 1100px;
         border-color: var(--k-green);
         box-shadow: inset 0 0 0 1px var(--k-green);
         background: var(--k-green-soft);
-        color: var(--k-green-deep);
+        color: var(--w-link);
       }
     }
   }
@@ -994,7 +994,7 @@ $t-tablet: 1100px;
     em {
       display: inline-flex;
       align-items: center;
-      color: var(--k-green);
+      color: var(--w-link);
       font-style: normal;
       font-weight: 800;
     }
@@ -1115,7 +1115,7 @@ $t-tablet: 1100px;
 
       &.-on {
         background: var(--k-green-soft);
-        color: var(--k-green) !important;
+        color: var(--w-link) !important;
       }
     }
   }
@@ -1144,8 +1144,8 @@ $t-tablet: 1100px;
   min-height: 220px;
   border-radius: 16px;
   overflow: hidden;
-  background: var(--k-green);
-  color: #fff !important;
+  background: var(--w-head); /* a band with pale words: the light primary in both modes */
+  color: var(--w-on-brand) !important;
   text-decoration: none;
 
   &__tx {
@@ -1176,7 +1176,7 @@ $t-tablet: 1100px;
       padding: 10px 16px;
       border-radius: 999px;
       background: #fff;
-      color: var(--k-green);
+      color: var(--w-link);
       font-style: normal;
       font-weight: 800;
     }
@@ -1223,7 +1223,7 @@ $t-tablet: 1100px;
 .w-pdp__brand {
   width: max-content;
   margin-bottom: 6px;
-  color: var(--k-green) !important;
+  color: var(--w-link) !important;
   font-size: 14.5px;
   font-weight: 800;
   text-decoration: underline;
@@ -1263,7 +1263,7 @@ $t-tablet: 1100px;
     cursor: pointer;
 
     > .v-icon {
-      color: var(--k-green);
+      color: var(--w-link);
     }
 
     &.-on {
@@ -1323,7 +1323,7 @@ $t-tablet: 1100px;
   }
 
   .v-icon {
-    color: var(--k-green);
+    color: var(--w-link);
   }
 }
 
@@ -1425,7 +1425,7 @@ $t-tablet: 1100px;
   }
 
   .v-icon {
-    color: var(--k-green);
+    color: var(--w-link);
   }
 }
 
@@ -1436,7 +1436,7 @@ $t-tablet: 1100px;
 }
 
 .t-card__tag {
-  background: var(--k-coral) !important;
+  background: var(--w-sale-solid) !important;
   color: #fff !important;
 }
 
@@ -1465,7 +1465,7 @@ $t-tablet: 1100px;
   }
 
   &__edit {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 14px;
     font-weight: 800;
   }
@@ -1515,7 +1515,7 @@ $t-tablet: 1100px;
       padding: 0 5px;
       border-radius: 10px;
       background: var(--k-green);
-      color: #fff;
+      color: var(--w-on-brand);
       font-size: 12px;
       font-style: normal;
       font-weight: 800;
@@ -1625,7 +1625,7 @@ $t-tablet: 1100px;
 
     &.-done > i {
       background: var(--k-green);
-      color: #fff;
+      color: var(--w-on-brand);
     }
 
     &.-now {
@@ -1704,15 +1704,15 @@ $t-tablet: 1100px;
     flex-direction: column;
     justify-content: center;
     padding: 48px 44px;
-    background: var(--k-green);
-    color: #fff;
+    background: var(--w-head); /* a band with pale words: the light primary in both modes */
+    color: var(--w-on-brand);
 
     h1 {
       margin: 14px 0 10px;
       font-family: var(--k-display);
       font-size: 32px;
       font-weight: 800;
-      color: #fff;
+      color: var(--w-on-brand);
     }
 
     p {
@@ -1747,7 +1747,7 @@ $t-tablet: 1100px;
 
     &.-solid {
       background: #fff;
-      color: var(--k-green) !important;
+      color: var(--w-link) !important;
     }
 
     &.-ghost {
@@ -1812,7 +1812,7 @@ $t-tablet: 1100px;
 
   &__eyebrow {
     margin: 0 !important;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 12.5px !important;
     font-weight: 800;
     letter-spacing: 0.14em;
@@ -1896,7 +1896,7 @@ $t-tablet: 1100px;
     }
 
     .v-icon {
-      color: var(--k-green);
+      color: var(--w-link);
     }
 
     b {
@@ -1988,7 +1988,7 @@ $t-tablet: 1100px;
   }
 
   .v-icon {
-    color: var(--k-green);
+    color: var(--w-link);
   }
 
   p {

@@ -60,7 +60,7 @@ $t-tablet: 1100px;
   &__more {
     display: inline-flex;
     align-items: center;
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
     font-size: 15px;
     font-weight: 700;
     text-decoration: none;
@@ -343,7 +343,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     padding: 3px 7px;
     border-radius: 4px;
     background: var(--k-green);
-    color: #fff;
+    color: var(--w-on-brand);
     font-size: 12px;
     font-weight: 800;
     line-height: 1.2;
@@ -364,7 +364,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   }
 
   &.-sale &__now {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
   }
 
   &__was {
@@ -380,7 +380,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   }
 
   &__sale {
-    color: var(--k-green);
+    color: var(--w-link);
     font-size: 12.5px;
     font-style: normal;
     font-weight: 700;
@@ -461,7 +461,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   background: #fff !important;
 
   button {
-    color: var(--k-green) !important;
+    color: var(--w-link) !important;
 
     &:hover:not(:disabled) {
       background: var(--k-green-soft) !important;
@@ -512,7 +512,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     height: 56px;
     border-radius: 50%;
     background: var(--k-wash);
-    color: var(--k-green);
+    color: var(--w-link);
     font-size: 22px;
     font-weight: 800;
 
@@ -543,7 +543,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     }
 
     u {
-      color: var(--k-green);
+      color: var(--w-link);
       font-size: 14px;
       font-weight: 700;
       text-underline-offset: 3px;
@@ -651,7 +651,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     padding: 10px 18px;
     border-radius: 999px;
     background: #fff;
-    color: var(--k-green);
+    color: var(--w-link);
     font-weight: 800;
     font-size: 15px;
   }
@@ -706,11 +706,11 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     }
 
     &.-deals {
-      background: var(--k-green);
-      color: #fff !important;
+      background: var(--w-head); /* a band with pale words: the light primary in both modes */
+      color: var(--w-on-brand) !important;
 
       small {
-        color: var(--k-leaf);
+        color: var(--w-on-brand); /* on the header colour: the yellow read 4.0:1 there */
       }
     }
 
@@ -718,7 +718,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
       background: #fff4d6;
 
       small {
-        color: var(--k-green);
+        color: var(--w-link);
       }
     }
   }
@@ -845,7 +845,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
   small {
     position: relative;
-    color: var(--k-green);
+    color: var(--w-link);
     font-weight: 700;
     font-size: 13px;
   }
@@ -887,7 +887,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   }
 
   &__eyebrow {
-    color: var(--k-green);
+    color: var(--w-link);
     font-size: 12.5px;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -952,15 +952,15 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
   &__panel {
     padding: 28px;
-    background: var(--k-green);
-    color: #fff;
+    background: var(--w-head); /* a band with pale words: the light primary in both modes */
+    color: var(--w-on-brand);
 
     h2 {
       margin: 0 0 16px;
       font-family: var(--k-display);
       font-size: 28px;
       font-weight: 800;
-      color: #fff;
+      color: var(--w-on-brand);
     }
 
     ul {
@@ -994,7 +994,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     height: 42px;
     border-radius: 50%;
     background: var(--k-leaf);
-    color: var(--k-ink);
+    color: var(--w-on-spark); /* navy on the yellow disc, in both modes */
   }
 
   @media (max-width: $t-phone) {
@@ -1068,7 +1068,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     }
 
     em {
-      color: var(--k-green);
+      color: var(--w-link);
       font-style: normal;
       font-weight: 800;
       text-decoration: underline;
@@ -1098,7 +1098,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 .t-btn.-main {
   border: 0;
   background: var(--k-green);
-  color: #fff !important;
+  color: var(--w-on-brand) !important;
 
   &:hover {
     background: var(--k-green-deep);
