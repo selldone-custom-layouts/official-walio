@@ -56,6 +56,12 @@ html .text-red {
 }
 
 html.wl-dark {
+  /* The empty cart's drawing is a dark line SVG (Selldone's baskets.svg):
+     light lines on the dark page. */
+  .k-basket-empty__art {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
   /* The row and hero arrows stay white discs with a dark arrow (the build
      step keeps their ground light; their ink token turns light). */
   .t-arrow,
