@@ -56,6 +56,17 @@ html .text-red {
 }
 
 html.wl-dark {
+  /* The row and hero arrows stay white discs with a dark arrow (the build
+     step keeps their ground light; their ink token turns light). */
+  .t-arrow,
+  .k-rail__arrow {
+    color: #1d1e20 !important;
+
+    .v-icon {
+      color: inherit !important;
+    }
+  }
+
   /* ── Light islands ──
      The home's aisle tiles and an aisle's banner keep their pastel tints,
      the yellow offer tag stays yellow:

@@ -113,6 +113,7 @@ export default ({mode}: any) => {
             include: [/\/style\//, /\/StorefrontApp\.vue/, /\/components\//, /\/pages\//, /\/layouts\//],
             exclude: [/\/node_modules\//, /\/modules\/pagebuilder\//, /\/theme-switcher\//],
             lightVars: ["--k-well", "--k-tint", "--k-leaf"],
+            keepLightExtra: /t-arrow|k-rail__arrow/, // the row and hero arrows: white discs with a dark arrow in both modes (the owner's rule)
           }),
         ],
       },
