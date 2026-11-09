@@ -73,6 +73,14 @@ html.wl-dark {
     }
   }
 
+  /* A row's arrows (KalioRail) sit on a card-coloured disc, which turns
+     dark in dark mode: they are white discs too, like the hero's, so the
+     dark arrow reads on them (the cart audit found it dark on dark). */
+  .k-rail__arrow {
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+  }
+
   /* ── Light islands ──
      The home's aisle tiles and an aisle's banner keep their pastel tints,
      the yellow offer tag stays yellow:
