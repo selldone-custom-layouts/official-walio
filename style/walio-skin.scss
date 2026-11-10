@@ -103,10 +103,6 @@ h3 {
     }
   }
 
-  &__lang {
-    color: var(--w-on-brand) !important;
-  }
-
   /* The basket: spark yellow with dark words. */
   &__basket {
     background: $walio-spark !important;
@@ -198,6 +194,52 @@ h3 {
     border-radius: 50% !important;
     background: $walio-spark !important;
   }
+}
+
+/* ━━━━━━━━━━━━ Language and currency (components/region-switcher) ━━━━━━━━━━━━
+   The owner's choice B (10 November 2026): a small pill in the blue bar
+   before the account (the desktop), a row in the phone menu that opens a
+   bottom sheet. Selldone's own pickers (header, menu, footer) are gone.
+   Walio's tokens feed the package's, per palette and mode. */
+:root {
+  --rs-ink: var(--k-ink);
+  --rs-muted: var(--k-muted);
+  --rs-line: var(--k-line-strong);
+  --rs-surface: var(--k-card);
+  --rs-accent: var(--w-link);
+  --rs-accent-soft: var(--k-green-soft);
+  --rs-btn: var(--k-green);
+  --rs-on-btn: var(--w-on-brand);
+  --rs-pill-ink: var(--w-on-brand);
+  --rs-pill-bg: rgba(var(--w-on-brand-rgb), 0.1);
+  --rs-pill-bg-hover: rgba(var(--w-on-brand-rgb), 0.14); /* no more: the bar's words need 4.5:1 */
+  --rs-font: var(--k-body);
+}
+
+.k-header__acts .rs-pick {
+  margin-inline-end: 6px;
+}
+
+/* Selldone's line under the price, "Free shipping (Over $200.00)", prints the
+   delivery method's own currency, so a shopper on DKK read dollars. Walio's
+   delivery tiles and its "Free delivery on orders over …" line say the same
+   in the shopper's currency, so Selldone's copy is not shown. */
+.w-pdp .s--product-section-tax .-shipping-box {
+  display: none !important;
+}
+
+.k-drawer .k-drawer__regionrow {
+  .rs-row__ic svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Selldone's "Continue with Google" button (the comments' sign-in) is
+   Google's #4285f4 under white words: 3.6:1. Google's deeper blue 700
+   (#1967d2) reads 5.4:1. */
+.v-btn[style*="background-color: rgb(66, 133, 244)"] {
+  background-color: #1967d2 !important;
 }
 
 /* The phone menu's head is the drawer's own ground, not the blue bar: the

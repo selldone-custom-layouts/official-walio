@@ -3,7 +3,8 @@
 
   Two parts. A light green band that sends a shopper back into the aisles
   (every aisle as a round picture). Then the footer proper on deep green:
-  the shop's name and its own description, social links and language; the
+  the shop's name and its own description and social links (language and
+  currency are the header's pill and the phone menu's row); the
   aisles; the sellers with their marks; the shop's own footer menu exactly
   as the merchant set it in Selldone (falling back to the standard pages
   when there is none); and the shopper's account links. The bottom row
@@ -51,15 +52,6 @@
           <router-link :to="{ path: '/' }" class="k-footer__mark -logo"><img :src="BRAND.mark" alt="" class="k-brand-mark" height="30" width="30" />{{ shopTitle }}</router-link>
           <p v-if="lede" class="k-footer__lede">{{ lede }}</p>
           <s-storefront-social-buttons class="k-footer__social"></s-storefront-social-buttons>
-          <div class="k-footer__pickers">
-            <s-language-selector hide-details variant="outlined"></s-language-selector>
-            <u-currency-selector
-              v-if="$shop.currencies && $shop.currencies.length > 1"
-              :shop="$shop"
-              hide-details
-              @change="onChangeUserSelectedCurrency"
-            />
-          </div>
         </div>
 
         <nav aria-labelledby="k-footer-shop" class="k-footer__col">
@@ -119,8 +111,6 @@
 <script>
 import { BRAND } from "../kalio-brand";
 import SStorefrontSocialButtons from "@selldone/components-vue/storefront/social/SStorefrontSocialButtons.vue";
-import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
-import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
 import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/section/gdpr/SFooterSectionGdpr.vue";
 import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
 import ThemeSwitcherRow from "../../theme-switcher/ThemeSwitcherRow.vue";
@@ -131,8 +121,6 @@ export default {
   name: "KalioFooter",
   components: {
     SStorefrontSocialButtons,
-    SLanguageSelector,
-    UCurrencySelector,
     SFooterSectionGdpr,
     SFooterSectionSelldone,
     ThemeSwitcherRow,

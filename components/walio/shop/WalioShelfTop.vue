@@ -49,8 +49,8 @@
           <small>Top match</small>
           <b>{{ top.title }}</b>
           <span class="w-match__price">
-            <u-price :amount="price(top).now" :currency="currency" :class="{ '-sale': price(top).was }" />
-            <s v-if="price(top).was"><u-price :amount="price(top).was" :currency="currency" /></s>
+            <u-price :amount="price(top).now" :currency="price(top).currency" :class="{ '-sale': price(top).was }" />
+            <s v-if="price(top).was"><u-price :amount="price(top).was" :currency="price(top).currency" /></s>
           </span>
           <em>See the product<v-icon size="18">chevron_right</v-icon></em>
         </span>
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { currentCurrency } from "../../region-switcher/region";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { aisleImage, aisleIndex, dropSrcset, priceOf, productImage, productSrcset, tintFor } from "../../kalio/kalio-catalog";
 
@@ -85,7 +86,7 @@ export default {
 
   computed: {
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     search() {
       return String(this.$route.query.search || "").trim();

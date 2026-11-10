@@ -221,6 +221,7 @@
 </template>
 
 <script>
+import { currentCurrency } from "../../region-switcher/region";
 import { PriceHelper } from "@selldone/core-js";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import KalioCardStep from "../KalioCardStep.vue";
@@ -269,7 +270,7 @@ export default {
       return this.$store.getters.getShop;
     },
     currency() {
-      return this.GetUserSelectedCurrency().code;
+      return currentCurrency();
     },
     home() {
       return { name: window.$storefront.routes.SHOP_PAGE };

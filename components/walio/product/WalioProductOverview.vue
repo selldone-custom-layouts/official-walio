@@ -102,7 +102,7 @@
                 <b>{{ w.word }}</b>
                 <span>{{ w.key === "Pickup" ? "At the shop" : w.key === "Delivery" ? "To your door" : "To your address" }}</span>
                 <em v-if="w.free">Free</em>
-                <em v-else-if="w.freeOver">Free over <u-price :amount="w.freeOver" :currency="w.currency" /></em>
+                <em v-else-if="w.freeOver">Free over {{ money(w.freeOver, w.currency, "auto") }}</em>
                 <em v-else class="-n">Price with your address</em>
               </span>
             </button>
@@ -215,7 +215,7 @@
 
 <script>
 import KalioProductOverview from "../../kalio/product/KalioProductOverview.vue";
-import { waysOf } from "../walio-home";
+import { money, waysOf } from "../walio-home";
 
 export default {
   name: "WalioProductOverview",
@@ -233,7 +233,7 @@ export default {
     perks() {
       const out = [];
       const ship = this.ways.find((w) => w.freeOver);
-      if (ship) out.push({ icon: "local_shipping", text: `Free ${ship.word.toLowerCase()} on orders over ${this.money(ship.freeOver)}` });
+      if (ship) out.push({ icon: "local_shipping", text: `Free ${ship.word.toLowerCase()} on orders over ${this.money(ship.freeOver, ship.currency, "auto")}` });
       const pick = this.ways.find((w) => w.key === "Pickup" && w.free);
       if (pick) out.push({ icon: "storefront", text: "Free pickup at the shop" });
       return out;
@@ -263,12 +263,9 @@ export default {
     onResize() {
       this.compact = window.innerWidth <= 960;
     },
-    money(n) {
-      try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: this.GetUserSelectedCurrency()?.code || "USD" }).format(n);
-      } catch {
-        return String(n);
-      }
+    /* An amount in `from` (null: the shop's base), in the visitor's currency. */
+    money(n, from, short) {
+      return money(n, from, short);
     },
   },
 };

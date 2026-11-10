@@ -31,13 +31,14 @@
         <router-link :to="productRoute(product.id)" class="k-often__name" @click="$emit('navigate')">
           {{ product.title }}
         </router-link>
-        <u-price :amount="priceOf(product).now" :currency="currency" class="k-often__price" />
+        <u-price :amount="priceOf(product).now" :currency="priceOf(product).currency" class="k-often__price" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { currentCurrency } from "../region-switcher/region";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { hasSizes, pendingLine, quickAdd } from "./kalio-basket";
 import { offers, priceOf, productImage, productSrcset, dropSrcset } from "./kalio-catalog";
@@ -63,7 +64,7 @@ export default {
 
   computed: {
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
 
     basketItems() {

@@ -190,10 +190,6 @@ $k-header-strip: 46px;
     }
   }
 
-  &__lang {
-    margin-inline-end: 4px;
-  }
-
   &__basket {
     position: relative;
     display: inline-flex;
@@ -662,10 +658,11 @@ $k-header-strip: 46px;
     }
   }
 
-  &__pickers {
-    display: grid;
-    gap: 10px;
-    padding: 18px 20px 28px;
+  /* The phone menu's language and currency row, under the aisles. */
+  &__region {
+    margin-top: 10px;
+    padding: 8px 0 28px;
+    border-top: 1px solid var(--k-line);
   }
 }
 
@@ -1065,19 +1062,6 @@ $k-header-strip: 46px;
 
     .v-btn {
       color: #fff !important;
-    }
-  }
-
-  &__pickers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 16px;
-    max-width: 260px;
-    --v-theme-on-surface: 255, 255, 255;
-
-    .v-field__outline {
-      color: rgba(255, 255, 255, 0.3) !important;
     }
   }
 

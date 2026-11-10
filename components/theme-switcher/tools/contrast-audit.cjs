@@ -13,7 +13,9 @@
 //   Selldone's SEO page). WIDTHS: default "1440,390". PW: a Playwright install (default kalio-marketplace's).
 // - SHOP_STUB: optional JSON { id, name } standing in for the shop (window.__THEME_SWITCHER_SHOP__), to test a
 //   shop that does not show the switcher.
-// - OPEN: optional JS run on each page after it settles (e.g. open the cart drawer) before the probe.
+// - OPEN: optional JS run on each page after it settles (e.g. open the cart drawer) before the probe. An
+//   expression or statements (top-level await is fine). If it throws, or returns false or "FAIL…" (return
+//   false when the button to open is missing), the page prints "OPEN FAILED" and counts as a failure.
 // It prints "<element> "<text>" <ratio> (fg on bg)" per failure, the photos on dark tiles (dark mode: a white
 // packshot must sit on a light tile), and "TOTAL n" (failures). Deliver only at 0.
 // - As a module: require("./contrast-audit.cjs").probe is the in-page check (pass it to page.evaluate), for
@@ -194,12 +196,33 @@ if (require.main === module) (async () => {
         await pg.waitForTimeout(300);
       }
       await pg.evaluate(() => window.scrollTo(0, 0));
+      /* OPEN may be an expression (an async IIFE) or plain statements with
+         top-level await. Before 10 Nov 2026 its errors were swallowed, so a
+         failed open (a typo, a missing button) audited the page with nothing
+         open and passed. Now a throw, or a return of false / "FAIL…", is
+         printed and counted as a failure. */
+      let openFail = null;
       if (process.env.OPEN) {
-        await pg.evaluate(process.env.OPEN).catch(() => {});
+        const src = process.env.OPEN;
+        const run = (code) => pg.evaluate(code);
+        let out;
+        try {
+          out = await run(`(async () => { return await (${src}); })()`);
+        } catch (e) {
+          if (/SyntaxError|Unexpected/.test(String(e.message))) {
+            try {
+              out = await run(`(async () => { ${src} })()`);
+            } catch (e2) {
+              openFail = e2.message.split("\n")[0];
+            }
+          } else openFail = e.message.split("\n")[0];
+        }
+        if (!openFail && (out === false || /^FAIL/i.test(String(out ?? "")))) openFail = `OPEN returned ${JSON.stringify(out)}`;
         await pg.waitForTimeout(1500);
       }
       await pg.waitForTimeout(400);
       const { fails, photos } = await pg.evaluate(probe);
+      if (openFail) fails.unshift(`OPEN FAILED (nothing was opened, so this page is not audited as asked): ${openFail}`);
       total += fails.length;
       console.log(`${w} ${name}: ${fails.length ? "\n  " + fails.slice(0, 40).join("\n  ") : "ok"}${photos.length ? "\n  photos on dark tiles:\n    " + photos.slice(0, 10).join("\n    ") : ""}`);
     }

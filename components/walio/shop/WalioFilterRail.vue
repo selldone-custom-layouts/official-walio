@@ -39,7 +39,7 @@
         @end="applyPrice(price_draft)"
       ></v-range-slider>
       <div class="w-rail__prices">
-        <span><u-price :amount="price_draft[0]" /></span>–<span><u-price :amount="price_draft[1]" /></span>
+        <span><u-price :amount="price_draft[0]" :currency="currency" /></span>–<span><u-price :amount="price_draft[1]" :currency="currency" /></span>
       </div>
       <div class="w-rail__quick">
         <button v-for="q in quick" :key="q.label" type="button" @click="applyPrice(q.range)">{{ q.label }}</button>
@@ -119,7 +119,7 @@
               <h5>Price</h5>
               <v-range-slider v-model="draft_price" :max="price_max" :min="price_min" :step="price_step" color="primary" hide-details />
               <div class="w-rail__prices">
-                <span><u-price :amount="draft_price[0]" /></span>–<span><u-price :amount="draft_price[1]" /></span>
+                <span><u-price :amount="draft_price[0]" :currency="currency" /></span>–<span><u-price :amount="draft_price[1]" :currency="currency" /></span>
               </div>
             </section>
             <section v-for="group in groups" :key="'p' + group.kind + group.key" class="t-fgrp">
@@ -150,6 +150,7 @@
 </template>
 
 <script>
+import { currentCurrency, formatMoney } from "../../region-switcher/region";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { PriceHelper } from "@selldone/core-js/helper";
@@ -194,7 +195,7 @@ export default {
       return countOn(this.modelValue);
     },
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     price_rows() {
       return (this.filters?.prices || []).filter((row) => this.rate(row.currency, true));
@@ -221,7 +222,8 @@ export default {
       if (hi - lo < 3) return [];
       const a = Math.round(lo + (hi - lo) / 3);
       const b = Math.round(lo + ((hi - lo) * 2) / 3);
-      const cur = (n) => (this.currency === "USD" ? `$${n}` : `${n}`);
+      /* In the visitor's currency, with its sign ("$12", "DKK 80", "€9"). */
+      const cur = (n) => formatMoney(n, this.currency, { short: true });
       return [
         { label: `Under ${cur(a)}`, range: [lo, a] },
         { label: `${cur(a)} – ${cur(b)}`, range: [a, b] },

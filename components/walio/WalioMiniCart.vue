@@ -25,15 +25,15 @@
             {{ item.product?.title }}
             <small v-if="sellerNames.get(item.vendor_id)">Sold by {{ sellerNames.get(item.vendor_id) }}</small>
           </router-link>
-          <u-price :amount="item.price * item.count" :currency="item.currency" class="w-mini__price" />
+          <span class="w-mini__price">{{ money(item.price * item.count, item.currency || group.currency) }}</span>
         </li>
       </ul>
       <footer class="w-mini__f">
-        <p class="w-mini__row"><span>Subtotal</span><u-price :amount="group.total" :currency="group.currency" /></p>
+        <p class="w-mini__row"><span>Subtotal</span><span>{{ money(group.total, group.currency) }}</span></p>
         <p v-if="group.saved >= 0.01 || free_left > 0" class="w-mini__note">
-          <template v-if="group.saved >= 0.01">You save <u-price :amount="group.saved" :currency="group.currency" /></template>
+          <template v-if="group.saved >= 0.01">You save {{ money(group.saved, group.currency) }}</template>
           <template v-if="group.saved >= 0.01 && free_left > 0"> · </template>
-          <template v-if="free_left > 0"><u-price :amount="free_left" :currency="group.currency" /> away from free shipping</template>
+          <template v-if="free_left > 0">{{ money(free_left, group.currency) }} away from free shipping</template>
         </p>
         <div class="w-mini__btns">
           <router-link :to="cartTo" class="t-btn -line" @click="$emit('close')">View cart</router-link>
@@ -51,7 +51,8 @@
 
 <script>
 import { productImage, vendors, dealsRoute } from "../kalio/kalio-catalog";
-import { freeShippingFrom } from "./walio-home";
+import { freeShippingFrom, money } from "./walio-home";
+import { convert } from "../region-switcher/region";
 
 export default {
   name: "WalioMiniCart",
@@ -77,8 +78,12 @@ export default {
       };
     },
     free_left() {
+      /* The threshold is in its delivery method's currency; the cart total
+         in the cart's. Compared in the cart's (no rate: no line). */
       const rule = freeShippingFrom(this.getShop());
-      return rule && this.group ? Math.max(0, rule.amount - this.group.total) : 0;
+      if (!rule || !this.group) return 0;
+      const limit = convert(rule.amount, rule.currency, this.group.currency);
+      return limit == null ? 0 : Math.max(0, limit - this.group.total);
     },
     cartTo() {
       return { name: window.$storefront.routes.BASKET_PAGE, params: { type: this.group?.type || "PHYSICAL" } };
@@ -93,6 +98,7 @@ export default {
   },
 
   methods: {
+    money,
     image(item) {
       return productImage(item.product, true);
     },

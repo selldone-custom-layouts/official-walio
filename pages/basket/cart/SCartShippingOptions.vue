@@ -65,7 +65,7 @@
             <small>{{ [item.message, item.cod && cod_payment_exists ? "Pay on delivery" : "", item.sod ? "Pay at the door" : ""].filter(Boolean).join(" · ") }}</small>
           </span>
           <span v-if="item.free_shipping" class="k-ship__free">
-            Free<template v-if="item.free_shipping_limit"> over <u-price :amount="item.free_shipping_limit" :currency="item.currency"></u-price></template>
+            Free<template v-if="item.free_shipping_limit"> over {{ money(item.free_shipping_limit, item.currency, { short: "auto" }) }}</template>
           </span>
         </button>
 
@@ -166,6 +166,7 @@
 </template>
 
 <script lang="ts">
+import { money } from "../../../components/region-switcher/region";
 import { defineComponent } from "vue";
 import ProductsDenseImagesCircles from "@selldone/components-vue/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
@@ -466,6 +467,7 @@ export default defineComponent({
   },
 
   methods: {
+    money,
     getShopTransportationObject(type) {
       return ShopTransportations[type];
     },

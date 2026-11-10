@@ -197,13 +197,19 @@ export function percentOff(shop: any, product: any): number {
 /** What a product costs now and, on offer, what it cost before — by
  *  Selldone's own pricing (discount dates, currency rates), in the currency
  *  the shopper has chosen. */
-export function priceOf(shop: any, product: any, currency: string): { now: number; was: number | null } {
+export function priceOf(shop: any, product: any, currency: string): { now: number; was: number | null; currency: string } {
   try {
     const now = PriceHelper.priceProductByCurrency(shop, product, null, currency as any);
     const off = PriceHelper.getProductDiscountAmountByCurrency(shop, product, null, currency as any) || 0;
-    return { now, was: off > 0 ? now + off : null };
+    return { now, was: off > 0 ? now + off : null, currency };
   } catch {
-    return { now: 0, was: null };
+    /* No rate for this pair (PriceHelper throws): the product's own price, in
+       its own currency, rather than 0. */
+    const own = product?.currency || currency;
+    const price = Number(product?.price || 0) + Number(product?.commission || 0);
+    const off = Number(product?.discount || 0);
+    const live = off > 0 && (!product?.dis_end || Date.parse(product.dis_end) > Date.now()) && (!product?.dis_start || Date.parse(product.dis_start) <= Date.now());
+    return { now: live ? price - off : price, was: live ? price : null, currency: own };
   }
 }
 

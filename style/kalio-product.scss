@@ -1751,18 +1751,15 @@
    The ring rule (the owner on Digito: "make it a rule so I don't have to
    check each section"): a chosen option's ring is drawn inside its own box
    (an inset shadow), never outside it, so no row or scroller can cut it;
-   its tick sits inside the corner. Colour options without a photo carry
+   it is the link colour, 3:1 or more on the chip's tint and on the page in
+   both modes (the primary fell to 2.9:1 on the dark tint once the tick
+   was gone, 10 November 2026). Colour options without a photo carry
    their name in Selldone's picker, drawn as 64px circles where a long name
    ("Navy Blue / Cyan / Aqua") ran out: they become equal rounded tiles that
    share the row (76–112px), with up to three lines of name, and the chosen
    tile keeps its size. */
 .s-product-variants__options .var-sel.selected {
-  box-shadow: inset 0 0 0 2px rgb(var(--v-theme-primary)) !important;
-
-  &::after {
-    top: 4px !important;
-    right: 4px !important;
-  }
+  box-shadow: inset 0 0 0 2px var(--w-link) !important;
 }
 
 .s-product-variants__options .var-sel.-color:has(> .s-product-variants__color-name) {

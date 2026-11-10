@@ -41,7 +41,7 @@
         Checkout
         <template v-if="total !== null">
           <span aria-hidden="true">·</span>
-          <u-price :amount="total" :currency="currency" />
+          <span>{{ money(total, currency) }}</span>
         </template>
       </router-link>
     </div>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { money } from "../../walio/walio-home";
 import { settling, shownCount, stepTo } from "../kalio-basket";
 
 export default {
@@ -93,6 +94,7 @@ export default {
   },
 
   methods: {
+    money,
     step(delta) {
       stepTo(this, this.product, this.line, this.shown + delta);
     },

@@ -118,7 +118,7 @@
                 <b>{{ w.word }}</b>
                 <small
                   >{{ w.line }}<template v-if="w.free"> · Free</template
-                  ><template v-else-if="w.freeOver"> · Free on orders over <u-price :amount="w.freeOver" :currency="w.currency" /></template
+                  ><template v-else-if="w.freeOver"> · Free on orders over {{ money(w.freeOver, w.currency, "auto") }}</template
                 ></small>
               </span>
             </li>
@@ -165,10 +165,11 @@
 </template>
 
 <script>
+import { currentCurrency } from "../region-switcher/region";
 import WalioRow from "./WalioRow.vue";
 import WalioPhoto from "./WalioPhoto.vue";
 import KalioQuickBuy from "../kalio/KalioQuickBuy.vue";
-import { DEALS_FILTER, findAisle, listProducts, photo, waysOf } from "./walio-home";
+import { DEALS_FILTER, findAisle, listProducts, money, photo, waysOf } from "./walio-home";
 import {
   aisleImage,
   aisleRoute,
@@ -213,7 +214,7 @@ export default {
 
   computed: {
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     catalogue() {
       return catalogueRoute();
@@ -259,6 +260,7 @@ export default {
   },
 
   methods: {
+    money,
     photo,
     aisleImage,
     aisleRoute,

@@ -39,6 +39,8 @@ import "@selldone/components-vue/style/fonts/material-design-fonts/material-desi
 import "@selldone/components-vue/style/fonts/lang/fa/lang-fa-iransans.css";
 import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher";
 import { WALIO_THEME } from "./components/walio/walio-theme";
+import { bootRegion, defineMessages } from "./components/region-switcher/region";
+import { WALIO_MESSAGES } from "./components/walio/i18n";
 import "./components/kalio/kalio-fonts"; // Kalio typefaces, loaded by the app so they reach production
 import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
@@ -54,7 +56,7 @@ try {
   /* keep Vuetify's */
 }
 
-// The shopper's palette and Light / Dark (the header's Theme button), painted
+// The shopper's palette and Light / Dark (the footer's Theme row), painted
 // before the first paint so the default never flashes. Only on the showcase
 // shop (molino): an imported copy never shows it.
 bootThemeSwitcher(WALIO_THEME, vuetify);
@@ -96,6 +98,12 @@ app.use(components);
 
 // ━━━ Storefront SDK (xapi) ━━━
 StorefrontSDK.Setup(); // Set up the Shop SDK.
+
+// The visitor's language and currency (the header pill and the phone menu's
+// row): Selldone's own state (window.$storefront.currency, setCurrentLanguage)
+// mirrored reactively, the shop's rates, and Walio's own words per language.
+defineMessages(WALIO_MESSAGES);
+bootRegion(store);
 
 // ━━━ Community SDK (capi) ━━━
 CapiCommunity.Setup(); // Setup community.

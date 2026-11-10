@@ -88,20 +88,11 @@
         <v-spacer v-else></v-spacer>
 
         <nav aria-label="Your account" class="k-header__acts">
-          <s-language-selector v-if="!compact" class="k-header__lang" icon-color="#1f1f1f" icon-only></s-language-selector>
-          <u-currency-selector
-            v-if="!compact && $shop.currencies && $shop.currencies.length > 1"
-            :shop="$shop"
-            class="k-header__lang"
-            dense
-            hide-details
-            icon
-            icon-color="#1f1f1f"
-            icon-only
-            single-line
-            small
-            @change="onChangeUserSelectedCurrency"
-          />
+          <!-- Language and currency (the owner's choice B, 10 November 2026,
+               as Walmart and Amazon do): a small pill before the account,
+               "EN · DKK", its panel under it. Hidden while the shop has one
+               currency and one language; the phone has the menu's row. -->
+          <region-switcher-button v-if="!compact" button-class="k-header__region" />
 
           <template v-if="!compact">
             <router-link v-if="user" :to="ordersRoute" class="k-header__link">
@@ -336,18 +327,13 @@
             @click="menu_more = !menu_more"
           >
             <span aria-hidden="true" class="k-drawer__ring -more"><v-icon size="22">expand_more</v-icon></span>
-            {{ menu_more ? "Show fewer" : `Show ${menuExtra.length} more` }}
+            {{ menu_more ? t("menu.showFewer") : t("menu.showMore", { n: menuExtra.length }) }}
           </button>
         </template>
 
-        <div class="k-drawer__pickers">
-          <s-language-selector hide-details variant="outlined"></s-language-selector>
-          <u-currency-selector
-            v-if="$shop.currencies && $shop.currencies.length > 1"
-            :shop="$shop"
-            hide-details
-            @change="onChangeUserSelectedCurrency"
-          />
+        <!-- Language and currency: a row that opens a bottom sheet. -->
+        <div class="k-drawer__region">
+          <region-sheet row-class="k-drawer__link k-drawer__regionrow" />
         </div>
       </v-navigation-drawer>
     </teleport>
@@ -358,8 +344,9 @@
 import { BRAND } from "../kalio-brand";
 import { defineAsyncComponent } from "vue";
 import SStorefrontSearchBox from "@selldone/components-vue/storefront/search/SStorefrontSearchBox.vue";
-import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
-import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
+import RegionSwitcherButton from "../../region-switcher/RegionSwitcherButton.vue";
+import RegionSheet from "../../region-switcher/RegionSheet.vue";
+import { t } from "../../region-switcher/region";
 import KalioBasketDrawer from "./KalioBasketDrawer.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleImage, aisleRoute, aisles, catalogueRoute, dealsRoute, tintFor } from "../kalio-catalog";
@@ -371,8 +358,8 @@ export default {
   components: {
     WalioMiniCart,
     SStorefrontSearchBox,
-    SLanguageSelector,
-    UCurrencySelector,
+    RegionSwitcherButton,
+    RegionSheet,
     KalioBasketDrawer,
     SHeaderSectionUser: defineAsyncComponent(
       () => import("@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue"),
@@ -498,6 +485,7 @@ export default {
   },
 
   methods: {
+    t,
     aisleRoute,
     aisleImage,
     tint: tintFor,

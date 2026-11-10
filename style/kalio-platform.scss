@@ -2035,7 +2035,8 @@ button.k-compare-fab.s--storefront-products-comparison-circle-progress {
    - keyboard focus: a dark ring around anything that can be pressed;
    - hover on a filled button: its colour deepens (no underline: the owner,
      8 November 2026);
-   - a chosen size or option: a thicker ring, bold words and a tick. */
+   - a chosen size or option: a ring, its tint and bold words (no tick in
+     the corner: the owner, 10 November 2026, the colour already says it). */
 :where(a, button, summary, [role="button"], [role="radio"], [role="tab"], .v-btn):focus-visible {
   outline: 3px solid var(--k-ink) !important;
   outline-offset: 2px !important;
@@ -2044,19 +2045,16 @@ button.k-compare-fab.s--storefront-products-comparison-circle-progress {
 
 .s-product-variants__options .var-sel.selected {
   position: relative;
-  box-shadow: 0 0 0 2px rgb(var(--v-theme-primary)) !important;
   font-weight: 700 !important;
+}
 
-  &::after {
-    content: "";
-    position: absolute;
-    top: -7px;
-    right: -7px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--w-ink-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center / 13px no-repeat;
-  }
+/* No tick badge on the chosen option, whoever draws it (Selldone's own
+   chip draws one as ::after): size, weight and pack chips, colour swatches
+   and named colour tiles, on the product page and in quick buy. */
+.v-application .s-product-variants__options .var-sel.selected::after,
+.s-product-variants__options .var-sel.selected::after {
+  display: none !important;
+  content: none !important;
 }
 
 .k-offer.-on .k-offer__name,

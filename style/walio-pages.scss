@@ -2058,36 +2058,12 @@ $t-tablet: 1100px;
   }
 }
 
-/* ▆▆▆▆▆▆▆▆ Article B: the text with a shopping column ▆▆▆▆▆▆▆▆ */
-
-@media (min-width: 1100px) {
-  .k-post__col:has(> .k-post__body) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
-    column-gap: 40px;
-    align-items: start;
-    max-width: 1120px !important;
-
-    > * {
-      grid-column: 1;
-    }
-
-    > .k-post__shop {
-      position: sticky;
-      top: 140px;
-      grid-column: 2;
-      grid-row: 1 / span 4;
-      margin-top: 0 !important;
-      padding: 18px;
-      border-radius: 14px;
-      background: var(--k-wash);
-
-      .k-post__shoprow {
-        grid-template-columns: minmax(0, 1fr) !important;
-      }
-    }
-  }
-}
+/* ▆▆▆▆▆▆▆▆ Article ▆▆▆▆▆▆▆▆
+   One reading column (760px) with the shopping list as a panel of four
+   cards in a row under the text, as Molino (the owner, 10 November 2026:
+   the 400px column beside a tall side column of stacked cards read badly).
+   The shared rules in kalio-pages.scss (.k-post) draw it; the side column
+   of design B and its sticky grid are gone. */
 
 /* ▆▆▆▆▆▆▆▆ Order page B: a paper receipt beside the timeline ▆▆▆▆▆▆▆▆ */
 

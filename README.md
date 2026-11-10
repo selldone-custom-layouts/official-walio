@@ -50,7 +50,8 @@ Selldone's own basket, checkout, payments, vendor offers and orders keep working
 - **Product page:** "Shop all &lt;brand&gt;", the price, the sizes, **How do you want it?** (Pickup / Delivery / Shipping with what each costs), the sellers as cards, Add to cart with the shop's free rules under it, and "About this item" in tabs.
 - **Checkout:** Cart ✓ — Delivery — Contact — Review & pay over numbered steps: review your items by seller, delivery and contact (a map-first address sheet), and an order summary that leads to whatever is missing.
 - **Account:** a greeting with tabs and an overview; orders as a table. **Sign-in** is a whole page.
-- **Pages:** About as a magazine (How an order works), Terms and Privacy as cards and folding sections, a journal with a side column, articles with a shopping column, and a blue 404.
+- **Language and currency:** a pill in the header (a panel of chips) and a row in the phone menu (a bottom sheet); a pick converts every amount on every page with the shop's rates.
+- **Pages:** About as a magazine (How an order works), Terms and Privacy as cards and folding sections, a journal with a side column, articles in one wide reading column with the shopping list in a row under the text, and a blue 404.
 - **Everywhere:** no pop-ups and no phone bottom bar.
 
 ## Use it on your shop

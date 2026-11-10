@@ -1,0 +1,316 @@
+/* Region switcher: the header pill and panel (RegionSwitcherButton), the
+   chips (RegionChips) and the phone menu row and bottom sheet (RegionSheet).
+   Tokens only, each with a fallback; a Layout maps them once (PORTING.md):
+     --rs-ink, --rs-muted, --rs-line      words, small words, hairlines
+     --rs-surface                         the panel's and the sheet's ground
+     --rs-accent                          the chosen chip's ring and words, the row's icon
+     --rs-accent-soft                     the chosen chip's ground
+     --rs-on-accent                       words on --rs-accent
+     --rs-btn, --rs-on-btn                the sheet's Done button (default: accent)
+     --rs-pill-ink, --rs-pill-bg          the header pill (on the header's colour)
+     --rs-pill-bg-hover                   at most 14% of the pill ink over the header:
+                                          more drops the words under 4.5:1
+     --rs-font, --rs-shadow, --rs-dim     font, panel shadow, sheet backdrop
+   Every ring and edge is drawn inside its own box (inset box-shadow), never
+   an outline or an outer spread, so no row or card can cut it. No
+   underlines; hover changes colour only. Colours carry !important where
+   Vuetify's button reset ([type=button] { color: inherit }) loads later. */
+
+/* ━━━━━━━━━━━━ Header pill ━━━━━━━━━━━━ */
+.rs-pick {
+  position: static;
+  display: inline-flex;
+}
+
+.rs-pick__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  min-width: 32px;
+  margin: 0;
+  padding: 0 10px 0 8px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: var(--rs-pill-bg, rgba(255, 255, 255, 0.1)) !important;
+  color: var(--rs-pill-ink, #fff) !important;
+  font: 700 12.5px/1 var(--rs-font, inherit);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none !important;
+  text-decoration: none !important;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover,
+  &.-open {
+    background: var(--rs-pill-bg-hover, rgba(255, 255, 255, 0.14)) !important;
+  }
+
+  /* Open: a ring inside the pill, not a lighter ground (the words must keep 4.5:1). */
+  &.-open {
+    box-shadow: inset 0 0 0 1.5px var(--rs-pill-ink, #fff);
+  }
+
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--rs-pill-ink, #fff) !important;
+  }
+}
+
+.rs-pick__globe {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: currentColor;
+}
+
+.rs-pick__chev {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: currentColor;
+  transition: transform 0.15s;
+
+  &.-up {
+    transform: rotate(180deg);
+  }
+}
+
+/* ━━━━━━━━━━━━ Panel ━━━━━━━━━━━━ */
+.rs-pop {
+  position: absolute;
+  z-index: 40;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--rs-surface, #fff);
+  color: var(--rs-ink, #121826);
+  box-shadow:
+    var(--rs-shadow, 0 16px 40px rgba(10, 20, 40, 0.22)),
+    inset 0 0 0 1px var(--rs-line, #e3e7ee);
+  font-family: var(--rs-font, inherit);
+  text-align: start;
+}
+
+/* ━━━━━━━━━━━━ Chips ━━━━━━━━━━━━ */
+.rs-chips {
+  display: block;
+}
+
+.rs-chips__t {
+  margin: 2px 4px 8px;
+  color: var(--rs-muted, #5b6475);
+  font: 800 12px/1.2 var(--rs-font, inherit);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rs-chips__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 14px;
+}
+
+.rs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: transparent !important;
+  color: var(--rs-ink, #121826) !important;
+  box-shadow: inset 0 0 0 1px var(--rs-line-strong, var(--rs-line, #c9d0db));
+  font: 700 13px/1 var(--rs-font, inherit);
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+
+  small {
+    color: var(--rs-muted, #5b6475);
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  &:hover {
+    color: var(--rs-accent, #0a3fb8) !important;
+  }
+
+  &.-on {
+    background: var(--rs-accent-soft, #eef3ff) !important;
+    color: var(--rs-accent, #0a3fb8) !important;
+    box-shadow: inset 0 0 0 2px var(--rs-accent, #0a3fb8);
+
+    small {
+      color: var(--rs-accent, #0a3fb8);
+    }
+  }
+
+  &:focus-visible {
+    box-shadow:
+      inset 0 0 0 2px var(--rs-ink, #121826),
+      inset 0 0 0 4px var(--rs-surface, #fff) !important;
+  }
+}
+
+.rs-chips__note {
+  margin: -4px 4px 2px;
+  color: var(--rs-muted, #5b6475);
+  font: 500 12px/1.45 var(--rs-font, inherit);
+}
+
+/* ━━━━━━━━━━━━ Phone menu row ━━━━━━━━━━━━ */
+.rs-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--rs-ink, #121826) !important;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  outline: none !important;
+
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--rs-accent, #0a3fb8) !important;
+  }
+}
+
+.rs-row__ic {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  color: var(--rs-accent, #0a3fb8);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+}
+
+.rs-row__t {
+  flex: 1;
+  min-width: 0;
+}
+
+.rs-row__v {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  color: var(--rs-muted, #5b6475);
+  font-weight: 700;
+  font-size: 13px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+}
+
+/* ━━━━━━━━━━━━ Bottom sheet (teleported to body) ━━━━━━━━━━━━ */
+html.rs-locked,
+html.rs-locked body {
+  overflow: hidden !important;
+}
+
+.rs-sheet-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.rs-sheet-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--rs-dim, rgba(10, 15, 30, 0.45));
+  animation: rs-fade 0.18s ease both;
+}
+
+.rs-sheet {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 10px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  border-radius: 18px 18px 0 0;
+  background: var(--rs-surface, #fff);
+  color: var(--rs-ink, #121826);
+  font-family: var(--rs-font, inherit);
+  text-align: start;
+  outline: none;
+  animation: rs-up 0.22s ease both;
+}
+
+.rs-sheet__grab {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 4px;
+  background: var(--rs-line-strong, var(--rs-line, #c9d0db));
+}
+
+.rs-sheet__h {
+  margin: 0 4px 12px;
+  color: var(--rs-ink, #121826);
+  font: 800 16px/1.25 var(--rs-font, inherit);
+}
+
+.rs-sheet__done {
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin: 4px 0 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rs-btn, var(--rs-accent, #0a3fb8)) !important;
+  color: var(--rs-on-btn, var(--rs-on-accent, #fff)) !important;
+  font: 800 15px/1 var(--rs-font, inherit);
+  cursor: pointer;
+  outline: none !important;
+
+  &:focus-visible {
+    box-shadow:
+      inset 0 0 0 2px var(--rs-on-btn, var(--rs-on-accent, #fff)),
+      inset 0 0 0 4px var(--rs-btn, var(--rs-accent, #0a3fb8)) !important;
+  }
+}
+
+@keyframes rs-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@keyframes rs-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rs-sheet,
+  .rs-sheet-dim {
+    animation: none;
+  }
+
+  .rs-pick__chev {
+    transition: none;
+  }
+}

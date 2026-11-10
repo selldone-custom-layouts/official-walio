@@ -21,6 +21,8 @@
 
 declare const window: any;
 
+import { baseCurrency, money as regionMoney } from "../region-switcher/region";
+
 /* ━━━━━━━━━━━━ Photos ━━━━━━━━━━━━
    import.meta.glob lists only the files that exist when the Layout is
    built, so a missing photo costs nothing and breaks nothing. */
@@ -142,7 +144,7 @@ export function waysOf(shop: any): Way[] {
       line: kind ? kind.line : "Brought to your address",
       free,
       freeOver,
-      currency: t.currency || shop?.currency || null,
+      currency: t.currency || null, // null: the shop's base currency (shop.currency does not exist)
     });
   }
   /* In the order shoppers expect: pickup, delivery, shipping, post. */
@@ -161,5 +163,15 @@ export function freeShippingFrom(shop: any): { amount: number; currency: string 
   );
   if (!paid.length) return null;
   const best = paid.reduce((a: any, b: any) => (Number(b.free_shipping_limit) < Number(a.free_shipping_limit) ? b : a));
-  return { amount: Number(best.free_shipping_limit), currency: best.currency || shop?.currency };
+  return { amount: Number(best.free_shipping_limit), currency: best.currency || baseCurrency() };
+}
+
+/* ━━━━━━━━━━━━ Money ━━━━━━━━━━━━ */
+
+/** Walio's money(): `amount` is in `currency` (omit it, or null, for the
+ *  shop's base currency); the result is in the visitor's currency, converted
+ *  with the shop's rates (the region switcher, 10 November 2026).
+ *  short: true drops the decimals; "auto" only when the amount is whole. */
+export function money(amount: number, currency?: string | null, short: boolean | "auto" = false): string {
+  return regionMoney(amount, currency || baseCurrency(), { short });
 }
