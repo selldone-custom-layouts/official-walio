@@ -96,6 +96,13 @@
         </nav>
       </div>
 
+      <!-- The visitor's theme: palettes, a free Custom colour and Light /
+           Dark, in a strip of its own above the legal row (the owner, 10
+           November 2026: the theme setting belongs in the footer, not the
+           header). Only on molino, the showcase shop; the row renders
+           nothing elsewhere. -->
+      <div class="k-wrap k-footer__theme"><theme-switcher-row /></div>
+
       <div class="k-wrap k-footer__base">
         <span>© {{ year }} {{ shopTitle }}</span>
         <span class="k-footer__base-links">
@@ -116,6 +123,7 @@ import SLanguageSelector from "@selldone/components-vue/storefront/language/sele
 import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
 import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/section/gdpr/SFooterSectionGdpr.vue";
 import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
+import ThemeSwitcherRow from "../../theme-switcher/ThemeSwitcherRow.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute, sellerRoute, vendorImage, vendors } from "../kalio-catalog";
 
@@ -127,6 +135,7 @@ export default {
     UCurrencySelector,
     SFooterSectionGdpr,
     SFooterSectionSelldone,
+    ThemeSwitcherRow,
   },
   inject: ["$shop"],
 

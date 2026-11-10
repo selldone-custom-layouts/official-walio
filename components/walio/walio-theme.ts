@@ -1,7 +1,7 @@
 /*
- * Walio — the theme switcher's config (the header's "Theme" button: the
- * owner's rule of 9 November 2026, the same on every molino Layout as on
- * Digito and Besti).
+ * Walio — the theme switcher's config (the footer's "Theme" row, above the
+ * legal row: the owner, 10 November 2026, the same on every molino Layout as
+ * on Digito and Besti).
  *
  * The switcher itself is Layout-agnostic (components/theme-switcher/); this
  * file is everything Walio-specific: the palettes, which Kalio variables

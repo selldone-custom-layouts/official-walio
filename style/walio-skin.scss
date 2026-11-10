@@ -200,6 +200,31 @@ h3 {
   }
 }
 
+/* The theme row (ThemeSwitcherRow), a strip of its own above the legal row,
+   on the columns' left edge (the owner, 10 November 2026: the theme setting
+   is in the footer). Light words on the navy in both modes: white 16:1, the
+   name 12:1, the hover and switch outline #8ea3c0 5.9:1, the chosen ring the
+   spark yellow 11:1. Off the showcase shops the row renders nothing and the
+   strip goes with it. */
+.k-footer__theme {
+  margin-top: 44px;
+  padding-block: 16px; /* the sides stay .k-wrap's */
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  --ts-ink: #ffffff;
+  --ts-muted: #d2dbe7;
+  --ts-line: #8ea3c0;
+  --ts-ring: #ffc220;
+  --ts-swatch-edge: rgba(255, 255, 255, 0.42);
+
+  &:empty {
+    display: none;
+  }
+
+  &:not(:empty) + .k-footer__base {
+    margin-top: 0 !important;
+  }
+}
+
 /* ── Checkout: numbered steps, a white summary, a blue pill to pay ── */
 .t-step {
   display: flex;

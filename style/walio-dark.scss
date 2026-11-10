@@ -1,7 +1,7 @@
 /* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Walio — dark mode, and the theme switcher's loose ends ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
 
-   The theme switcher (components/walio/walio-theme.ts, the header's Theme
-   button) turns the page dark by tokens and by the build step that gives
+   The theme switcher (components/walio/walio-theme.ts, the footer's Theme
+   row) turns the page dark by tokens and by the build step that gives
    every fixed colour a dark value (postcss-dark-tokens). This file holds
    what neither can know. Loaded last (storefront.scss); the build step
    leaves rules that name html.wl-dark alone. */
@@ -88,6 +88,7 @@ html.wl-dark {
      on them stay dark in every palette. */
   .k-mtile:not(.-lead),
   .k-shelf__tag.-offer,
+  .k-aisle-chip:not(.-on),
   .w-cat,
   .w-banner {
     --k-ink: #1d1e20;
@@ -98,6 +99,19 @@ html.wl-dark {
     --tsd-surface-ffffff: initial;
     --tsd-text-8a3c1d: initial;
     color: #1d1e20;
+  }
+
+  /* The empty cart's "Or start with an aisle" chips (KalioHeader) are pills
+     on their aisle's pastel (an inline --k-tint the build step cannot see):
+     the light ink of dark mode read 1.0:1 on them (the owner's phone, 10
+     November 2026). A light island too: dark words, 15:1 or more; the hover
+     deepens the pastel as in light mode. */
+  .k-aisle-chip:not(.-on) {
+    color: #1d1e20 !important;
+
+    &:hover {
+      background: color-mix(in oklab, var(--k-tint) 85%, #4a4a4a) !important;
+    }
   }
 
   & .text-red {

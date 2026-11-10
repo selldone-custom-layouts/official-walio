@@ -77,6 +77,24 @@
   }
 }
 
+/* The footer row's "Custom colour" swatch: a label with the native picker
+   over it. A colour wheel until picked, then the colour in use. */
+.ts-row .ts-swatch.-custom {
+  display: inline-block;
+
+  &.-rainbow::before {
+    background: conic-gradient(from 0deg, #ff3b30, #ffcc00, #34c759, #00c7be, #007aff, #af52de, #ff2d55, #ff3b30);
+  }
+
+  &:has(.ts-pal__input:focus-visible) {
+    box-shadow: inset 0 0 0 2px var(--ts-ink, currentColor) !important;
+  }
+}
+
+.ts-row__name .ts-pal__note {
+  display: block;
+}
+
 html[data-ts-mode="dark"] .ts-row .ts-swatch::before {
   --ts-swatch-edge: rgba(255, 255, 255, 0.42);
 }
