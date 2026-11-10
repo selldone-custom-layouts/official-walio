@@ -193,6 +193,7 @@
 </template>
 
 <script>
+import { computed } from "vue";
 import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
 import KalioSellerOffers from "./KalioSellerOffers.vue";
 import KalioBasketLine from "./KalioBasketLine.vue";
@@ -204,6 +205,15 @@ export default {
   name: "KalioProductOverview",
   extends: SProductOverview,
   components: { KalioSellerOffers, KalioBasketLine },
+
+  /* Selldone's sections inside (the price, tax, cashback) read the chosen
+     variant from an injected $variant. The product page provides it; the
+     quick-buy sheet did not, so the sheet's price stayed at the product's own
+     price while an option with its own price was picked (the cart got the
+     right one). The overview now provides its own choice (Digito 1.0.15). */
+  provide() {
+    return { $variant: computed(() => this.current_variant) };
+  },
 
   data() {
     return {

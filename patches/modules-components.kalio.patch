@@ -345,7 +345,7 @@ index 579e8c9..1f5d878 100644
        </span>
      </div>
 diff --git a/storefront/products/listing/SProductsListing.vue b/storefront/products/listing/SProductsListing.vue
-index 942cd61..04a0c36 100644
+index 942cd61..48562bc 100644
 --- a/storefront/products/listing/SProductsListing.vue
 +++ b/storefront/products/listing/SProductsListing.vue
 @@ -261,19 +261,47 @@
@@ -486,14 +486,34 @@ index 942cd61..04a0c36 100644
        //console.log(to,from)
        if (
          !this.routeMode ||
-@@ -1213,6 +1292,7 @@ export default {
+@@ -1211,13 +1290,27 @@ export default {
+         surrounded = null;
+       }
  
++      const shown = new Set(more ? this.products.map((product) => product.id) : []);
++
        const handleSuccessResponse = ({ products, total, folders, parent }) => {
          this.products_count = total;
 +        this.kalio_loaded = true;
  
          if (more) {
            products.forEach((product) => {
+             this.AddOrUpdateItemByID(this.products, product);
+           });
++          // Kalio (10 November 2026): the server can count more than it
++          // sends (Digini's deals: 61 counted, the page after 60 brings
++          // nothing new). A "more" page with nothing that was not already
++          // shown when it was asked for ends the list. Before, "Show 1 more"
++          // stayed in view and its v-intersect asked again on every frame,
++          // answered from the SDK's cache, so the page re-rendered about 60
++          // times a second and froze. (`shown` is taken when the request
++          // starts, so the cached answer and the network answer agree.)
++          if (!products.some((product) => !shown.has(product.id))) {
++            this.products_count = this.products.length;
++          }
+         } else {
+           this.products = products;
+           this.folders = folders;
 diff --git a/system/pwa/version-check/SPwaVersionCheck.vue b/system/pwa/version-check/SPwaVersionCheck.vue
 index 1c8cfde..4d0a8b7 100644
 --- a/system/pwa/version-check/SPwaVersionCheck.vue
