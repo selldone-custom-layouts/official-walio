@@ -587,6 +587,81 @@ $k-header-strip: 46px;
     }
   }
 
+  /* The phone menu's hidden aisles: they open inline (height, then each row
+     fades up 20ms after the one before). */
+  &__extra {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 260ms ease;
+
+    > div {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .k-drawer__link {
+      opacity: 0;
+      transform: translateY(6px);
+      transition:
+        opacity 200ms ease,
+        transform 200ms ease;
+    }
+
+    &.-open {
+      grid-template-rows: 1fr;
+
+      .k-drawer__link {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+
+  /* "Show N more" / "Show fewer": a row of the list (same ring column,
+     same words column), a chevron on the palette's soft tint, bold words
+     in the link colour. */
+  &__link.-more {
+    width: 100%;
+    margin: 2px 0 0;
+    border: 0;
+    background: none;
+    color: var(--w-link) !important;
+    font-family: inherit;
+    font-weight: 800;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--k-wash);
+    }
+
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: inset 0 0 0 2px var(--w-link) !important;
+    }
+
+    .k-drawer__ring {
+      background: var(--k-green-soft);
+    }
+
+    .v-icon {
+      color: var(--w-link);
+      transition: transform 220ms ease;
+    }
+
+    &[aria-expanded="true"] .v-icon {
+      transform: rotate(180deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__extra,
+    &__extra .k-drawer__link,
+    &__link.-more .v-icon {
+      transition: none !important;
+    }
+  }
+
   &__pickers {
     display: grid;
     gap: 10px;

@@ -200,6 +200,13 @@ h3 {
   }
 }
 
+/* The phone menu's head is the drawer's own ground, not the blue bar: the
+   wordmark beside the mark takes the ink there (it was white on white in
+   light mode; the ink turns light with the drawer in dark mode). */
+.k-drawer .k-header__brand {
+  color: var(--k-ink) !important;
+}
+
 /* The theme row (ThemeSwitcherRow), a strip of its own above the legal row,
    on the columns' left edge (the owner, 10 November 2026: the theme setting
    is in the footer). Light words on the navy in both modes: white 16:1, the

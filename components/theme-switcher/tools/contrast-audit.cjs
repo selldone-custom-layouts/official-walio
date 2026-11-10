@@ -28,12 +28,37 @@ const WIDTHS = (process.env.WIDTHS || "1440,390").split(",").map(Number);
 const STORAGE = process.env.STORAGE ? JSON.parse(process.env.STORAGE) : null;
 
 const probe = () => {
+  /* Any CSS colour to [r, g, b, a] (0–255, alpha 0–1). rgb()/rgba() is read
+     directly; every other form a browser can compute (color(srgb …), oklab(),
+     oklch(), lab(), lch(), hsl(), from color-mix()) is painted on a 1px
+     canvas and read back. Before 10 Nov 2026 only rgb() was read, so a
+     color-mix() background was skipped and the text was judged against the
+     ancestor behind it: light words on a pale chip passed as "light on dark". */
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = 1;
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const seenColour = new Map();
   const parse = (s) => {
-    const m = String(s).match(/rgba?\(([^)]+)\)/);
-    if (!m) return null;
-    const p = m[1].split(/[\s,/]+/).filter(Boolean).map(parseFloat);
-    return [p[0], p[1], p[2], p[3] === undefined ? 1 : p[3]];
+    s = String(s || "").trim();
+    if (!s || s === "none") return null;
+    const m = s.match(/^rgba?\(([^)]+)\)$/);
+    if (m) {
+      const p = m[1].split(/[\s,/]+/).filter(Boolean).map(parseFloat);
+      return [p[0], p[1], p[2], p[3] === undefined ? 1 : p[3]];
+    }
+    if (seenColour.has(s)) return seenColour.get(s);
+    let out = null;
+    if (window.CSS && CSS.supports("color", s)) {
+      cx.clearRect(0, 0, 1, 1);
+      cx.fillStyle = s;
+      cx.fillRect(0, 0, 1, 1);
+      const d = cx.getImageData(0, 0, 1, 1).data;
+      out = [d[0], d[1], d[2], d[3] / 255];
+    }
+    seenColour.set(s, out);
+    return out;
   };
+  const COLOUR = /(rgba?|color|oklab|oklch|lab|lch|hsla?|hwb)\([^()]*\)/;
   const lum = ([r, g, b]) => {
     const f = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
     return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
@@ -66,7 +91,7 @@ const probe = () => {
       const cs = getComputedStyle(a);
       if (cs.backgroundImage && cs.backgroundImage !== "none" && /url\(/.test(cs.backgroundImage)) return null;
       if (a !== el && under.some((m) => a.contains(m))) return null;
-      const g = cs.backgroundImage && cs.backgroundImage !== "none" ? cs.backgroundImage.match(/rgba?\([^)]+\)/) : null;
+      const g = cs.backgroundImage && cs.backgroundImage !== "none" ? cs.backgroundImage.match(COLOUR) : null;
       const c = parse(cs.backgroundColor);
       if (c && c[3] > 0) layers.push(c);
       else if (g) layers.push(parse(g[0]));
