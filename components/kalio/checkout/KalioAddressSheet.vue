@@ -35,10 +35,10 @@
     <div class="k-sheet k-addr">
       <div class="k-sheet__head">
         <div>
-          <h2>{{ heading }}</h2>
-          <p>{{ lede }}</p>
+          <h2>{{ heading || t("address.title.go", "Where should it go?") }}</h2>
+          <p>{{ lede || t("address.lede.default", "Your address, for the receipt and the seller.") }}</p>
         </div>
-        <button aria-label="Close" class="k-sheet__x" type="button" @click="$emit('update:modelValue', false)">
+        <button :aria-label="t('common.close', 'Close')" class="k-sheet__x" type="button" @click="$emit('update:modelValue', false)">
           <v-icon>close</v-icon>
         </button>
       </div>
@@ -55,10 +55,10 @@
             <v-icon size="20">search</v-icon>
             <input
               :value="query"
-              aria-label="Search a street and number"
+              :aria-label="t('address.searchStreet', 'Search a street and number')"
               autocomplete="off"
               enterkeyhint="search"
-              placeholder="Search a street and number"
+              :placeholder="t('address.searchStreet', 'Search a street and number')"
               type="search"
               @input="onQuery"
               @keydown.enter.prevent="pickFirst"
@@ -66,7 +66,7 @@
             <v-progress-circular v-if="busy_search" indeterminate size="16" width="2" />
           </div>
           <p v-if="no_match" class="k-addr__results -none" role="status">
-            No street found for “{{ no_match }}”. Try the street and number, or move the map to the spot.
+            {{ t("address.noMatch.map", "No street found for “{query}”. Try the street and number, or move the map to the spot.", { query: no_match }) }}
           </p>
           <ul v-if="results.length" class="k-addr__results" role="listbox">
             <li v-for="(item, i) in results" :key="i">
@@ -80,7 +80,7 @@
           <div class="k-addr__pin">
             <span v-if="bubble" class="k-addr__bubble">{{ bubble }}</span>
             <svg
-              aria-label="Use the address under the pin"
+              :aria-label="t('address.pinHere', 'Use the address under the pin')"
               height="56"
               role="button"
               tabindex="0"
@@ -97,11 +97,11 @@
           <button :disabled="busy_locate" class="k-addr__locate" type="button" @click="locate">
             <v-progress-circular v-if="busy_locate" indeterminate size="16" width="2" />
             <v-icon v-else size="18">my_location</v-icon>
-            Use my location
+            {{ t("address.useMyLocation", "Use my location") }}
           </button>
           <span class="k-addr__zoom">
-            <button aria-label="Zoom in" type="button" @click="map && map.zoomIn()"><v-icon size="20">add</v-icon></button>
-            <button aria-label="Zoom out" type="button" @click="map && map.zoomOut()"><v-icon size="20">remove</v-icon></button>
+            <button :aria-label="t('address.zoomIn', 'Zoom in')" type="button" @click="map && map.zoomIn()"><v-icon size="20">add</v-icon></button>
+            <button :aria-label="t('address.zoomOut', 'Zoom out')" type="button" @click="map && map.zoomOut()"><v-icon size="20">remove</v-icon></button>
           </span>
         </div>
 
@@ -111,7 +111,7 @@
              2026). -->
         <div v-if="steps && step === 'map'" class="k-addr__peek">
           <div v-if="book.length" class="k-addr__book">
-            <span class="k-addr__label">Saved</span>
+            <span class="k-addr__label">{{ t("address.saved", "Saved") }}</span>
             <button
               v-for="saved in book"
               :key="saved.id"
@@ -129,8 +129,8 @@
               <v-icon v-else size="20">place</v-icon>
             </span>
             <span>
-              <b>{{ form.address || "No address yet" }}</b>
-              <small>{{ form.address ? "Where the pin is. Next, the details." : "Move the map so the pin is on the door, or search above." }}</small>
+              <b>{{ form.address || t("address.noAddressYet", "No address yet") }}</b>
+              <small>{{ form.address ? t("address.found.next", "Where the pin is. Next, the details.") : t("address.found.moveMap", "Move the map so the pin is on the door, or search above.") }}</small>
             </span>
           </div>
         </div>
@@ -141,17 +141,17 @@
             <v-icon size="20">search</v-icon>
             <input
               :value="query"
-              aria-label="Search your address"
+              :aria-label="t('address.searchAddress', 'Search your address')"
               autocomplete="off"
               enterkeyhint="search"
-              placeholder="Search your address"
+              :placeholder="t('address.searchAddress', 'Search your address')"
               type="search"
               @input="onQuery"
               @keydown.enter.prevent="pickFirst"
             />
           </div>
           <p v-if="noMap && no_match" class="k-addr__results -inline -none" role="status">
-            No street found for “{{ no_match }}”. Try the street and number.
+            {{ t("address.noMatch.form", "No street found for “{query}”. Try the street and number.", { query: no_match }) }}
           </p>
           <ul v-if="noMap && results.length" class="k-addr__results -inline" role="listbox">
             <li v-for="(item, i) in results" :key="i">
@@ -164,12 +164,12 @@
 
           <div v-if="titled" class="k-addr__named">
             <label :class="{ '-error': tried && !form.title }" class="k-addr__field -wide">
-              <span>Name this address <em>*</em></span>
-              <input v-model.trim="form.title" maxlength="64" placeholder="Home, Work, Mum's…" type="text" />
+              <span>{{ t("address.nameThis", "Name this address") }} <em>*</em></span>
+              <input v-model.trim="form.title" maxlength="64" :placeholder="namePlaceholder" type="text" />
             </label>
             <div class="k-addr__book -names">
               <button
-                v-for="word in NAMES"
+                v-for="word in names"
                 :key="word.text"
                 :class="{ '-on': form.title === word.text }"
                 class="k-addr__saved"
@@ -182,7 +182,7 @@
           </div>
 
           <div v-if="book.length && !steps" class="k-addr__book">
-            <span class="k-addr__label">Saved</span>
+            <span class="k-addr__label">{{ t("address.saved", "Saved") }}</span>
             <button
               v-for="saved in book"
               :key="saved.id"
@@ -201,62 +201,62 @@
               <v-icon v-else size="20">place</v-icon>
             </span>
             <span>
-              <b>{{ form.address || "No address yet" }}</b>
-              <small v-if="steps">{{ form.address ? "Where the pin is. Fill in the rest below." : "Place the pin on the map first." }}</small>
-              <small v-else>{{ form.address ? "Where the pin is. You can edit the details below." : "Tap the map where it should go, or search above." }}</small>
+              <b>{{ form.address || t("address.noAddressYet", "No address yet") }}</b>
+              <small v-if="steps">{{ form.address ? t("address.found.rest", "Where the pin is. Fill in the rest below.") : t("address.found.pinFirst", "Place the pin on the map first.") }}</small>
+              <small v-else>{{ form.address ? t("address.found.edit", "Where the pin is. You can edit the details below.") : t("address.found.tapMap", "Tap the map where it should go, or search above.") }}</small>
             </span>
-            <button v-if="steps" class="k-addr__found-edit" type="button" @click="toMap">Change</button>
+            <button v-if="steps" class="k-addr__found-edit" type="button" @click="toMap">{{ t("address.change", "Change") }}</button>
           </div>
 
           <label :class="{ '-error': tried && !form.address }" class="k-addr__field -wide">
-            <span>Street address <em>*</em></span>
-            <input v-model.trim="form.address" autocomplete="street-address" placeholder="Street and number" type="text" />
+            <span>{{ t("address.field.street", "Street address") }} <em>*</em></span>
+            <input v-model.trim="form.address" autocomplete="street-address" :placeholder="t('address.field.streetHint', 'Street and number')" type="text" />
           </label>
           <div class="k-addr__two">
             <label class="k-addr__field">
-              <span>Building</span>
-              <input v-model.trim="form.no" placeholder="No." type="text" />
+              <span>{{ t("address.field.building", "Building") }}</span>
+              <input v-model.trim="form.no" :placeholder="t('address.field.buildingHint', 'No.')" type="text" />
             </label>
             <label class="k-addr__field">
-              <span>Unit</span>
-              <input v-model.trim="form.unit" placeholder="Apt, floor" type="text" />
+              <span>{{ t("address.field.unit", "Unit") }}</span>
+              <input v-model.trim="form.unit" :placeholder="t('address.field.unitHint', 'Apt, floor')" type="text" />
             </label>
           </div>
           <div class="k-addr__two">
             <label class="k-addr__field">
-              <span>Full name</span>
-              <input v-model.trim="form.name" autocomplete="name" placeholder="Who receives it" type="text" />
+              <span>{{ t("address.field.name", "Full name") }}</span>
+              <input v-model.trim="form.name" autocomplete="name" :placeholder="t('address.field.nameHint', 'Who receives it')" type="text" />
             </label>
             <label :class="{ '-error': tried && phoneRequired && !form.phone }" class="k-addr__field">
-              <span>Phone <em v-if="phoneRequired">*</em></span>
-              <input v-model.trim="form.phone" autocomplete="tel" inputmode="tel" placeholder="For the courier" type="tel" />
+              <span>{{ t("address.field.phone", "Phone") }} <em v-if="phoneRequired">*</em></span>
+              <input v-model.trim="form.phone" autocomplete="tel" inputmode="tel" :placeholder="t('address.field.phoneHint', 'For the courier')" type="tel" />
             </label>
           </div>
           <div class="k-addr__two">
             <label class="k-addr__field">
-              <span>City</span>
-              <input v-model.trim="form.city" autocomplete="address-level2" placeholder="City" type="text" />
+              <span>{{ t("address.field.city", "City") }}</span>
+              <input v-model.trim="form.city" autocomplete="address-level2" :placeholder="t('address.field.city', 'City')" type="text" />
             </label>
             <label class="k-addr__field">
-              <span>County or state</span>
-              <input v-model.trim="form.state" autocomplete="address-level1" placeholder="County" type="text" />
+              <span>{{ t("address.field.state", "County or state") }}</span>
+              <input v-model.trim="form.state" autocomplete="address-level1" :placeholder="t('address.field.stateHint', 'County')" type="text" />
             </label>
           </div>
           <div class="k-addr__two">
             <label class="k-addr__field">
-              <span>Postcode</span>
-              <input v-model.trim="form.postal" autocomplete="postal-code" placeholder="Postcode" type="text" />
+              <span>{{ t("address.field.postcode", "Postcode") }}</span>
+              <input v-model.trim="form.postal" autocomplete="postal-code" :placeholder="t('address.field.postcode', 'Postcode')" type="text" />
             </label>
             <label class="k-addr__field">
-              <span>Country</span>
+              <span>{{ t("address.field.country", "Country") }}</span>
               <select v-model="form.country" autocomplete="country">
                 <option v-for="country in countryList" :key="country.code" :value="country.code">{{ country.name }}</option>
               </select>
             </label>
           </div>
           <label class="k-addr__field -wide">
-            <span>Note for the seller</span>
-            <textarea v-model="form.message" placeholder="Gate code, landmark… (optional)" rows="2"></textarea>
+            <span>{{ t("address.field.note", "Note for the seller") }}</span>
+            <textarea v-model="form.message" :placeholder="t('address.field.noteHint', 'Gate code, landmark… (optional)')" rows="2"></textarea>
           </label>
         </div>
       </div>
@@ -264,17 +264,17 @@
       <div class="k-sheet__foot">
         <template v-if="steps && step === 'map'">
           <p v-if="pin_needed" class="k-addr__missing"><v-icon size="16">error_outline</v-icon>{{ pin_needed }}</p>
-          <button class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">Cancel</button>
+          <button class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">{{ t("common.cancel", "Cancel") }}</button>
           <button class="k-sheet__go" type="button" @click="next">
-            Continue<v-icon size="20">arrow_forward</v-icon>
+            {{ t("address.continue", "Continue") }}<v-icon size="20">arrow_forward</v-icon>
           </button>
         </template>
         <template v-else>
           <p v-if="tried && missing" class="k-addr__missing"><v-icon size="16">error_outline</v-icon>{{ missing }}</p>
-          <button v-if="steps" class="k-sheet__ghost" type="button" @click="toMap">Back</button>
-          <button v-else class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">Cancel</button>
+          <button v-if="steps" class="k-sheet__ghost" type="button" @click="toMap">{{ t("common.back", "Back") }}</button>
+          <button v-else class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">{{ t("common.cancel", "Cancel") }}</button>
           <button :disabled="busy" class="k-sheet__go" type="button" @click="save">
-            <v-progress-circular v-if="busy" indeterminate size="18" width="2" />{{ saveText }}
+            <v-progress-circular v-if="busy" indeterminate size="18" width="2" />{{ saveText || t("address.save", "Save address") }}
           </button>
         </template>
       </div>
@@ -285,6 +285,7 @@
 <script>
 import Mapbox from "@selldone/components-vue/ui/map/providers/mapbox/MapBox";
 import { Countries } from "@selldone/core-js/models/general/country/country.model";
+import { t } from "../i18n/kalio-i18n";
 
 /* Streets in colour: a shopper finds their door by the parks, the water
    and the road colours (the light style read as a grey, broken map). */
@@ -293,12 +294,15 @@ const MAP_STYLE = "mapbox://styles/mapbox/streets-v12";
 const ZOOM_ADDRESS = 13;
 const ZOOM_STREET = 16;
 
-/* Quick names for an address in the address book. */
-const NAMES = [
-  { text: "Home", icon: "home" },
-  { text: "Work", icon: "work_outline" },
-  { text: "Other", icon: "place" },
-];
+/* Quick names for an address in the address book (in the visitor's
+   language, read at render time). */
+function NAMES() {
+  return [
+    { text: t("address.name.home", "Home"), icon: "home" },
+    { text: t("address.name.work", "Work"), icon: "work_outline" },
+    { text: t("address.name.other", "Other"), icon: "place" },
+  ];
+}
 
 function blank() {
   return { title: "", address: "", no: "", unit: "", name: "", phone: "", city: "", state: "", postal: "", country: null, message: "" };
@@ -316,8 +320,9 @@ export default {
     noMap: Boolean,
     /** The shop's countries; all when empty. */
     countries: { type: Array, default: null },
-    heading: { type: String, default: "Where should it go?" },
-    lede: { type: String, default: "Your address, for the receipt and the seller." },
+    /* Empty: the sheet's own words, in the visitor's language. */
+    heading: { type: String, default: "" },
+    lede: { type: String, default: "" },
     /** The address book: the address has a name, asked first. */
     titled: Boolean,
     /** The address's name, when it has one. */
@@ -328,14 +333,13 @@ export default {
     phoneRequired: { type: Boolean, default: true },
     /** Offer the shopper's saved addresses above the form. */
     savedList: { type: Boolean, default: true },
-    saveText: { type: String, default: "Save address" },
+    saveText: { type: String, default: "" },
   },
 
   emits: ["update:modelValue", "save"],
 
   data() {
     return {
-      NAMES,
       form: blank(),
       location: null,
       moved: false,
@@ -371,16 +375,22 @@ export default {
       }
       return Countries;
     },
+    names() {
+      return NAMES();
+    },
+    namePlaceholder() {
+      return t("address.namePlaceholder", "Home, Work, Mum's…");
+    },
     bubble() {
-      if (this.zoomed_out) return "Zoom in to place the pin";
-      if (!this.form.address) return "Tap the map where it should go";
+      if (this.zoomed_out) return t("address.bubble.zoomIn", "Zoom in to place the pin");
+      if (!this.form.address) return t("address.bubble.tapMap", "Tap the map where it should go");
       return null;
     },
     missing() {
-      if (this.titled && !this.form.title) return "Name this address.";
-      if (!this.noMap && !this.location) return "Place the pin on the map.";
-      if (!this.form.address) return "Add the street address.";
-      if (this.phoneRequired && !this.form.phone) return "Add a phone number.";
+      if (this.titled && !this.form.title) return t("address.missing.name", "Name this address.");
+      if (!this.noMap && !this.location) return t("address.missing.pin", "Place the pin on the map.");
+      if (!this.form.address) return t("address.missing.street", "Add the street address.");
+      if (this.phoneRequired && !this.form.phone) return t("address.missing.phone", "Add a phone number.");
       return null;
     },
   },
@@ -651,7 +661,7 @@ export default {
       this.pin_needed = null;
       if (this.map && this.zoomed_out) {
         this.pinHere();
-        this.pin_needed = "Zoom in so the pin is on the door.";
+        this.pin_needed = t("address.missing.zoomIn", "Zoom in so the pin is on the door.");
         return;
       }
       if (this.map) {
@@ -660,7 +670,7 @@ export default {
         if (away) this.pinHere();
       }
       if (!this.location) {
-        this.pin_needed = "Place the pin on the map.";
+        this.pin_needed = t("address.missing.pin", "Place the pin on the map.");
         return;
       }
       this.step = "details";

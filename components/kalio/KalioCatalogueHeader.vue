@@ -16,6 +16,7 @@
 <script>
 import KalioShelfHead from "./KalioShelfHead.vue";
 import { aisleRoute, aisles, catalogueRoute } from "./kalio-catalog";
+import { t } from "./i18n/kalio-i18n";
 
 export default {
   name: "KalioCatalogueHeader",
@@ -45,29 +46,29 @@ export default {
       }
     },
     eyebrow() {
-      if (this.search) return "Search results";
-      if (this.deals) return "On offer";
+      if (this.search) return t("listing.searchResults", "Search results");
+      if (this.deals) return t("listing.onOffer", "On offer");
       return null;
     },
     title() {
-      if (this.search) return `“${this.search}”`;
-      if (this.deals) return "Today’s deals";
-      return "All products";
+      if (this.search) return t("listing.searchQuery", "“{query}”", { query: this.search });
+      if (this.deals) return t("listing.todaysDeals", "Today’s deals");
+      return t("listing.allProducts", "All products");
     },
     crumbs() {
       return [
         { label: this.$shop?.title || "Kalio", to: { name: window.$storefront.routes.SHOP_PAGE } },
-        { label: this.search ? "Search" : this.title },
+        { label: this.search ? t("common.search", "Search") : this.title },
       ];
     },
     meta() {
       if (this.total === null) return null;
-      return `${this.total.toLocaleString()} ${this.total === 1 ? "product" : "products"}`;
+      return t("listing.productCount", { one: "{n} product", other: "{n} products" }, { n: this.total });
     },
     tabs() {
       if (!this.list.length) return [];
       return [
-        { key: "all", label: "All products", to: catalogueRoute(), on: !this.search && !this.deals },
+        { key: "all", label: t("listing.allProducts", "All products"), to: catalogueRoute(), on: !this.search && !this.deals },
         ...this.list.map((item) => ({ key: item.id, label: item.title || item.name, to: aisleRoute(item) })),
       ];
     },

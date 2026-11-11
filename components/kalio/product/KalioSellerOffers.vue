@@ -17,9 +17,9 @@
   <section v-if="items_show.length" :aria-labelledby="headingId" class="k-offers">
     <header class="k-offers__head">
       <h2 :id="headingId" class="k-offers__title">
-        {{ items_show.length > 1 ? `Sold by ${items_show.length} sellers` : "Sold by" }}
+        {{ items_show.length > 1 ? t("offers.soldByCount", { one: "Sold by {n} seller", other: "Sold by {n} sellers" }, { n: items_show.length }) : t("offers.soldBy", "Sold by") }}
       </h2>
-      <p v-if="items_show.length > 1" class="k-offers__hint">Choose who your cart line comes from.</p>
+      <p v-if="items_show.length > 1" class="k-offers__hint">{{ t("offers.hint", "Choose who your basket line comes from.") }}</p>
     </header>
 
     <div :aria-labelledby="headingId" class="k-offers__list" role="radiogroup">
@@ -47,7 +47,7 @@
             class="k-offer__link"
             @click.stop
           >
-            Visit shop
+            {{ t("offers.visitShop", "Visit shop") }}
           </a>
           <span
             v-if="pickup_transportation_for_vendors_exists && offer.vendor.warehouse"

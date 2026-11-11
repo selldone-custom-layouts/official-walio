@@ -39,8 +39,9 @@ import "@selldone/components-vue/style/fonts/material-design-fonts/material-desi
 import "@selldone/components-vue/style/fonts/lang/fa/lang-fa-iransans.css";
 import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher";
 import { WALIO_THEME } from "./components/walio/walio-theme";
-import { bootRegion, defineMessages } from "./components/region-switcher/region";
-import { WALIO_MESSAGES } from "./components/walio/i18n";
+import { bootRegion } from "./components/region-switcher/region";
+import { EN as KALIO_EN, LOADERS as KALIO_LANGUAGES } from "./components/kalio/i18n";
+import { bootI18n, i18nGlobals } from "./components/kalio/i18n/kalio-i18n";
 import "./components/kalio/kalio-fonts"; // Kalio typefaces, loaded by the app so they reach production
 import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
@@ -88,6 +89,7 @@ window.OverrideShopLanguagePacks = {};
 //█████████████████████████████████████████████████████████████
 // @ts-ignore
 const app = createApp(StorefrontApp);
+Object.assign(app.config.globalProperties, i18nGlobals); // t(), formatNumber(), formatDate() in every template
 
 const components = createComponents({});
 app.use(components);
@@ -100,10 +102,9 @@ app.use(components);
 StorefrontSDK.Setup(); // Set up the Shop SDK.
 
 // The visitor's language and currency (the header pill and the phone menu's
-// row): Selldone's own state (window.$storefront.currency, setCurrentLanguage)
-// mirrored reactively, the shop's rates, and Walio's own words per language.
-defineMessages(WALIO_MESSAGES);
+// row), then the Layout's own words in that language (<html lang dir> too).
 bootRegion(store);
+bootI18n(KALIO_EN, KALIO_LANGUAGES);
 
 // ━━━ Community SDK (capi) ━━━
 CapiCommunity.Setup(); // Setup community.

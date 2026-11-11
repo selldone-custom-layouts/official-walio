@@ -36,12 +36,12 @@
 
       <div class="k-rail__tools">
         <router-link v-if="moreTo" :to="moreTo" class="k-more">
-          {{ moreLabel }}
+          {{ moreLabel || t("common.seeAll", "See all") }}
           <v-icon class="k-flip" size="20">chevron_right</v-icon>
         </router-link>
         <button
           :disabled="at_start"
-          aria-label="Scroll back"
+          :aria-label="t('rail.scrollBack', 'Scroll back')"
           class="k-round k-rail__arrow"
           type="button"
           @click="scrollBy(-1)"
@@ -50,7 +50,7 @@
         </button>
         <button
           :disabled="at_end"
-          aria-label="Scroll forward"
+          :aria-label="t('rail.scrollForward', 'Scroll forward')"
           class="k-round k-rail__arrow"
           type="button"
           @click="scrollBy(1)"
@@ -85,7 +85,7 @@
           quick-buy
           @quick-buy="quickBuy(product)"
         />
-        <p v-if="product.unit" class="k-rail__unit">per {{ product.unit }}</p>
+        <p v-if="product.unit" class="k-rail__unit">{{ t("rail.perUnit", "per {unit}", { unit: product.unit }) }}</p>
         <kalio-seller-line :sellers="sellersOf.get(product.id) || []" />
         <!-- The card's foot, under the unit and the sellers: "Add to
              basket", "See options", or "− n in basket +". -->
@@ -154,7 +154,8 @@ export default {
     /** A product left out of the row, such as the one on the page above it. */
     exclude: { type: [Number, String], default: null },
     moreTo: { type: Object, default: null },
-    moreLabel: { type: String, default: "See all" },
+    /** The link's words; "See all" in the visitor's language when not given. */
+    moreLabel: { type: String, default: null },
 
     /** Fetch only when the rail is about to scroll into view. */
     lazy: Boolean,

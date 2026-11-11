@@ -111,6 +111,7 @@
 </template>
 
 <script lang="ts">
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 import SDataIteratorToolbar from "@selldone/components-vue/ui/toolbar/SDataIteratorToolbar.vue";
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
@@ -168,7 +169,7 @@ export default {
   },
 
   created() {
-    this.setPageTitle("My comments"); // Set Page Title!
+    this.setPageTitle(t("account.pageTitle.comments", "My comments")); // Set Page Title!
   },
 
   methods: {

@@ -19,7 +19,7 @@
   <div class="k-pdp" :style="{ '--k-tint': tint }">
     <div class="k-pdp__grid">
       <!-- ▆▆▆▆▆▆▆▆ Packshot ▆▆▆▆▆▆▆▆ -->
-      <section v-if="showCover" aria-label="Product images" class="k-pdp__media">
+      <section v-if="showCover" :aria-label="t('pdp.images', 'Product images')" class="k-pdp__media">
         <div class="k-pdp__stage">
           <s-shop-product-slide-show :current-variant="current_variant" :vertical="false" />
         </div>
@@ -48,7 +48,7 @@
           <span :style="{ '--k-rate': $product.rate }" class="k-stars"></span>
           <b>{{ numeralFormat($product.rate, "0.0") }}</b>
           <a class="k-pdp__rating-link" href="#k-reviews" @click.prevent="toReviews">
-            {{ numeralFormat($product.rate_count, "0,0") }} {{ $product.rate_count === 1 ? "rating" : "ratings" }}
+            {{ t("reviews.ratingCount", { one: "{n} rating", other: "{n} ratings" }, { n: Number($product.rate_count) }) }}
           </a>
         </div>
 

@@ -21,7 +21,7 @@
         <span class="k-lines__who">
           <router-link v-if="group.route" :to="group.route" class="k-lines__name">{{ group.name }}</router-link>
           <b v-else class="k-lines__name">{{ group.name }}</b>
-          <small>{{ group.units }} {{ group.units === 1 ? "item" : "items" }}</small>
+          <small>{{ t("checkout.lines.items", { one: "{n} item", other: "{n} items" }, { n: group.units }) }}</small>
         </span>
         <u-price :amount="group.subtotal" :currency="currency" class="k-lines__subtotal" />
       </header>
@@ -42,20 +42,20 @@
             }}
           </small>
           <small v-if="shown(item) > available(item)" class="k-lines__short">
-            <v-icon size="14">error_outline</v-icon>Only {{ available(item) }} left
+            <v-icon size="14">error_outline</v-icon>{{ t("checkout.lines.onlyLeft", { one: "Only {n} left", other: "Only {n} left" }, { n: available(item) }) }}
           </small>
         </div>
         <div
-          :aria-label="`Quantity of ${item.product?.title || 'this item'}`"
+          :aria-label="item.product?.title ? t('checkout.lines.quantityOf', 'Quantity of {name}', { name: item.product.title }) : t('checkout.lines.quantityOfThis', 'Quantity of this item')"
           :class="{ '-busy': settling(lineProduct(item), item) }"
           class="k-lines__qty"
           role="group"
         >
-          <button :aria-label="shown(item) > 1 ? 'One fewer' : 'Remove from basket'" type="button" @click="step(item, -1)">
+          <button :aria-label="shown(item) > 1 ? t('checkout.lines.oneFewer', 'One fewer') : t('checkout.lines.removeFromBasket', 'Remove from basket')" type="button" @click="step(item, -1)">
             <v-icon size="18">{{ shown(item) > 1 ? "remove" : "delete_outline" }}</v-icon>
           </button>
           <output aria-live="polite">{{ shown(item) }}</output>
-          <button :disabled="shown(item) >= available(item)" aria-label="One more" type="button" @click="step(item, 1)">
+          <button :disabled="shown(item) >= available(item)" :aria-label="t('checkout.lines.oneMore', 'One more')" type="button" @click="step(item, 1)">
             <v-icon size="18">add</v-icon>
           </button>
         </div>

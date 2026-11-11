@@ -12,9 +12,9 @@
 <template>
   <section v-if="busy || list.length" aria-labelledby="k-aisles-title" class="k-aisles k-wrap">
     <header class="k-section-head">
-      <h2 id="k-aisles-title" class="k-section-head__title">Shop by aisle</h2>
+      <h2 id="k-aisles-title" class="k-section-head__title">{{ t("aisle.shopBy", "Shop by aisle") }}</h2>
       <router-link :to="allRoute" class="k-more">
-        All products
+        {{ t("listing.allProducts", "All products") }}
         <v-icon class="k-flip" size="20">chevron_right</v-icon>
       </router-link>
     </header>
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <nav v-else :style="{ '--k-cols': Math.ceil(list.length / 2) }" aria-label="Aisles" class="k-aisles__row">
+    <nav v-else :style="{ '--k-cols': Math.ceil(list.length / 2) }" :aria-label="t('aisle.aisles', 'Aisles')" class="k-aisles__row">
       <router-link
         v-for="aisle in list"
         :key="aisle.id"

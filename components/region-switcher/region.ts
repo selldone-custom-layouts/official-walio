@@ -65,7 +65,7 @@ const OWN: Record<string, string> = {
 
 const RTL = new Set(["ar", "fa", "he", "ur", "ps", "ckb", "ku"]);
 
-const state = reactive({ currency: "", language: "", booted: false });
+const state = reactive({ currency: "", language: "", booted: false, words: 0 });
 let opts: Required<RegionOptions> = { ...DEFAULTS };
 let store: any = null;
 let messages: Record<string, Record<string, string>> = { en: { ...OWN } };
@@ -184,8 +184,9 @@ export function formatMoney(amount: number, code: string = currentCurrency(), op
   const n = Number(amount) || 0;
   const short = options.short === "auto" ? Math.abs(n - Math.round(n)) < 0.005 : !!options.short;
   const floats = short ? 0 : ((Currency as any)[code]?.floats ?? 2);
+  let out: string;
   try {
-    return new Intl.NumberFormat(locale(), {
+    out = new Intl.NumberFormat(locale(), {
       style: "currency",
       currency: code,
       currencyDisplay: opts.currencyDisplay,
@@ -193,8 +194,12 @@ export function formatMoney(amount: number, code: string = currentCurrency(), op
       maximumFractionDigits: floats,
     }).format(n);
   } catch {
-    return `${code} ${n.toFixed(floats)}`;
+    out = `${code} ${n.toFixed(floats)}`;
   }
+  /* In a right-to-left language an amount is one left-to-right piece inside
+     the sentence (LRI … PDI); otherwise the bidi algorithm splits "US$" around
+     the number ("$US 589"). */
+  return isRtl() ? `\u2066${out.replace(/[\u200e\u200f\u061c]/g, "")}\u2069` : out;
 }
 
 /** THE money helper: `amount` is in `from` (default: the shop's base
@@ -304,10 +309,12 @@ export function defineMessages(dict: Record<string, Record<string, string>>): vo
   const out: Record<string, Record<string, string>> = { en: { ...OWN } };
   for (const [lang, m] of Object.entries(dict || {})) out[lang] = { ...(out[lang] || {}), ...m };
   messages = out;
+  state.words++; // redraw every t() that was drawn before these words arrived
 }
 
 /** A word in the visitor's language: t("header.account"), t("cart.items", { n: 3 }). Reactive. */
 export function t(key: string, vars?: Record<string, string | number>): string {
+  void state.words;
   const lang = currentLanguage();
   let s = messages[lang]?.[key] ?? messages.en?.[key] ?? key;
   if (vars) for (const [k, v] of Object.entries(vars)) s = s.split(`{${k}}`).join(String(v));

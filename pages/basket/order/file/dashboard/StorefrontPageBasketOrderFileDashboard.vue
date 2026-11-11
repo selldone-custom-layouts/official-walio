@@ -27,7 +27,7 @@
         <!-- 🎗️ Created by a subscription basket -->
         <span
           v-if="basket.subscription_id"
-          title="This order created by a subscription."
+          :title="t('order.fromSubscriptionTip', 'This order created by a subscription.')"
         >
           <span class="mx-1 text-muted">/</span>
           <img :src="ProductType.SUBSCRIPTION.image" height="20" width="20" />
@@ -101,7 +101,7 @@
             <div class="widget-box mb-5">
               <v-list-subheader>
                 <v-icon class="me-1" size="small">warning_amber</v-icon>
-                After downloading files, check those with your antivirus.
+                {{ t("order.files.antivirus", "After downloading files, check those with your antivirus.") }}
               </v-list-subheader>
 
               <s-shop-product-files-list

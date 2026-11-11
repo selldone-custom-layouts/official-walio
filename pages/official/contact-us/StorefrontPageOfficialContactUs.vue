@@ -125,6 +125,7 @@
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import SArticleEditor from "@selldone/components-vue/article/SArticleEditor.vue";
+import { t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageOfficialContactUs",
@@ -156,7 +157,7 @@ export default {
 
   watch: {},
   created() {
-    this.setPageTitle("Contact us"); // Set Page Title!
+    this.setPageTitle(t("contact.pageTitle", "Contact us")); // Set Page Title!
     this.fetchProfile();
 
     if (this.USER()) {

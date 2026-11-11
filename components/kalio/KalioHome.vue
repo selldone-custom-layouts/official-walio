@@ -58,7 +58,7 @@
 
     <div v-if="ordered.length" class="k-home__end k-wrap">
       <router-link :to="catalogueRoute" class="k-btn k-btn--line">
-        Browse every product
+        {{ t("home.browseAll", "Browse every product") }}
         <v-icon class="k-flip" size="20">chevron_right</v-icon>
       </router-link>
     </div>

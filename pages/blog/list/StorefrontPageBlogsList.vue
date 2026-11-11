@@ -18,11 +18,11 @@
     <slot name="header"></slot>
 
     <div class="k-wrap">
-      <nav aria-label="Breadcrumb" class="k-official__crumbs">
+      <nav :aria-label="t('pages.breadcrumb', 'Breadcrumb')" class="k-official__crumbs">
         <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
         <v-icon size="16">chevron_right</v-icon>
-        <router-link v-if="filtered" :to="homeRoute">Journal</router-link>
-        <span v-else>Journal</span>
+        <router-link v-if="filtered" :to="homeRoute">{{ t("blog.journal", "Journal") }}</router-link>
+        <span v-else>{{ t("blog.journal", "Journal") }}</span>
         <template v-if="filtered">
           <v-icon size="16">chevron_right</v-icon>
           <span>{{ heading }}</span>
@@ -31,23 +31,23 @@
 
       <section class="k-journal__hero">
         <div>
-          <p class="k-journal__eyebrow">{{ filtered ? "Market journal" : `The ${shopTitle} journal` }}</p>
+          <p class="k-journal__eyebrow">{{ filtered ? t("blog.eyebrow.filtered", "Market journal") : t("blog.eyebrow.shop", "The {shop} journal", { shop: shopTitle }) }}</p>
           <h1>{{ heading }}</h1>
           <p>{{ lede }}</p>
         </div>
         <p v-if="total" class="k-journal__count">
-          <b>{{ total }}</b>{{ total === 1 ? "note" : "notes" }}{{ filtered ? "" : " so far" }}
+          {{ count_words[0] }}<b>{{ count_words[1] }}</b>{{ count_words[2] }}
         </p>
       </section>
 
       <kalio-sample-note v-if="demo" class="k-journal__note">
-        These notes came with the shop's demo content to show the page. They are not real {{ shopTitle }} articles.
+        {{ t("blog.demoNote", "These notes came with the shop's demo content to show the page. They are not real {shop} articles.", { shop: shopTitle }) }}
       </kalio-sample-note>
 
       <div class="k-journal__cols">
         <div class="k-journal__main">
-          <nav aria-label="Topics" class="k-journal__tabs">
-            <router-link :class="{ '-on': !current_category }" :to="homeRoute">Latest</router-link>
+          <nav :aria-label="t('blog.topics', 'Topics')" class="k-journal__tabs">
+            <router-link :class="{ '-on': !current_category }" :to="homeRoute">{{ t("blog.latest", "Latest") }}</router-link>
             <router-link
               v-for="category in categories"
               :key="category.id"
@@ -90,25 +90,25 @@
 
           <div v-else class="k-board__empty k-journal__empty">
             <v-icon size="30">menu_book</v-icon>
-            <h2>{{ filtered ? "No notes here yet" : "The journal is empty for now" }}</h2>
-            <p>{{ filtered ? "Nothing matches this yet. The latest notes are one tap away." : `${shopTitle} has not written any notes yet.` }}</p>
-            <router-link v-if="filtered" :to="homeRoute" class="k-btn k-btn--line">All notes</router-link>
+            <h2>{{ filtered ? t("blog.empty.filteredTitle", "No notes here yet") : t("blog.empty.title", "The journal is empty for now") }}</h2>
+            <p>{{ filtered ? t("blog.empty.filteredText", "Nothing matches this yet. The latest notes are one tap away.") : t("blog.empty.text", "{shop} has not written any notes yet.", { shop: shopTitle }) }}</p>
+            <router-link v-if="filtered" :to="homeRoute" class="k-btn k-btn--line">{{ t("blog.allNotes", "All notes") }}</router-link>
           </div>
 
-          <nav v-if="pageCount > 1" aria-label="Pages" class="k-journal__pages">
+          <nav v-if="pageCount > 1" :aria-label="t('blog.pages', 'Pages')" class="k-journal__pages">
             <router-link v-if="page > 1" :to="pageRoute(page - 1)" class="k-btn k-btn--line">
-              <v-icon class="k-flip" size="20">chevron_left</v-icon>Newer
+              <v-icon class="k-flip" size="20">chevron_left</v-icon>{{ t("blog.newer", "Newer") }}
             </router-link>
-            <span>Page {{ page }} of {{ pageCount }}</span>
+            <span>{{ t("blog.pageOf", "Page {page} of {count}", { page, count: pageCount }) }}</span>
             <router-link v-if="page < pageCount" :to="pageRoute(page + 1)" class="k-btn k-btn--line">
-              Older<v-icon class="k-flip" size="20">chevron_right</v-icon>
+              {{ t("blog.older", "Older") }}<v-icon class="k-flip" size="20">chevron_right</v-icon>
             </router-link>
           </nav>
         </div>
 
         <aside class="k-journal__side">
           <section v-if="popular.length" class="k-jbox">
-            <h2>Most read</h2>
+            <h2>{{ t("blog.mostRead", "Most read") }}</h2>
             <ol class="k-jbox__ranks">
               <li v-for="article in popular.slice(0, 4)" :key="article.id">
                 <router-link :to="postRoute(article)">{{ article.title }}</router-link>
@@ -117,20 +117,20 @@
           </section>
 
           <section v-if="offers.length" class="k-jbox">
-            <h2>On offer this week</h2>
+            <h2>{{ t("blog.onOffer", "On offer this week") }}</h2>
             <div class="k-jbox__grid">
               <kalio-mini-product v-for="product in offers" :key="product.id" :product="product" @sheet="openSheet" />
             </div>
             <router-link :to="dealsRoute" class="k-more">
-              Every deal<v-icon class="k-flip" size="20">chevron_right</v-icon>
+              {{ t("blog.everyDeal", "Every deal") }}<v-icon class="k-flip" size="20">chevron_right</v-icon>
             </router-link>
           </section>
 
           <section class="k-jbox -ask">
-            <h2>Got a question?</h2>
-            <p>Ask the sellers anything about a product before you order.</p>
+            <h2>{{ t("blog.ask.title", "Got a question?") }}</h2>
+            <p>{{ t("blog.ask.text", "Ask the sellers anything about a product before you order.") }}</p>
             <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--line">
-              Contact the shop
+              {{ t("contact.shop", "Contact the shop") }}
             </router-link>
           </section>
         </aside>
@@ -156,6 +156,7 @@ import {
   journalRoute,
   postRoute,
 } from "@app-storefront/components/kalio/pages/kalio-journal";
+import { formatNumber, t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
 
 const PER_PAGE = 8;
 
@@ -177,7 +178,7 @@ export default {
 
   computed: {
     shopTitle() {
-      return this.$shop?.title || "The shop";
+      return this.$shop?.title || t("pages.theShop", "The shop");
     },
     page() {
       return Math.max(1, parseInt(this.$route.query.page) || 1);
@@ -207,17 +208,29 @@ export default {
       return this.categories.find((it) => String(it.id) === String(this.current_category)) || null;
     },
     heading() {
-      if (this.current_category) return this.category?.title || this.category?.name || "Topic";
-      if (this.current_author_id) return this.articles[0]?.user?.name || this.current_author || "Author";
+      if (this.current_category) return this.category?.title || this.category?.name || t("blog.heading.topic", "Topic");
+      if (this.current_author_id) return this.articles[0]?.user?.name || this.current_author || t("blog.heading.author", "Author");
       if (this.current_tag) return `#${this.current_tag}`;
-      if (this.current_search) return `“${this.current_search}”`;
-      return "Notes from the aisles";
+      if (this.current_search) return t("blog.heading.search", "“{query}”", { query: String(this.current_search) });
+      return t("blog.heading.default", "Notes from the aisles");
     },
     lede() {
-      if (this.current_category) return this.category?.description || "Every note on this topic, newest first.";
-      if (this.current_author_id) return "Every note by this author, newest first.";
-      if (this.current_tag || this.current_search) return "The notes that match, newest first.";
-      return "Short, useful reads for the weekly shop: what's good now, how to keep it fresh and what to cook with it.";
+      if (this.current_category) return this.category?.description || t("blog.lede.topic", "Every note on this topic, newest first.");
+      if (this.current_author_id) return t("blog.lede.author", "Every note by this author, newest first.");
+      if (this.current_tag || this.current_search) return t("blog.lede.match", "The notes that match, newest first.");
+      return t("blog.lede.default", "Short, useful reads for the weekly shop: what's good now, how to keep it fresh and what to cook with it.");
+    },
+    /* "12 notes so far": the words around the number, which the template
+       sets in bold, so a language can put the number where it reads. */
+    count_words() {
+      const n = this.total;
+      const text = this.filtered
+        ? t("blog.count.filtered", { one: "{n} note", other: "{n} notes" }, { n })
+        : t("blog.count.all", { one: "{n} note so far", other: "{n} notes so far" }, { n });
+      const num = formatNumber(n);
+      const at = text.indexOf(num);
+      if (at < 0) return ["", num, text];
+      return [text.slice(0, at).trimEnd(), num, text.slice(at + num.length).trimStart()];
     },
     homeRoute() {
       return journalRoute();
@@ -238,7 +251,7 @@ export default {
   },
 
   created() {
-    this.setPageTitle?.("Journal");
+    this.setPageTitle?.(t("blog.journal", "Journal"));
     this.load();
     journalExtra().then(({ popular, categories }) => {
       this.popular = popular;

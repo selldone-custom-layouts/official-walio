@@ -10,7 +10,7 @@
 -->
 <template>
   <div v-if="suggestions.length" class="k-often">
-    <p class="k-eyebrow k-often__label">Often added</p>
+    <p class="k-eyebrow k-often__label">{{ t("often.title", "Often added") }}</p>
     <div :style="{ '--k-often-cols': count }" class="k-often__row">
       <div v-for="product in suggestions" :key="product.id" class="k-often__item">
         <div class="k-often__pic">
@@ -18,7 +18,7 @@
             <img v-if="image(product)" :src="image(product)" :srcset="srcset(product)" alt="" loading="lazy" sizes="(max-width: 600px) 30vw, 160px" @error="dropSrcset" />
           </router-link>
           <button
-            :aria-label="`Add ${product.title}`"
+            :aria-label="t('shelf.addProduct', 'Add {name}', { name: product.title })"
             :disabled="adding(product)"
             class="k-often__add"
             type="button"
@@ -29,7 +29,7 @@
           </button>
         </div>
         <router-link :to="productRoute(product.id)" class="k-often__name" @click="$emit('navigate')">
-          {{ product.title }}
+          <bdi>{{ product.title }}</bdi>
         </router-link>
         <u-price :amount="priceOf(product).now" :currency="priceOf(product).currency" class="k-often__price" />
       </div>

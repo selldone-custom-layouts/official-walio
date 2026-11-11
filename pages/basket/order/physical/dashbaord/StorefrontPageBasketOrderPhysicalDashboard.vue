@@ -31,25 +31,25 @@
       <div class="k-order__words">
         <h1>{{ heroTitle }}</h1>
         <p>
-          Order <b>{{ getBasketOrderCode(basket) }}</b>
+          {{ t("order.hero.order", "Order") }} <b>{{ getBasketOrderCode(basket) }}</b>
           <template v-if="placedAt"> · {{ placedAt }}</template>
           <template v-if="heroNote"> · {{ heroNote }}</template>
         </p>
         <p v-if="basket.subscription_id" class="k-order__sub">
-          From the subscription
+          {{ t("order.hero.fromSubscription", "From the subscription") }}
           <router-link :to="{ name: 'MySubscriptionOrderInfoPage', params: { basket_id: basket.subscription_id } }">SN-{{ basket.subscription_id }}</router-link>
         </p>
       </div>
       <div class="k-order__acts">
         <button :disabled="busy_invoice" class="k-order__btn" type="button" @click="downloadInvoice">
           <v-progress-circular v-if="busy_invoice" indeterminate size="16" width="2" />
-          <v-icon v-else size="18">download</v-icon>Invoice
+          <v-icon v-else size="18">download</v-icon>{{ t("order.hero.invoice", "Invoice") }}
         </button>
         <s-shop-share-order-button :basket="basket" class="k-order__share"></s-shop-share-order-button>
       </div>
     </section>
 
-    <ol v-if="tone !== 'off'" aria-label="Order progress" class="k-order__track">
+    <ol v-if="tone !== 'off'" :aria-label="t('orders.progress', 'Order progress')" class="k-order__track">
       <li
         v-for="(state, i) in states"
         :key="state.code"
@@ -70,7 +70,7 @@
               <span v-else aria-hidden="true" class="k-lines__logo -shop"><v-icon size="18">storefront</v-icon></span>
               <span class="k-lines__who">
                 <b class="k-lines__name">{{ group.name }}</b>
-                <small>{{ group.units }} {{ group.units === 1 ? "item" : "items" }}</small>
+                <small>{{ t("orders.items", { one: "{n} item", other: "{n} items" }, { n: group.units }) }}</small>
               </span>
               <u-price :amount="group.subtotal" :currency="basket.currency" class="k-lines__subtotal" />
             </header>
@@ -95,8 +95,8 @@
           <header class="k-ocard__head">
             <span aria-hidden="true" class="k-ocard__ico"><v-icon size="22">account_balance</v-icon></span>
             <div class="k-ocard__titles">
-              <h2>Pay by bank transfer</h2>
-              <p>Send the amount with these details, then add a photo of the receipt.</p>
+              <h2>{{ t("order.transfer.title", "Pay by bank transfer") }}</h2>
+              <p>{{ t("order.transfer.lede", "Send the amount with these details, then add a photo of the receipt.") }}</p>
             </div>
           </header>
           <table class="k-order__legacy">
@@ -120,7 +120,7 @@
       <aside class="k-order__side">
         <kalio-order-receipt :basket="basket" />
         <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE }" class="k-order__more">
-          <v-icon size="18">shopping_bag</v-icon>Keep shopping
+          <v-icon size="18">shopping_bag</v-icon>{{ t("order.keepShopping", "Keep shopping") }}
         </router-link>
       </aside>
     </div>
@@ -141,6 +141,7 @@ import SBasketVendorOrders from "@selldone/components-vue/storefront/order/vendo
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { Basket } from "@selldone/core-js";
 import { productImage, vendorImage, vendors } from "../../../../../components/kalio/kalio-catalog";
+import { t } from "../../../../../components/kalio/i18n/kalio-i18n";
 
 /* The size of a variant in words: its volume, weight, pack, colour or style. */
 function sizeOf(variant) {
@@ -203,10 +204,11 @@ export default {
       return { ok: "check", wait: "schedule", off: "close" }[this.tone];
     },
     heroTitle() {
-      if (this.tone === "off") return "This order was cancelled";
-      if (this.tone === "wait") return this.basket?.status === "Reserved" ? "Your order is waiting for payment" : "This order is not paid yet";
-      if (this.stateIndex === this.states.length - 1) return "Your order has reached you";
-      return "Thank you, your order is in";
+      if (this.tone === "off") return t("order.hero.cancelled", "This order was cancelled");
+      if (this.tone === "wait")
+        return this.basket?.status === "Reserved" ? t("order.hero.waiting", "Your order is waiting for payment") : t("order.hero.notPaid", "This order is not paid yet");
+      if (this.stateIndex === this.states.length - 1) return t("order.hero.reached", "Your order has reached you");
+      return t("order.hero.thanks", "Thank you, your order is in");
     },
     heroNote() {
       if (this.tone !== "ok") return null;

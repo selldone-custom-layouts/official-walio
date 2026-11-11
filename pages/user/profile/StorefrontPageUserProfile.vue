@@ -427,7 +427,7 @@
               "
               readonly
               @click="showSelectLocation()"
-              placeholder="Enter your address..."
+              :placeholder="t('account.profile.addressPlaceholder', 'Enter your address...')"
               :rows="2"
               auto-grow
             >
@@ -464,6 +464,7 @@
 </template>
 
 <script lang="ts">
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
@@ -571,8 +572,8 @@ export default {
             NotificationService.showSuccessAlert(
               null,
               subscribe
-                ? "Subscribe successfully."
-                : "Unsubscribe successfully.",
+                ? t("account.profile.subscribed", "Subscribe successfully.")
+                : t("account.profile.unsubscribed", "Unsubscribe successfully."),
             );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
@@ -599,7 +600,7 @@ export default {
             this.USER().customer = data.customer;
             this.dialog_profile = false;
 
-            NotificationService.showSuccessAlert(null, "My profile updated successfully.");
+            NotificationService.showSuccessAlert(null, t("account.profile.saved", "My profile updated successfully."));
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
@@ -630,7 +631,7 @@ export default {
     },
   },
   created() {
-    this.setPageTitle("My profile"); // Set Page Title!
+    this.setPageTitle(t("account.pageTitle.profile", "My profile")); // Set Page Title!
   },
 };
 </script>

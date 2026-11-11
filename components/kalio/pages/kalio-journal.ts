@@ -10,6 +10,8 @@
  *                        not the article's own id).
  */
 
+import { formatDate } from "../i18n/kalio-i18n";
+
 export interface JournalQuery {
   page?: number;
   limit?: number;
@@ -105,15 +107,15 @@ export function isDemoPost(article: any, shop: any): boolean {
   return !!match && !!shop?.id && Number(match[1]) !== Number(shop.id);
 }
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+/* A date's parts in the visitor's language ("05", "Nov", "Nov 5, 2026" in
+   English): the month names and the order are Intl's, not ours. */
 export function dateParts(iso: string | null | undefined) {
   const date = iso ? new Date(iso) : null;
   if (!date || isNaN(date.getTime())) return { day: "", mon: "", full: "" };
   return {
-    day: String(date.getDate()).padStart(2, "0"),
-    mon: MONTHS[date.getMonth()],
-    full: `${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`,
+    day: formatDate(date, { day: "2-digit" }),
+    mon: formatDate(date, { month: "short" }),
+    full: formatDate(date, { month: "short", day: "numeric", year: "numeric" }),
   };
 }
 

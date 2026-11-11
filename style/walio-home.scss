@@ -616,12 +616,16 @@ a:hover > .t-photo .t-photo__pack.-p1 {
       position: absolute;
       inset: 0;
       background: linear-gradient(90deg, rgba(0, 32, 70, 0.72) 0%, rgba(0, 32, 70, 0.35) 55%, rgba(0, 32, 70, 0) 80%);
+
+      [dir="rtl"] & {
+        background: linear-gradient(270deg, rgba(0, 32, 70, 0.72) 0%, rgba(0, 32, 70, 0.35) 55%, rgba(0, 32, 70, 0) 80%);
+      }
     }
   }
 
   &__text {
     position: absolute;
-    left: 28px;
+    inset-inline-start: 28px;
     bottom: 28px;
     z-index: 1;
     display: grid;
@@ -785,8 +789,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     }
 
     &__text {
-      left: 18px;
-      right: 18px;
+      inset-inline: 18px;
       bottom: 18px;
 
       b {
@@ -826,12 +829,15 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   color: var(--k-ink) !important;
   text-decoration: none;
 
+  /* The picture stops above the name and "Shop now" (they sit at the
+     bottom), so it never covers the words (box-check, 11 November 2026). */
   img {
     position: absolute;
     top: 10px;
-    right: 10px;
+    bottom: 62px;
+    inset-inline-end: 10px;
     width: 46%;
-    height: 62%;
+    height: auto;
     object-fit: contain;
     mix-blend-mode: multiply;
     transition: transform 200ms ease;
@@ -839,12 +845,14 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
   b {
     position: relative;
+    justify-self: start;
     font-size: 16px;
     font-weight: 800;
   }
 
   small {
     position: relative;
+    justify-self: start;
     color: var(--w-link);
     font-weight: 700;
     font-size: 13px;

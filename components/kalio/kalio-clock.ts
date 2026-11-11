@@ -17,6 +17,7 @@
  */
 import { reactive } from "vue";
 import { PriceHelper } from "@selldone/core-js";
+import { t } from "./i18n/kalio-i18n";
 
 export const clock = reactive({ now: Date.now() });
 
@@ -64,7 +65,7 @@ export function leftText(end: number | null, now: number = clock.now): string {
   s -= d * 86400;
   const pad = (n: number) => String(n).padStart(2, "0");
   const hms = `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
-  return d > 0 ? `${d}d ${hms}` : hms;
+  return d > 0 ? t("clock.daysLeft", { one: "{n}d {time}", other: "{n}d {time}" }, { n: d, time: hms }) : hms;
 }
 
 /** The soonest end among these deals (a row's or the deals page's head). */

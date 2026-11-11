@@ -6,6 +6,7 @@
   The address is Selldone's own: ?list=p713727_p713728v55 (p = product id,
   v = variant id), so a link copied from Selldone's table still opens here.
 */
+import { t } from "../i18n/kalio-i18n";
 
 export interface CompareRef {
   p: number;
@@ -32,8 +33,8 @@ export function compareListParam(list: CompareRef[]): string {
 export function specText(value: any): string {
   if (value === null || value === undefined) return "";
   if (Array.isArray(value)) return value.map(specText).filter(Boolean).join(", ");
-  if (value === true || value === "true") return "Yes";
-  if (value === false || value === "false") return "No";
+  if (value === true || value === "true") return t("compare.yes", "Yes");
+  if (value === false || value === "false") return t("compare.no", "No");
   if (typeof value === "object") return "";
   return String(value).trim();
 }
@@ -76,7 +77,7 @@ export function specGroups(products: any[]): SpecGroup[] {
   for (const product of products) {
     const spec = product?.spec;
     if (!spec) continue;
-    let current = "Details";
+    let current = t("compare.group.details", "Details");
     if (Array.isArray(spec)) {
       for (const row of spec) {
         if (!row) continue;
@@ -130,4 +131,27 @@ export function unitSize(product: any, variant: any = null): { n: number; unit: 
     return { n, unit };
   }
   return null;
+}
+
+/** A unit from unitSize() in the visitor's language ("each" is written by
+ *  the price-per-unit line itself). */
+export function unitLabel(unit: string): string {
+  switch (unit) {
+    case "oz":
+      return t("compare.unit.oz", "oz");
+    case "fl oz":
+      return t("compare.unit.flOz", "fl oz");
+    case "lb":
+      return t("compare.unit.lb", "lb");
+    case "kg":
+      return t("compare.unit.kg", "kg");
+    case "g":
+      return t("compare.unit.g", "g");
+    case "ml":
+      return t("compare.unit.ml", "ml");
+    case "l":
+      return t("compare.unit.l", "l");
+    default:
+      return unit;
+  }
 }

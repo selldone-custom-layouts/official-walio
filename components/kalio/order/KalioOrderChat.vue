@@ -20,8 +20,8 @@
         <img :src="brandMark" alt="" height="40" width="40" />
       </span>
       <div class="k-ocard__titles">
-        <h2>Messages</h2>
-        <p>Questions about this order go straight to {{ $shop.title || "the shop" }}.</p>
+        <h2>{{ t("order.chat.title", "Messages") }}</h2>
+        <p>{{ t("order.chat.lede", "Questions about this order go straight to {shop}.", { shop: $shop.title || t("order.chat.theShop", "the shop") }) }}</p>
       </div>
     </header>
 
@@ -36,13 +36,13 @@
         >
           <img v-if="!m.mine" :src="avatar(m.message)" alt="" class="k-chat__face" height="30" width="30" />
           <div class="k-chat__col">
-            <span v-if="!m.mine" class="k-chat__who">{{ m.message.user_name || $shop.title }}<i>Shop</i></span>
+            <span v-if="!m.mine" class="k-chat__who">{{ m.message.user_name || $shop.title }}<i>{{ t("order.chat.shopBadge", "Shop") }}</i></span>
             <div class="k-chat__bubble">{{ m.message.body }}</div>
             <span class="k-chat__meta">
               <time :datetime="m.message.date" :title="full(m.message.date)">{{ time(m.message.date) }}</time>
               <button
                 v-if="m.mine"
-                :aria-label="confirming === m.index ? 'Delete this message' : 'Delete'"
+                :aria-label="confirming === m.index ? t('order.chat.deleteThis', 'Delete this message') : t('order.chat.delete', 'Delete')"
                 :class="{ '-ask': confirming === m.index }"
                 :disabled="deleting !== null"
                 class="k-chat__bin"
@@ -51,7 +51,7 @@
                 @click="askDelete(m)"
               >
                 <v-progress-circular v-if="deleting === m.index" indeterminate size="12" width="2" />
-                <template v-else-if="confirming === m.index">Delete?</template>
+                <template v-else-if="confirming === m.index">{{ t("order.chat.deleteAsk", "Delete?") }}</template>
                 <v-icon v-else size="15">delete_outline</v-icon>
               </button>
             </span>
@@ -61,7 +61,7 @@
     </div>
 
     <div v-else class="k-chat__empty">
-      <p>No messages yet. Ask about the delivery, a swap, or anything else in this order.</p>
+      <p>{{ t("order.chat.empty", "No messages yet. Ask about the delivery, a swap, or anything else in this order.") }}</p>
       <div class="k-chat__starts">
         <button v-for="start in starters" :key="start" class="k-chat__start" type="button" @click="useStarter(start)">{{ start }}</button>
       </div>
@@ -73,28 +73,36 @@
           ref="input"
           v-model="draft"
           :disabled="busy"
-          aria-label="Your message"
+          :aria-label="t('order.chat.yourMessage', 'Your message')"
+          :placeholder="t('order.chat.placeholder', 'Write a message…')"
           maxlength="1024"
-          placeholder="Write a message…"
           rows="1"
           @input="grow"
           @keydown.enter="onEnter"
         ></textarea>
       </label>
-      <button :disabled="!ready" aria-label="Send" class="k-chat__send" type="submit">
+      <button :disabled="!ready" :aria-label="t('order.chat.send', 'Send')" class="k-chat__send" type="submit">
         <v-progress-circular v-if="busy" indeterminate size="18" width="2" />
         <v-icon v-else class="flip-rtl" size="20">send</v-icon>
       </button>
     </form>
-    <p v-if="draft.length > 900" class="k-chat__left">{{ 1024 - draft.length }} characters left</p>
+    <p v-if="draft.length > 900" class="k-chat__left">{{ t("order.chat.left", { one: "{n} character left", other: "{n} characters left" }, { n: 1024 - draft.length }) }}</p>
   </section>
 </template>
 
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { BRAND } from "../kalio-brand";
+import { t } from "../i18n/kalio-i18n";
 
-const STARTERS = ["When will it arrive?", "Can I change something?", "Please leave it at the door"];
+/* A few common questions to start from, in the visitor's language. */
+function starters() {
+  return [
+    t("order.chat.starter.when", "When will it arrive?"),
+    t("order.chat.starter.change", "Can I change something?"),
+    t("order.chat.starter.door", "Please leave it at the door"),
+  ];
+}
 
 function dayKey(date) {
   return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
@@ -115,11 +123,13 @@ export default {
       busy: false,
       confirming: null,
       deleting: null,
-      starters: STARTERS,
     };
   },
 
   computed: {
+    starters() {
+      return starters();
+    },
     messages() {
       return (this.basket?.chat || []).map((message, index) => ({
         index,
@@ -139,9 +149,9 @@ export default {
         if (!group || group.key !== key) {
           const label =
             key === dayKey(today)
-              ? "Today"
+              ? t("order.chat.today", "Today")
               : key === dayKey(yesterday)
-                ? "Yesterday"
+                ? t("order.chat.yesterday", "Yesterday")
                 : at.toLocaleDateString(this.$i18n?.locale || "en", { weekday: "long", month: "short", day: "numeric" });
           group = { key, label, items: [] };
           groups.push(group);

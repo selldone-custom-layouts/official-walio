@@ -17,21 +17,17 @@
       <router-link :to="catalogue" class="w-hero__main">
         <walio-photo :products="dealList" :src="photo('walio-hero-1-weekly')" class="w-hero__photo" shape="wide" />
         <span class="w-hero__text">
-          <b>Everything for the week, in one cart</b>
-          <small>
-            {{ aisleList.length ? `${aisleList.length} aisles` : "Every aisle" }}<template v-if="sellerList.length > 1"
-              >, {{ sellerList.length }} independent sellers</template
-            >, one checkout.
-          </small>
-          <span class="w-hero__go">Start shopping<v-icon size="18">chevron_right</v-icon></span>
+          <b>{{ t("walio.home.hero", "Everything for the week, in one cart") }}</b>
+          <small>{{ heroLine }}</small>
+          <span class="w-hero__go">{{ t("pages.startShopping", "Start shopping") }}<v-icon class="k-flip" size="18">chevron_right</v-icon></span>
         </span>
       </router-link>
       <div class="w-hero__side">
         <router-link :to="deals" class="w-hero__tile -deals">
           <span>
-            <small>Deals</small>
-            <b>{{ best_off ? `Up to ${best_off}% off this week` : "This week's deals" }}</b>
-            <em>Shop deals</em>
+            <small>{{ t("header.deals", "Deals") }}</small>
+            <b>{{ best_off ? t("walio.home.upToOff", "Up to {n}% off this week", { n: best_off }) : t("walio.home.weekDeals", "This week's deals") }}</b>
+            <em>{{ t("walio.home.shopDeals", "Shop deals") }}</em>
           </span>
           <span aria-hidden="true" class="w-hero__packs">
             <span v-for="p in dealList.slice(0, 3)" :key="p.id" class="w-hero__pack">
@@ -41,9 +37,9 @@
         </router-link>
         <router-link :to="newest" class="w-hero__tile -new">
           <span>
-            <small>New</small>
-            <b>Just landed on the shelves</b>
-            <em>See what's new</em>
+            <small>{{ t("walio.home.new", "New") }}</small>
+            <b>{{ t("walio.home.newTitle", "Just landed on the shelves") }}</b>
+            <em>{{ t("walio.home.seeNew", "See what's new") }}</em>
           </span>
           <span aria-hidden="true" class="w-hero__packs">
             <span v-for="p in newList.slice(0, 3)" :key="p.id" class="w-hero__pack">
@@ -58,47 +54,47 @@
          A row of equal cards, the biggest saving first, as the big grocers
          show their deals (since 1.1.5; one large card beside four small
          ones left a gap under them and filled a tablet's screen). -->
-    <walio-row :items="deals_ready ? dealList : null" :more-to="deals" title="Best saving today" />
+    <walio-row :items="deals_ready ? dealList : null" :more-to="deals" :title="t('walio.home.bestSaving', 'Best saving today')" />
 
     <!-- ▆▆▆▆ Shop by category ▆▆▆▆ -->
     <section v-if="aisleList.length" class="t-sec k-wrap">
       <header class="t-sec__head">
-        <h2 class="t-sec__title">Shop by category</h2>
-        <router-link :to="catalogue" class="t-sec__more">All aisles<v-icon size="20">chevron_right</v-icon></router-link>
+        <h2 class="t-sec__title">{{ t("walio.home.byCategory", "Shop by category") }}</h2>
+        <router-link :to="catalogue" class="t-sec__more">{{ t("footer.allAisles", "All aisles") }}<v-icon class="k-flip" size="20">chevron_right</v-icon></router-link>
       </header>
       <div class="w-cats">
         <router-link v-for="a in aisleList.slice(0, 8)" :key="a.id" :style="{ background: tint(a) }" :to="aisleRoute(a)" class="w-cat">
           <img v-if="a.icon" :src="aisleImage(a, 256)" alt="" loading="lazy" />
           <b>{{ a.title || a.name }}</b>
-          <small>Shop now</small>
+          <small>{{ t("walio.home.shopNow", "Shop now") }}</small>
         </router-link>
       </div>
     </section>
 
-    <walio-row :limit="12" lazy sort="bestselling" spread title="Top picks for you" />
+    <walio-row :limit="12" lazy sort="bestselling" spread :title="t('walio.home.topPicks', 'Top picks for you')" />
 
     <!-- ▆▆▆▆ Shop the idea ▆▆▆▆ -->
     <section v-if="idea.items.length >= 2" class="t-sec k-wrap">
       <header class="t-sec__head">
-        <h2 class="t-sec__title">Shop the idea</h2>
-        <router-link v-if="idea.aisle" :to="aisleRoute(idea.aisle)" class="t-sec__more">More ideas<v-icon size="20">chevron_right</v-icon></router-link>
+        <h2 class="t-sec__title">{{ t("walio.home.idea", "Shop the idea") }}</h2>
+        <router-link v-if="idea.aisle" :to="aisleRoute(idea.aisle)" class="t-sec__more">{{ t("walio.home.moreIdeas", "More ideas") }}<v-icon class="k-flip" size="20">chevron_right</v-icon></router-link>
       </header>
       <div class="w-idea">
         <walio-photo :products="idea.items" :src="photo('walio-tile-breakfast')" class="w-idea__photo" />
         <div class="w-idea__list">
-          <small class="w-idea__eyebrow">{{ idea.eyebrow }}</small>
-          <h3>{{ idea.title }}</h3>
-          <p>Everything on the table, from {{ $shop.title }}'s sellers.</p>
+          <small class="w-idea__eyebrow">{{ idea.breakfast ? t("walio.home.ideaEyebrow", "Weekend breakfast") : idea.aisleName }}</small>
+          <h3>{{ idea.breakfast ? t("walio.home.ideaTitle", "A slow weekend breakfast") : t("walio.home.ideaBest", "The best of {aisle}", { aisle: idea.aisleName }) }}</h3>
+          <p>{{ t("walio.home.ideaLine", "Everything on the table, from {shop}'s sellers.", { shop: $shop.title }) }}</p>
           <router-link v-for="p in idea.items" :key="p.id" :to="productRoute(p)" class="w-idea__row">
             <img :src="image(p)" alt="" />
-            <span>{{ p.title }}</span>
+            <span dir="auto">{{ p.title }}</span>
             <u-price :amount="priceNow(p)" :currency="currency" />
           </router-link>
           <div class="w-idea__foot">
-            <b>{{ idea.items.length }} items · <u-price :amount="idea_total" :currency="currency" /></b>
+            <b>{{ t("cart.units", { one: "{n} item", other: "{n} items" }, { n: idea.items.length }) }} · <u-price :amount="idea_total" :currency="currency" /></b>
             <button :disabled="adding" class="t-btn -main" type="button" @click="addIdea">
               <v-progress-circular v-if="adding" indeterminate size="18" width="2" />
-              <template v-else>Add all to cart</template>
+              <template v-else>{{ t("walio.home.addAll", "Add all to cart") }}</template>
             </button>
           </div>
         </div>
@@ -110,15 +106,15 @@
       <div class="w-ways">
         <walio-photo :products="[]" :src="photo('walio-finds-dinner')" class="w-ways__photo" />
         <div class="w-ways__panel">
-          <h2>{{ ways.length > 1 ? `${ways.map((w) => w.word).slice(0, 2).join(" or ")} — your call` : "How it reaches you" }}</h2>
+          <h2>{{ ways.length > 1 ? t("walio.home.waysCall", "{a} or {b} — your call", { a: ways[0].word, b: ways[1].word }) : t("walio.home.waysOne", "How it reaches you") }}</h2>
           <ul>
             <li v-for="w in ways" :key="w.key">
               <span class="w-ways__ic"><v-icon size="22">{{ w.icon }}</v-icon></span>
               <span>
                 <b>{{ w.word }}</b>
                 <small
-                  >{{ w.line }}<template v-if="w.free"> · Free</template
-                  ><template v-else-if="w.freeOver"> · Free on orders over {{ money(w.freeOver, w.currency, "auto") }}</template
+                  >{{ w.line }}<template v-if="w.free"> · {{ t("shipping.free", "Free") }}</template
+                  ><template v-else-if="w.freeOver"> · {{ t("walio.way.freeOver", "Free on orders over {amount}", { amount: money(w.freeOver, w.currency, "auto") }) }}</template
                 ></small>
               </span>
             </li>
@@ -132,7 +128,7 @@
       :dir="fresh.name"
       :limit="12"
       :more-to="aisleRoute(fresh)"
-      :title="`Trending in ${fresh.title || fresh.name}`"
+      :title="t('walio.home.trending', 'Trending in {aisle}', { aisle: fresh.title || fresh.name })"
       lazy
       sort="bestselling"
     />
@@ -140,15 +136,15 @@
     <!-- ▆▆▆▆ Shop our sellers ▆▆▆▆ -->
     <section v-if="sellerList.length" class="t-sec k-wrap">
       <header class="t-sec__head">
-        <h2 class="t-sec__title">Shop our sellers</h2>
+        <h2 class="t-sec__title">{{ t("walio.home.sellers", "Shop our sellers") }}</h2>
       </header>
       <div class="w-sellers">
         <router-link v-for="v in sellerList" :key="v.id" :to="sellerRoute(v)" class="w-seller">
           <span class="w-seller__mark"><img v-if="vendorImage(v)" :src="vendorImage(v)" alt="" /><b v-else>{{ v.name[0] }}</b></span>
           <span class="w-seller__who">
             <b>{{ v.name }}</b>
-            <small>An independent seller on {{ $shop.title }}</small>
-            <em>Visit shop</em>
+            <small>{{ t("walio.seller.independent", "An independent seller on {shop}", { shop: $shop.title }) }}</small>
+            <em>{{ t("offers.visitShop", "Visit shop") }}</em>
           </span>
           <span aria-hidden="true" class="w-seller__packs">
             <img v-for="p in (shelfOf.get(v.id) || []).filter((x) => x.icon).slice(0, 4)" :key="p.id" :src="image(p)" alt="" />
@@ -158,7 +154,7 @@
     </section>
 
     <div class="t-home__end k-wrap">
-      <router-link :to="catalogue" class="t-btn -outline">Browse every product</router-link>
+      <router-link :to="catalogue" class="t-btn -outline">{{ t("home.browseAll", "Browse every product") }}</router-link>
     </div>
     <kalio-quick-buy v-model="sheet" :product="picked" />
   </div>
@@ -166,6 +162,7 @@
 
 <script>
 import { currentCurrency } from "../region-switcher/region";
+import { t } from "../kalio/i18n/kalio-i18n";
 import WalioRow from "./WalioRow.vue";
 import WalioPhoto from "./WalioPhoto.vue";
 import KalioQuickBuy from "../kalio/KalioQuickBuy.vue";
@@ -205,7 +202,7 @@ export default {
       deals_ready: false,
       newList: [],
       shelfOf: new Map(),
-      idea: { aisle: null, items: [], eyebrow: "", title: "" },
+      idea: { aisle: null, items: [], breakfast: false, aisleName: "" },
       sheet: false,
       picked: null,
       adding: false,
@@ -213,6 +210,16 @@ export default {
   },
 
   computed: {
+    /* "16 aisles, 2 independent sellers, one checkout." in the visitor's language. */
+    heroLine() {
+      const n = this.aisleList.length;
+      const s = this.sellerList.length;
+      if (s > 1)
+        return n
+          ? t("walio.home.heroLineSellers", { one: "{n} aisle, {s} independent sellers, one checkout.", other: "{n} aisles, {s} independent sellers, one checkout." }, { n, s })
+          : t("walio.home.heroLineSellersAll", "Every aisle, {s} independent sellers, one checkout.", { s });
+      return n ? t("walio.home.heroLine", { one: "{n} aisle, one checkout.", other: "{n} aisles, one checkout." }, { n }) : t("walio.home.heroLineAll", "Every aisle, one checkout.");
+    },
     currency() {
       return currentCurrency();
     },
@@ -298,8 +305,8 @@ export default {
         this.idea = {
           aisle,
           items,
-          eyebrow: breakfast ? "Weekend breakfast" : aisle.title || aisle.name,
-          title: breakfast ? "A slow weekend breakfast" : `The best of ${aisle.title || aisle.name}`,
+          breakfast,
+          aisleName: aisle.title || aisle.name,
         };
       });
     },

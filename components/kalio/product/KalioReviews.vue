@@ -23,15 +23,15 @@
       <template v-if="rated">
         <div class="k-rv__big">
           <b>{{ score }}</b>
-          <span>out of 5</span>
+          <span>{{ t("reviews.outOf", "out of {max}", { max: 5 }) }}</span>
         </div>
         <span :style="{ '--k-rate': rate }" class="k-stars"></span>
         <p class="k-rv__count">{{ countText }}</p>
       </template>
-      <p v-else class="k-rv__none">No ratings yet.</p>
+      <p v-else class="k-rv__none">{{ t("reviews.noRatings", "No ratings yet.") }}</p>
 
       <template v-if="criteria.length">
-        <h3 class="k-rv__h">How it rates</h3>
+        <h3 class="k-rv__h">{{ t("reviews.howItRates", "How it rates") }}</h3>
         <div class="k-rv__crit">
           <div v-for="c in criteria" :key="c.id">
             <span :title="c.name">{{ c.name }}</span>
@@ -42,14 +42,14 @@
       </template>
 
       <div v-if="!user" class="k-rv__guest">
-        <p>Bought this? Sign in to rate it and share what you think.</p>
-        <button class="k-btn k-btn--solid" type="button" @click="signIn">Sign in to review</button>
+        <p>{{ t("reviews.guestPrompt", "Bought this? Sign in to rate it and share what you think.") }}</p>
+        <button class="k-btn k-btn--solid" type="button" @click="signIn">{{ t("reviews.signInToReview", "Sign in to review") }}</button>
       </div>
       <div v-else-if="$product.bought && $product.ratings?.length" class="k-rv__rate">
-        <h3 class="k-rv__h">Your rating</h3>
+        <h3 class="k-rv__h">{{ t("reviews.yourRating", "Your rating") }}</h3>
         <s-shop-product-rating-view :product="$product" dense />
       </div>
-      <p v-else-if="$product.ratings?.length" class="k-rv__note">Once you've bought it, you can rate it here.</p>
+      <p v-else-if="$product.ratings?.length" class="k-rv__note">{{ t("reviews.buyToRate", "Once you've bought it, you can rate it here.") }}</p>
     </aside>
 
     <div class="k-rv__list">
@@ -71,6 +71,7 @@
 import SArticleComments from "@selldone/components-vue/article/comment/SArticleComments.vue";
 import SShopProductRatingView from "@selldone/components-vue/storefront/product/rating/SShopProductRatingView.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+import { t } from "../i18n/kalio-i18n";
 
 export default {
   name: "KalioReviews",
@@ -94,7 +95,7 @@ export default {
       return this.rate.toFixed(1);
     },
     countText() {
-      return `${this.count.toLocaleString("en-US")} ${this.count === 1 ? "rating" : "ratings"}`;
+      return t("reviews.ratingCount", { one: "{n} rating", other: "{n} ratings" }, { n: this.count });
     },
     /** The shop's criteria with an average; ones nobody has rated are left out. */
     criteria() {

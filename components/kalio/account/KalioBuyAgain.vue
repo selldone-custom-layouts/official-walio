@@ -8,8 +8,8 @@
 <template>
   <section v-if="products.length" class="k-again">
     <header class="k-sec__head">
-      <h2>Buy again</h2>
-      <p>From your past orders, at today's prices.</p>
+      <h2>{{ t("account.buyAgain.title", "Buy again") }}</h2>
+      <p>{{ t("account.buyAgain.lede", "From your past orders, at today's prices.") }}</p>
     </header>
     <div class="k-again__row">
       <div v-for="product in products" :key="product.id" class="k-again__item">
@@ -17,8 +17,8 @@
           <router-link :aria-label="product.title" :to="productRoute(product)">
             <img v-if="image(product)" :src="image(product)" alt="" loading="lazy" />
           </router-link>
-          <span v-if="inBasket(product)" class="k-again__have">{{ inBasket(product) }} in cart</span>
-          <button :aria-label="`Add ${product.title}`" :disabled="adding(product)" class="k-again__add" type="button" @click="add(product)">
+          <span v-if="inBasket(product)" class="k-again__have">{{ t("account.buyAgain.inBasket", "{n} in basket", { n: inBasket(product) }) }}</span>
+          <button :aria-label="t('account.buyAgain.add', 'Add {name}', { name: product.title })" :disabled="adding(product)" class="k-again__add" type="button" @click="add(product)">
             <v-progress-circular v-if="adding(product)" indeterminate size="16" width="2" />
             <v-icon v-else size="20">add</v-icon>
           </button>
@@ -38,6 +38,7 @@ import { currentCurrency } from "../../region-switcher/region";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { basketLine, pendingLine, quickAdd, shownCount } from "../kalio-basket";
 import { offers, priceOf, productImage } from "../kalio-catalog";
+import { t } from "../i18n/kalio-i18n";
 import { account } from "./kalio-account";
 
 export default {
@@ -89,7 +90,7 @@ export default {
     },
     sellerOf(product) {
       const list = this.sellersOf.get(product.id) || [];
-      return list.length > 1 ? `${list.length} sellers` : list[0]?.name || null;
+      return list.length > 1 ? t("account.buyAgain.sellers", { one: "{n} seller", other: "{n} sellers" }, { n: list.length }) : list[0]?.name || null;
     },
     inBasket(product) {
       const line = basketLine(this, product) || pendingLine(product);

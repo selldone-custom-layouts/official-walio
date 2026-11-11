@@ -92,7 +92,10 @@ async function settle(pg, ms = 3500) {
 
 async function waitCurrency(pg, code) {
   await pg.waitForFunction((c) => window.$storefront?.currency?.code === c, code, { timeout: 30000 });
-  // Selldone refetches the cart and the shop and redraws the app (its :key holds the currency).
+}
+
+/* Selldone refetches the cart and the shop, then redraws the app (its :key holds the currency). */
+async function waitRedraw(pg) {
   await pg.waitForTimeout(4500);
   await pg.waitForSelector(WAIT, { timeout: 60000 });
 }
@@ -118,7 +121,16 @@ async function pick(pg, code, phone) {
 
 const fillCart = (pg, shop) =>
   pg.evaluate(async (shop) => {
-    const list = await fetch(`https://xapi.selldone.com/shops/@${shop}/products/list?limit=40`).then((r) => r.json());
+    // Selldone answers 429 (an HTML page) when hammered: retry, then give up quietly.
+    let list = null;
+    for (let t = 0; t < 4 && !list; t++) {
+      try {
+        list = await fetch(`https://xapi.selldone.com/shops/@${shop}/products/list?limit=40`).then((r) => r.json());
+      } catch {
+        await new Promise((r) => setTimeout(r, 4000));
+      }
+    }
+    if (!list) return 0;
     const p = (list.products || []).find((x) => x.price > 0 && x.icon);
     if (!p) return 0;
     const v = (p.product_variants || [])[0] || null;
@@ -166,6 +178,14 @@ const fillCart = (pg, shop) =>
         total++;
         continue;
       }
+      // "At once": the page the pick was made on, before Selldone's redraw. An
+      // amount that waits for the redraw (a string made at mount) shows here.
+      await pg.waitForTimeout(700);
+      const early = await pg.evaluate(scan, code);
+      total += early.length;
+      const NL = "\n    ";
+      console.log(`${w} ${code} at once (before the redraw): ${early.length ? NL + early.slice(0, 12).map((x) => `"${x.text}" looks ${x.looks}`).join(NL) : "ok"}`);
+      await waitRedraw(pg);
       const report = async (name) => {
         const bad = await pg.evaluate(scan, code);
         total += bad.length;
@@ -203,7 +223,9 @@ const fillCart = (pg, shop) =>
             return [c, f("symbol"), f("narrowSymbol")].filter(Boolean);
           }, code);
           const wrong = signs.filter((s) => !want.includes(s) && !(code === "SAR" && s === "﷼") && !(code === "AED" && s === "د.إ") && !(code === "DKK" && /^kr\.?$/i.test(s)));
-          if (wrong.length) {
+          if (!signs.length) {
+            console.log(`${w} ${code} price filter: NOT FOUND (the category did not draw its filter; a 429?)`);
+          } else if (wrong.length) {
             total += wrong.length;
             console.log(`${w} ${code} price filter: sign ${JSON.stringify(wrong)} (want one of ${JSON.stringify(want)})`);
           } else console.log(`${w} ${code} price filter: sign ${JSON.stringify([...new Set(signs)])} ok`);
@@ -225,7 +247,8 @@ const fillCart = (pg, shop) =>
       if (CART && SHOP) {
         await push(pg, "/");
         await pg.waitForTimeout(2500);
-        await fillCart(pg, SHOP);
+        const filled = await fillCart(pg, SHOP).catch(() => 0);
+        if (!filled) console.log(`${w} ${code} cart-drawer: not checked (Selldone did not answer the product list)`);
         await pg.waitForTimeout(800);
         await pg.evaluate(() => window.scrollTo(0, 0));
         await pg.click(CART).catch(() => {});

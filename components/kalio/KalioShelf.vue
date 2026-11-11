@@ -19,10 +19,10 @@
 <template>
   <section v-if="list.length" ref="root" aria-labelledby="k-shelf-title" class="k-shelf k-wrap">
     <div class="k-shelf__board">
-      <p class="k-eyebrow">On the shelf at {{ shopTitle }}</p>
-      <h2 id="k-shelf-title" class="k-shelf__title">Pick an aisle, fill your basket</h2>
+      <p class="k-eyebrow">{{ t("shelf.eyebrow", "On the shelf at {shop}", { shop: shopTitle }) }}</p>
+      <h2 id="k-shelf-title" class="k-shelf__title">{{ t("shelf.title", "Pick an aisle, fill your basket") }}</h2>
 
-      <div aria-label="Aisles" class="k-shelf__tabs" role="tablist">
+      <div :aria-label="t('aisle.aisles', 'Aisles')" class="k-shelf__tabs" role="tablist">
         <button
           v-for="aisle in list"
           :key="aisle.id"
@@ -55,7 +55,7 @@
               </router-link>
               <div :class="{ '-offer': labels.get(product.id).was }" class="k-shelf__tag">
                 <span v-if="labels.get(product.id).off" class="k-shelf__save">
-                  Save {{ labels.get(product.id).off }}%
+                  {{ t("shelf.save", "Save {percent}%", { percent: labels.get(product.id).off }) }}
                 </span>
                 <router-link :to="productRoute(product)" class="k-shelf__link">
                   <span class="k-shelf__price">
@@ -63,21 +63,21 @@
                   </span>
                   <span class="k-shelf__was">
                     <template v-if="labels.get(product.id).was">
-                      was <s><u-price :amount="labels.get(product.id).was" :currency="currency" /></s>
+                      <template v-for="(part, i) in t('shelf.was', 'was {price}').split('{price}')" :key="i"><s v-if="i"><u-price :amount="labels.get(product.id).was" :currency="currency" /></s>{{ part }}</template>
                     </template>
-                    <template v-else-if="product.unit">per {{ product.unit }}</template>
+                    <template v-else-if="product.unit">{{ t("rail.perUnit", "per {unit}", { unit: product.unit }) }}</template>
                   </span>
                   <span class="k-shelf__name">{{ product.title }}</span>
                 </router-link>
                 <kalio-card-step v-if="inBasket(product)" :product="product" class="k-shelf__strip" strip />
                 <button
                   v-else
-                  :aria-label="`Add ${product.title}`"
+                  :aria-label="t('shelf.addProduct', 'Add {name}', { name: product.title })"
                   class="k-shelf__strip"
                   type="button"
                   @click="add(product)"
                 >
-                  <v-icon size="20">add</v-icon>Add
+                  <v-icon size="20">add</v-icon>{{ t("shelf.add", "Add") }}
                 </button>
               </div>
             </div>
@@ -85,7 +85,7 @@
             <div v-if="currentAisle && products.length" class="k-shelf__item -all">
               <router-link :to="aisleRoute(currentAisle)">
                 <span class="k-round"><v-icon class="k-flip" size="22">chevron_right</v-icon></span>
-                All {{ currentAisle.title || currentAisle.name }}
+                {{ t("shelf.allOfAisle", "All {aisle}", { aisle: currentAisle.title || currentAisle.name }) }}
               </router-link>
             </div>
           </template>
@@ -93,9 +93,9 @@
       </div>
 
       <div class="k-shelf__foot">
-        <span class="k-shelf__key"><i></i>Yellow labels are on offer</span>
+        <span class="k-shelf__key"><i></i>{{ t("shelf.legend", "Yellow labels are on offer") }}</span>
         <router-link :to="catalogueRoute" class="k-more">
-          Every product
+          {{ t("shelf.everyProduct", "Every product") }}
           <v-icon class="k-flip" size="20">chevron_right</v-icon>
         </router-link>
       </div>

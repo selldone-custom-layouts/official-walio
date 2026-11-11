@@ -24,8 +24,8 @@
     <div class="t-card__price">
       <u-price :amount="now" :currency="price.currency" class="t-card__now" />
       <template v-if="was">
-        <span class="t-card__was">reg <u-price :amount="was" :currency="price.currency" /></span>
-        <em class="t-card__sale">Sale</em>
+        <span class="t-card__was">{{ t("walio.card.reg", "reg") }} <u-price :amount="was" :currency="price.currency" /></span>
+        <em class="t-card__sale">{{ t("walio.card.sale", "Sale") }}</em>
       </template>
     </div>
 
@@ -33,7 +33,7 @@
 
     <kalio-card-rating :product="product" class="t-card__rate" />
 
-    <p v-if="product.unit" class="t-card__unit">per {{ product.unit }}</p>
+    <p v-if="product.unit" class="t-card__unit">{{ t("rail.perUnit", "per {unit}", { unit: product.unit }) }}</p>
     <kalio-seller-line :sellers="sellers" class="t-card__by" />
 
     <kalio-card-step

@@ -1,5 +1,5 @@
 diff --git a/storefront/comparison/button/SComparisonButton.vue b/storefront/comparison/button/SComparisonButton.vue
-index e7752ff..922b8fd 100644
+index e7752ff..e026599 100644
 --- a/storefront/comparison/button/SComparisonButton.vue
 +++ b/storefront/comparison/button/SComparisonButton.vue
 @@ -17,25 +17,20 @@
@@ -20,7 +20,7 @@ index e7752ff..922b8fd 100644
 +         not a ring that filled up like a loading spinner. It bumps once
 +         when a product joins the list, so the shopper sees where it went. -->
 +    <button
-+      :aria-label="show ? 'Close the comparison' : `Compare ${products.length} products`"
++      :aria-label="show ? t('compare.fab.close', 'Close the comparison') : t('compare.fab.open', { one: 'Compare {n} product', other: 'Compare {n} products' }, { n: products.length })"
 +      :class="{ 'force-on-top': show, 'is-mobile': isMobile, '-bump': bump }"
 +      class="widget-hover s--storefront-products-comparison-circle-progress k-compare-fab"
 +      type="button"
@@ -211,7 +211,7 @@ index 009f831..9d48ba6 100644
        this.step = 1;
        this.email = this.predefine_email;
 diff --git a/storefront/product/card/SShopProductCard.vue b/storefront/product/card/SShopProductCard.vue
-index 337d45a..1ac2682 100644
+index 337d45a..68b8640 100644
 --- a/storefront/product/card/SShopProductCard.vue
 +++ b/storefront/product/card/SShopProductCard.vue
 @@ -65,7 +65,10 @@
@@ -232,7 +232,7 @@ index 337d45a..1ac2682 100644
 -            :title="$t('global.commons.compare')"
 +            :aria-pressed="existInComparisonList ? 'true' : 'false'"
 +            :class="{ '-on': existInComparisonList }"
-+            :title="existInComparisonList ? 'Take it out of the comparison' : 'Compare up to 10 products side by side'"
++            :title="existInComparisonList ? t('card.compare.remove', 'Take it out of the comparison') : t('card.compare.add', 'Compare up to 10 products side by side')"
              block
 +            class="k-compare-toggle"
              color="primary"
@@ -253,7 +253,7 @@ index 337d45a..1ac2682 100644
 +            <!-- Kalio (7 November 2026): a box that gets a tick and the word,
 +                 not a ring (read as "loading") and a blinking dot. -->
 +            <v-icon size="small">{{ existInComparisonList ? "check_box" : "check_box_outline_blank" }}</v-icon>
-+            <span class="k-compare-toggle__t">{{ existInComparisonList ? "Comparing" : $t("global.commons.compare") }}</span>
++            <span class="k-compare-toggle__t">{{ existInComparisonList ? t("card.compare.on", "Comparing") : $t("global.commons.compare") }}</span>
            </v-btn>
          </div>
  
@@ -299,7 +299,7 @@ index 337d45a..1ac2682 100644
        return this.getShopImagePath(
          this.current_variant?.image
 diff --git a/storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue b/storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue
-index 1f8ebe4..9270f1c 100644
+index 1f8ebe4..847ddf4 100644
 --- a/storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue
 +++ b/storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue
 @@ -28,7 +28,7 @@
@@ -326,8 +326,8 @@ index 1f8ebe4..9270f1c 100644
          :color="inWishlist ? 'red' : '#444'"
          :loading="wishlist_busy"
 -        :title="inWishlist ? 'In my list' : 'Add to favorites'"
-+        :aria-label="inWishlist ? 'Saved — remove from Saved' : 'Save'"
-+        :title="inWishlist ? 'Saved' : 'Save'"
++        :aria-label="inWishlist ? t('pdp.saved.remove', 'Saved — remove from Saved') : t('pdp.save', 'Save')"
++        :title="inWishlist ? t('pdp.saved', 'Saved') : t('pdp.save', 'Save')"
          icon
          min-width="54px"
          size="44"
@@ -345,7 +345,7 @@ index 579e8c9..1f5d878 100644
        </span>
      </div>
 diff --git a/storefront/products/listing/SProductsListing.vue b/storefront/products/listing/SProductsListing.vue
-index 942cd61..48562bc 100644
+index 942cd61..89f30b7 100644
 --- a/storefront/products/listing/SProductsListing.vue
 +++ b/storefront/products/listing/SProductsListing.vue
 @@ -261,19 +261,47 @@
@@ -401,7 +401,7 @@ index 942cd61..48562bc 100644
 +            class="k-loadmore__go"
 +            variant="flat"
 +            @click="fetchData(false, true)"
-+            >Show {{ remains_count }} more
++            >{{ t("listing.showMore", "Show {n} more", { n: remains_count }) }}
 +          </v-btn>
 +        </div>
  
@@ -450,10 +450,10 @@ index 942cd61..48562bc 100644
 +      const search = String(this.$route?.query?.search || "").trim();
 +      const filtered = !!(this.filter && Object.keys(kalioFilterQuery(this.filter)).length);
 +      if (search)
-+        return { icon: "search_off", title: `Nothing matches “${search}”`, text: "Check the spelling, or try a shorter or more general word.", clear: filtered };
++        return { icon: "search_off", title: this.t("listing.empty.search.title", "Nothing matches “{search}”", { search }), text: this.t("listing.empty.search.text", "Check the spelling, or try a shorter or more general word."), clear: filtered };
 +      if (filtered)
-+        return { icon: "filter_alt_off", title: "No products match these filters", text: "Take a filter or two off to see more of the aisle.", clear: true };
-+      return { icon: "inventory_2", title: "Nothing here yet", text: "The sellers have not stocked this shelf yet. The rest of the shop is a tap away.", clear: false };
++        return { icon: "filter_alt_off", title: this.t("listing.empty.filters.title", "No products match these filters"), text: this.t("listing.empty.filters.text", "Take a filter or two off to see more of the aisle."), clear: true };
++      return { icon: "inventory_2", title: this.t("listing.empty.none.title", "Nothing here yet"), text: this.t("listing.empty.none.text", "The sellers have not stocked this shelf yet. The rest of the shop is a tap away."), clear: false };
 +    },
      ShopURLs() {
        return ShopURLs
@@ -515,7 +515,7 @@ index 942cd61..48562bc 100644
            this.products = products;
            this.folders = folders;
 diff --git a/system/pwa/version-check/SPwaVersionCheck.vue b/system/pwa/version-check/SPwaVersionCheck.vue
-index 1c8cfde..4d0a8b7 100644
+index 1c8cfde..fec7e16 100644
 --- a/system/pwa/version-check/SPwaVersionCheck.vue
 +++ b/system/pwa/version-check/SPwaVersionCheck.vue
 @@ -13,20 +13,21 @@
@@ -535,14 +535,14 @@ index 1c8cfde..4d0a8b7 100644
      @click="new_version = false"
    >
 -    {{ $t("global.notification.new_pwa_version") }}
-+    <span class="k-update__words"><v-icon size="20">auto_awesome</v-icon>A newer version of the shop is ready.</span>
++    <span class="k-update__words"><v-icon size="20">auto_awesome</v-icon>{{ t("update.ready", "A newer version of the shop is ready.") }}</span>
  
 -    <v-btn :loading="busy" color="green" variant="text" @click.stop="refreshMe">
 -      <v-icon class="me-1">get_app</v-icon>
 -      {{ $t("global.actions.update") }}
 -    </v-btn>
 +    <template v-slot:actions>
-+      <v-btn :loading="busy" class="k-update__go" variant="flat" @click.stop="refreshMe">Refresh</v-btn>
++      <v-btn :loading="busy" class="k-update__go" variant="flat" @click.stop="refreshMe">{{ t("update.refresh", "Refresh") }}</v-btn>
 +    </template>
    </v-snackbar>
  </template>

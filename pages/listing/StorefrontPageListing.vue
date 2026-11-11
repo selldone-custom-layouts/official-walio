@@ -19,7 +19,7 @@
 
       <div v-if="listing" class="mb-4">
         <div class="text-h5 font-weight-black">
-          {{ listing.title || "Listing" }}
+          {{ listing.title || t("listing.page.title", "Listing") }}
         </div>
         <div v-if="listing.description" class="text-muted mt-1">
           {{ listing.description }}
@@ -46,6 +46,7 @@
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
+import { t } from "../../components/kalio/i18n/kalio-i18n";
 
 import SStorefrontListingCategories from "@selldone/components-vue/storefront/listing/categories/SStorefrontListingCategories.vue";
 import SStorefrontListingItems from "@selldone/components-vue/storefront/listing/items/SStorefrontListingItems.vue";
@@ -99,7 +100,7 @@ export default {
         .then(({ data }) => {
           if (this.$?.isUnmounted) return;
           if (data?.error) {
-            this.error_text = data.error_msg || "Listing is not available.";
+            this.error_text = data.error_msg || t("listing.page.unavailable", "Listing is not available.");
             this.listing = null;
             return;
           }

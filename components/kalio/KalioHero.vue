@@ -19,30 +19,30 @@
   <section aria-labelledby="k-counter-title" class="k-hero k-wrap">
     <div class="k-counter">
       <div class="k-counter__copy">
-        <p class="k-eyebrow">This week at {{ shopTitle }}</p>
+        <p class="k-eyebrow">{{ t("hero.eyebrow", "This week at {shop}", { shop: shopTitle }) }}</p>
         <h2 id="k-counter-title" class="k-counter__title">
-          Fresh picks,
-          <em v-if="best">up to {{ best }}% off</em>
-          <em v-else-if="has_deals === false">from every aisle</em>
+          {{ t("hero.title", "Fresh picks,") }}
+          <em v-if="best">{{ t("hero.upTo", "up to {percent}% off", { percent: best }) }}</em>
+          <em v-else-if="has_deals === false">{{ t("hero.fromEveryAisle", "from every aisle") }}</em>
         </h2>
         <p class="k-counter__lede">
           <template v-if="has_deals === false">
-            {{ shopTitle }}’s best sellers — add them to your basket right here.
+            {{ t("hero.lede.bestSellers", "{shop}’s best sellers — add them to your basket right here.", { shop: shopTitle }) }}
           </template>
           <template v-else>
-            Real savings from {{ shopTitle }}’s sellers — add them to your basket right here.
+            {{ t("hero.lede.savings", "Real savings from {shop}’s sellers — add them to your basket right here.", { shop: shopTitle }) }}
           </template>
         </p>
         <div class="k-counter__ctas">
           <router-link :to="has_deals === false ? catalogueRoute : dealsRoute" class="k-btn k-btn--light">
-            {{ has_deals === false ? "Browse every product" : "Shop all deals" }}
+            {{ has_deals === false ? t("home.browseAll", "Browse every product") : t("hero.shopAllDeals", "Shop all deals") }}
             <v-icon class="k-flip" size="20">chevron_right</v-icon>
           </router-link>
-          <button class="k-btn k-btn--ghost" type="button" @click="toAisles">Browse aisles</button>
+          <button class="k-btn k-btn--ghost" type="button" @click="toAisles">{{ t("hero.browseAisles", "Browse aisles") }}</button>
         </div>
         <div v-if="chips.length" class="k-counter__in">
-          Deals waiting in
-          <nav aria-label="Aisles with deals" class="k-counter__chips">
+          {{ t("hero.dealsWaitingIn", "Deals waiting in") }}
+          <nav :aria-label="t('hero.aislesWithDeals', 'Aisles with deals')" class="k-counter__chips">
             <router-link v-for="aisle in chips" :key="aisle.id" :to="aisleRoute(aisle)" class="k-counter__chip">
               <img v-if="aisle.icon" :src="aisleImage(aisle, 64)" alt="" height="26" width="26" />
               {{ aisle.title || aisle.name }}
@@ -55,7 +55,7 @@
         :key="has_deals === false ? 'popular' : 'deals'"
         :filter="has_deals === false ? null : { only_has_discount: true }"
         :limit="16"
-        :title="has_deals === false ? 'Popular this week' : 'Today’s best savings'"
+        :title="has_deals === false ? t('hero.popularThisWeek', 'Popular this week') : t('hero.bestSavings', 'Today’s best savings')"
         class="k-counter__rail"
         sort="bestselling"
         spread

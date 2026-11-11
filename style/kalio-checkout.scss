@@ -47,7 +47,7 @@
 
   &__add {
     position: absolute;
-    right: 6px;
+    inset-inline-end: 6px;
     bottom: 6px;
     display: grid;
     place-items: center;
@@ -84,8 +84,8 @@
 }
 
 [dir="rtl"] .k-often__add {
-  right: auto;
-  left: 6px;
+  inset-inline-end: auto;
+  inset-inline-start: 6px;
 }
 
 /* ▆▆▆▆▆▆▆▆ Basket lines, by seller ▆▆▆▆▆▆▆▆ */
@@ -697,7 +697,7 @@
     }
 
     .k-often__add {
-      right: 8px;
+      inset-inline-end: 8px;
       bottom: 8px;
       width: 34px;
       height: 34px;
@@ -992,8 +992,8 @@
 
     &__bar {
       position: fixed;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       bottom: 0;
       z-index: 6;
       display: flex;
@@ -1252,8 +1252,8 @@
   &__search {
     position: absolute;
     top: 16px;
-    left: 16px;
-    right: 16px;
+    inset-inline-start: 16px;
+    inset-inline-end: 16px;
     z-index: 2;
     display: flex;
     align-items: center;
@@ -1287,8 +1287,8 @@
   &__results {
     position: absolute;
     top: 72px;
-    left: 16px;
-    right: 16px;
+    inset-inline-start: 16px;
+    inset-inline-end: 16px;
     z-index: 3;
     max-height: 280px;
     margin: 0;
@@ -1388,7 +1388,7 @@
     z-index: 1;
     width: 18px;
     height: 6px;
-    margin-left: -9px;
+    margin-inline-start: -9px;
     border-radius: 50%;
     background: rgba(20, 20, 20, 0.3);
     pointer-events: none;
@@ -1396,7 +1396,7 @@
 
   &__locate {
     position: absolute;
-    left: 16px;
+    inset-inline-start: 16px;
     bottom: 44px;
     z-index: 2;
     display: inline-flex;
@@ -1414,7 +1414,7 @@
 
   &__zoom {
     position: absolute;
-    right: 16px;
+    inset-inline-end: 16px;
     bottom: 44px;
     z-index: 2;
     display: grid;
@@ -1946,7 +1946,7 @@
   &__tick {
     position: absolute;
     top: 8px;
-    right: 8px;
+    inset-inline-end: 8px;
     color: var(--w-link) !important;
   }
 
@@ -2341,18 +2341,18 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       content: "";
       position: absolute;
       top: 12px;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       height: 3px;
       background: var(--k-line);
     }
 
     &:first-child::before {
-      left: 13px;
+      inset-inline-start: 13px;
     }
 
     &:last-child::before {
-      right: auto;
+      inset-inline-end: auto;
       width: 13px;
     }
 
@@ -2367,7 +2367,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     > i {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       display: grid;
       place-items: center;
       width: 27px;
@@ -2584,15 +2584,15 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       &::before {
         top: 0;
         bottom: 0;
-        left: 12px;
-        right: auto;
+        inset-inline-start: 12px;
+        inset-inline-end: auto;
         width: 3px;
         height: auto;
       }
 
       &:first-child::before {
         top: 12px;
-        left: 12px;
+        inset-inline-start: 12px;
       }
 
       &:last-child::before {
@@ -3031,7 +3031,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
         position: absolute;
         top: 30px;
         bottom: 2px;
-        left: 13px;
+        inset-inline-start: 13px;
         width: 2px;
         border-radius: 1px;
         background: var(--k-green);

@@ -303,8 +303,8 @@
           content: "";
           position: absolute;
           top: 55%;
-          right: -2px;
-          left: -2px;
+          inset-inline-end: -2px;
+          inset-inline-start: -2px;
           height: 1.5px;
           border-radius: 1px;
           background: currentColor;
@@ -835,8 +835,8 @@
   /* Below a laptop it is a bar across the page at the foot of the window,
      not a card floating over the right half of the price. */
   @media (max-width: 960px) {
-    left: 12px !important;
-    right: 12px !important;
+    inset-inline-start: 12px !important;
+    inset-inline-end: 12px !important;
     bottom: calc(12px + env(safe-area-inset-bottom)) !important;
     width: auto !important;
     max-width: none !important;
@@ -847,7 +847,7 @@
     }
 
     &.-in-cart {
-      left: auto !important;
+      inset-inline-start: auto !important;
       width: min(460px, calc(100vw - 24px)) !important;
     }
   }

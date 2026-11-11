@@ -28,26 +28,27 @@
 @use "walio-skin"; // Walio: the blue superstore dress over all of the above
 @use "walio-home"; // Walio 1.1.0: the home (design B), with the shared rows and cards
 @use "walio-pages"; // Walio 1.1.0: every page after the home (the B mockups, product A)
+@use "kalio-bidi"; // merchant text keeps its own direction (11 November 2026)
 @use "kalio-compare"; // the compare page (design 1, 8 November 2026)
 @use "walio-dark"; // Walio: dark mode and the theme switcher's loose ends (last)
 
 // --------------------------------------------------------
 .add-marginal-side-menu-open {
-  margin-left: var(--products-filter-width) !important;
+  margin-inline-start: var(--products-filter-width) !important;
   @media (max-width: 960px) {
     /* $vuetify.display.smAndDown */
-    margin-left: 0 !important;
+    margin-inline-start: 0 !important;
     transform: translateX(var(--products-filter-width));
   }
 }
 
 .v-locale--is-rtl {
   .add-marginal-side-menu-open {
-    margin-left: 0px !important;
-    margin-right: var(--products-filter-width) !important;
+    margin-inline-start: 0px !important;
+    margin-inline-end: var(--products-filter-width) !important;
     @media (max-width: 960px) {
       /* $vuetify.display.smAndDown */
-      margin-right: 0 !important;
+      margin-inline-end: 0 !important;
       transform: translateX(- var(--products-filter-width));
     }
   }
@@ -57,7 +58,7 @@
 .social-stick {
   position: fixed;
   top: 50%;
-  right: 10px;
+  inset-inline-end: 10px;
   transform: translate(0, -50%);
   background-color: #fff;
   z-index: 5;
@@ -68,8 +69,8 @@
 
 .v-locale--is-rtl {
   .social-stick {
-    right: unset;
-    left: 10px;
+    inset-inline-end: unset;
+    inset-inline-start: 10px;
   }
 
 }

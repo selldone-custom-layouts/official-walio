@@ -26,15 +26,15 @@
 -->
 <template>
   <div :class="{ '-numbered': SKIN.numbered }" :style="vars" class="k-cmp k-wrap">
-    <nav aria-label="Breadcrumb" class="k-crumbs k-cmp__crumbs">
-      <router-link :to="home">{{ shop?.title || "Home" }}</router-link>
+    <nav :aria-label="t('compare.breadcrumb', 'Breadcrumb')" class="k-crumbs k-cmp__crumbs">
+      <router-link :to="home">{{ shop?.title || t("compare.home", "Home") }}</router-link>
       <v-icon size="16">chevron_right</v-icon>
-      <span>Compare</span>
+      <span>{{ t("compare.pageName", "Compare") }}</span>
     </nav>
 
     <div v-if="busy && !items.length" class="k-cmp__wait">
       <v-progress-circular indeterminate size="26" width="3" />
-      Getting your picks…
+      {{ t("compare.loading", "Getting your picks…") }}
     </div>
 
     <!-- ▆▆▆▆ Nothing to compare ▆▆▆▆ -->
@@ -43,7 +43,7 @@
       <span v-else class="k-cmp__mark -icon"><v-icon size="30">compare_arrows</v-icon></span>
       <small v-if="SKIN.eyebrow" class="k-cmp__eyebrow">{{ SKIN.eyebrow }}</small>
       <h1>{{ SKIN.emptyTitle }}</h1>
-      <p>Tap Compare on a product, or find one here. Up to {{ MAX }} side by side.</p>
+      <p>{{ t("compare.empty.text", "Tap Compare on a product, or find one here. Up to {max} side by side.", { max: MAX }) }}</p>
       <kalio-compare-add :max="MAX" :suggestions="suggested" wide @add="add" />
       <router-link :to="catalogue" class="k-cmp__btn -main">
         {{ SKIN.browse }}<v-icon size="20">arrow_forward</v-icon>
@@ -58,9 +58,9 @@
           <p>{{ summary }}</p>
         </div>
         <div class="k-cmp__tools">
-          <div v-if="SKIN.toggle === 'segmented'" aria-label="Show" class="k-cmp__seg" role="group">
-            <button :aria-pressed="!diffOnly" :class="{ '-on': !diffOnly }" type="button" @click="diffOnly = false">Everything</button>
-            <button :aria-pressed="diffOnly" :class="{ '-on': diffOnly }" :disabled="items.length < 2" type="button" @click="diffOnly = true">Only differences</button>
+          <div v-if="SKIN.toggle === 'segmented'" :aria-label="t('compare.show', 'Show')" class="k-cmp__seg" role="group">
+            <button :aria-pressed="!diffOnly" :class="{ '-on': !diffOnly }" type="button" @click="diffOnly = false">{{ t("compare.everything", "Everything") }}</button>
+            <button :aria-pressed="diffOnly" :class="{ '-on': diffOnly }" :disabled="items.length < 2" type="button" @click="diffOnly = true">{{ t("compare.onlyDiff", "Only differences") }}</button>
           </div>
           <button
             v-else
@@ -71,13 +71,13 @@
             type="button"
             @click="diffOnly = !diffOnly"
           >
-            <i></i>Only differences
+            <i></i>{{ t("compare.onlyDiff", "Only differences") }}
           </button>
           <button class="k-cmp__btn -line" type="button" @click="share">
-            <v-icon size="20">{{ copied === "top" ? "check" : "ios_share" }}</v-icon>{{ copied === "top" ? "Link copied" : "Share" }}
+            <v-icon size="20">{{ copied === "top" ? "check" : "ios_share" }}</v-icon>{{ copied === "top" ? t("compare.linkCopied", "Link copied") : t("compare.share", "Share") }}
           </button>
           <button class="k-cmp__btn -soft" type="button" @click="clear">
-            <v-icon size="20">delete_outline</v-icon>Clear
+            <v-icon size="20">delete_outline</v-icon>{{ t("compare.clear", "Clear") }}
           </button>
         </div>
       </div>
@@ -98,10 +98,10 @@
       <div class="k-cmp__strip">
         <div class="k-cmp__scroll" @scroll.passive="sync">
           <div class="k-cmp__g">
-            <div class="k-cmp__hint"><b>Your picks</b>{{ SKIN.hint }}</div>
+            <div class="k-cmp__hint"><b>{{ t("compare.yourPicks", "Your picks") }}</b>{{ SKIN.hint }}</div>
 
             <article v-for="it in items" :key="it.key" class="k-cmp__cp">
-              <button :aria-label="`Remove ${it.product.title}`" class="k-cmp__rm" type="button" @click="remove(it)">
+              <button :aria-label="t('compare.removeItem', 'Remove {name}', { name: it.product.title })" class="k-cmp__rm" type="button" @click="remove(it)">
                 <v-icon size="18">close</v-icon>
               </button>
               <router-link :to="productRoute(it)" aria-hidden="true" class="k-cmp__well" tabindex="-1">
@@ -112,12 +112,16 @@
                 <router-link :to="productRoute(it)" class="k-cmp__nm">{{ it.product.title }}</router-link>
                 <small v-if="it.variantLabel" class="k-cmp__var">{{ it.variantLabel }}</small>
                 <div :class="{ '-sale': it.price.was }" class="k-cmp__pr">
-                  <span v-if="it.price.was" class="k-cmp__now-lbl">Now</span>
+                  <span v-if="it.price.was" class="k-cmp__now-lbl">{{ t("compare.now", "Now") }}</span>
                   <u-price :amount="it.price.now" :currency="currency" class="k-cmp__now" />
                   <s v-if="it.price.was"><u-price :amount="it.price.was" :currency="currency" /></s>
                 </div>
                 <div v-if="it.per" class="k-cmp__per">
-                  {{ money(it.per.amount) }} {{ it.per.unit === "each" ? "each" : `/ ${it.per.unit}` }}
+                  {{
+                    it.per.unit === "each"
+                      ? t("compare.perEach", "{price} each", { price: money(it.per.amount) })
+                      : t("compare.perUnit", "{price} / {unit}", { price: money(it.per.amount), unit: unitLabel(it.per.unit) })
+                  }}
                 </div>
                 <kalio-card-step
                   :addable="() => it.stock > 0"
@@ -147,13 +151,13 @@
       <section v-for="g in shownGroups" :key="g.title" class="k-cmp__grp">
         <h3>
           <span class="k-cmp__ic"><v-icon size="20">{{ g.icon }}</v-icon></span><span class="k-cmp__gt">{{ g.title }}</span>
-          <span v-if="items.length > 1" class="k-cmp__n">{{ g.diff ? `${g.diff} differ` : "All the same" }}</span>
+          <span v-if="items.length > 1" class="k-cmp__n">{{ g.diff ? t("compare.differ", { one: "{n} differs", other: "{n} differ" }, { n: g.diff }) : t("compare.allSame", "All the same") }}</span>
         </h3>
         <div class="k-cmp__scroll" @scroll.passive="sync">
           <div v-for="row in g.shown" :key="row.key" :class="{ '-diff': row.diff }" class="k-cmp__g k-cmp__row">
             <div class="k-cmp__k"><i v-if="row.diff"></i>{{ row.key }}</div>
             <div v-if="row.same" class="k-cmp__both">
-              <v-icon size="20">check_circle</v-icon>{{ row.values[0] }}<small>· {{ items.length === 2 ? "both" : `all ${items.length}` }}</small>
+              <v-icon size="20">check_circle</v-icon>{{ row.values[0] }}<small>· {{ items.length === 2 ? t("compare.both", "both") : t("compare.allN", { one: "all {n}", other: "all {n}" }, { n: items.length }) }}</small>
             </div>
             <template v-else>
               <div v-for="(v, i) in row.values" :key="i" :class="{ '-none': !v }" class="k-cmp__c">{{ v || "—" }}</div>
@@ -164,19 +168,19 @@
       </section>
 
       <section v-if="!diffOnly && hasPros" class="k-cmp__grp">
-        <h3><span class="k-cmp__ic"><v-icon size="20">thumb_up</v-icon></span><span class="k-cmp__gt">Why pick it</span></h3>
+        <h3><span class="k-cmp__ic"><v-icon size="20">thumb_up</v-icon></span><span class="k-cmp__gt">{{ t("compare.whyPick", "Why pick it") }}</span></h3>
         <div class="k-cmp__scroll" @scroll.passive="sync">
           <div class="k-cmp__g k-cmp__row -top">
-            <div class="k-cmp__k">Good to know</div>
+            <div class="k-cmp__k">{{ t("compare.goodToKnow", "Good to know") }}</div>
             <ul v-for="it in items" :key="it.key" class="k-cmp__pros">
-              <li v-for="(t, i) in it.pros" :key="i"><v-icon size="20">check_circle</v-icon>{{ t }}</li>
+              <li v-for="(line, i) in it.pros" :key="i"><v-icon size="20">check_circle</v-icon>{{ line }}</li>
             </ul>
             <div v-if="items.length < MAX" class="k-cmp__sp"></div>
           </div>
           <div v-if="hasCons" class="k-cmp__g k-cmp__row -top">
-            <div class="k-cmp__k">Worth knowing</div>
+            <div class="k-cmp__k">{{ t("compare.worthKnowing", "Worth knowing") }}</div>
             <ul v-for="it in items" :key="it.key" class="k-cmp__pros -cons">
-              <li v-for="(t, i) in it.cons" :key="i"><v-icon size="20">remove_circle</v-icon>{{ t }}</li>
+              <li v-for="(line, i) in it.cons" :key="i"><v-icon size="20">remove_circle</v-icon>{{ line }}</li>
             </ul>
             <div v-if="items.length < MAX" class="k-cmp__sp"></div>
           </div>
@@ -184,16 +188,16 @@
       </section>
 
       <section v-if="!diffOnly" class="k-cmp__grp">
-        <h3><span class="k-cmp__ic"><v-icon size="20">star</v-icon></span><span class="k-cmp__gt">Reviews</span></h3>
+        <h3><span class="k-cmp__ic"><v-icon size="20">star</v-icon></span><span class="k-cmp__gt">{{ t("reviews.title", "Reviews") }}</span></h3>
         <div class="k-cmp__scroll" @scroll.passive="sync">
           <div class="k-cmp__g k-cmp__row">
-            <div class="k-cmp__k">Rating</div>
+            <div class="k-cmp__k">{{ t("compare.rating", "Rating") }}</div>
             <div v-for="it in items" :key="it.key" class="k-cmp__rev">
-              <span :aria-label="it.rateCount ? `${it.rate} out of 5` : 'No reviews yet'" class="k-cmp__stars">
+              <span :aria-label="it.rateCount ? t('compare.rateOutOf', '{rate} out of {max}', { rate: it.rate, max: 5 }) : t('compare.noReviews', 'No reviews yet')" class="k-cmp__stars">
                 <v-icon v-for="s in 5" :key="s" :class="{ '-on': it.rateCount && s <= Math.round(it.rate) }" size="18">star</v-icon>
               </span>
-              <template v-if="it.rateCount">{{ it.rate.toFixed(1) }} · {{ it.rateCount }} {{ it.rateCount === 1 ? "review" : "reviews" }}</template>
-              <template v-else>No reviews yet <router-link :to="productRoute(it)">Write one</router-link></template>
+              <template v-if="it.rateCount">{{ it.rate.toFixed(1) }} · {{ t("compare.reviewCount", { one: "{n} review", other: "{n} reviews" }, { n: it.rateCount }) }}</template>
+              <template v-else>{{ t("compare.noReviews", "No reviews yet") }} <router-link :to="productRoute(it)">{{ t("compare.writeOne", "Write one") }}</router-link></template>
             </div>
             <div v-if="items.length < MAX" class="k-cmp__sp"></div>
           </div>
@@ -205,12 +209,12 @@
         <span v-else class="k-cmp__mark -icon"><v-icon size="26">ios_share</v-icon></span>
         <div>
           <h3>{{ SKIN.shareTitle }}</h3>
-          <p>Send it to someone you shop with, or keep the link for later.</p>
+          <p>{{ t("compare.shareText", "Send it to someone you shop with, or keep the link for later.") }}</p>
         </div>
         <div class="k-cmp__lnk">
           <span>{{ linkShown }}</span>
           <button class="k-cmp__btn -main" type="button" @click="copy('card')">
-            <v-icon size="18">{{ copied === "card" ? "check" : "content_copy" }}</v-icon>{{ copied === "card" ? "Copied" : "Copy link" }}
+            <v-icon size="18">{{ copied === "card" ? "check" : "content_copy" }}</v-icon>{{ copied === "card" ? t("compare.copied", "Copied") : t("compare.copyLink", "Copy link") }}
           </button>
         </div>
       </section>
@@ -230,17 +234,19 @@ import KalioCompareAdd from "./KalioCompareAdd.vue";
 import { BRAND } from "../kalio-brand";
 import { quickAdd } from "../kalio-basket";
 import { aisleIndex, catalogueRoute, dropSrcset, productImage, productSrcset } from "../kalio-catalog";
-import { compareListParam, groupIcon, parseCompareList, specGroups, specText, specValue, unitSize } from "./kalio-compare";
+import { compareListParam, groupIcon, parseCompareList, specGroups, specText, specValue, unitLabel, unitSize } from "./kalio-compare";
 import { SKIN } from "./compare-skin";
+import { t, locale } from "../i18n/kalio-i18n";
 
 const MAX = 4;
-/* A variant's own sizes, as rows of their own when a pick is a variant. */
+/* A variant's own sizes, as rows of their own when a pick is a variant
+   (each label is read when the rows are drawn, in the visitor's language). */
 const VARIANT_KEYS = [
-  ["volume", "Volume"],
-  ["weight", "Weight"],
-  ["pack", "Pack"],
-  ["style", "Style"],
-  ["type", "Type"],
+  ["volume", () => t("compare.variant.volume", "Volume")],
+  ["weight", () => t("compare.variant.weight", "Weight")],
+  ["pack", () => t("compare.variant.pack", "Pack")],
+  ["style", () => t("compare.variant.style", "Style")],
+  ["type", () => t("compare.variant.type", "Type")],
 ];
 const norm = (s) => String(s || "").trim().toLowerCase();
 
@@ -325,13 +331,13 @@ export default {
       };
       const out = [];
       const variantRows = VARIANT_KEYS.filter(([k]) => items.some((it) => it.variant && specText(it.variant[k]))).map(([k, label]) =>
-        row(label, items.map((it) => specText(it.variant?.[k]))),
+        row(label(), items.map((it) => specText(it.variant?.[k]))),
       );
-      if (variantRows.length) out.push({ title: "Your pick", rows: variantRows });
+      if (variantRows.length) out.push({ title: t("compare.group.yourPick", "Your pick"), icon: "straighten", rows: variantRows });
       for (const g of specGroups(items.map((it) => it.product))) {
         out.push({ title: g.title, rows: g.keys.map((k) => row(k, items.map((it) => specValue(it.product, k)))) });
       }
-      return out.map((g) => ({ ...g, icon: groupIcon(g.title), diff: g.rows.filter((r) => r.diff).length }));
+      return out.map((g) => ({ ...g, icon: g.icon || groupIcon(g.title), diff: g.rows.filter((r) => r.diff).length }));
     },
     shownGroups() {
       return this.groups
@@ -361,11 +367,22 @@ export default {
     },
     summary() {
       const n = this.items.length;
-      if (n < 2) return "Add one more product to see what differs.";
+      if (n < 2) return t("compare.summary.addOne", "Add one more product to see what differs.");
       const cats = new Set(this.items.map((it) => it.product.category_id));
-      const from = cats.size === 1 ? (this.aisleTitle ? ` from ${this.aisleTitle}` : "") : ` from ${cats.size} aisles`;
-      const tail = this.rowCount ? ` · ${this.diffCount} of ${this.rowCount} details differ` : "";
-      return `${n} products${from}${tail}`;
+      const head =
+        cats.size === 1
+          ? this.aisleTitle
+            ? t("compare.summary.fromAisle", { one: "{n} product from {aisle}", other: "{n} products from {aisle}" }, { n, aisle: this.aisleTitle })
+            : t("compare.summary.products", { one: "{n} product", other: "{n} products" }, { n })
+          : t("compare.summary.fromAisles", { one: "{n} product from {aisles} aisles", other: "{n} products from {aisles} aisles" }, { n, aisles: cats.size });
+      if (!this.rowCount) return head;
+      // Two separate facts, side by side (" · "), each one whole sentence.
+      const tail = t(
+        "compare.summary.differ",
+        { one: "{n} of {rows} details differs", other: "{n} of {rows} details differ" },
+        { n: this.diffCount, rows: this.rowCount },
+      );
+      return `${head} · ${tail}`;
     },
     suggested() {
       return this.pool.filter((p) => !this.ids.includes(p.id)).slice(0, 3);
@@ -396,6 +413,10 @@ export default {
     "aisle.id"() {
       this.fillPool();
     },
+    /* The tab's title follows a language change. */
+    "SKIN.title"(title) {
+      this.setPageTitle(title);
+    },
   },
 
   created() {
@@ -413,6 +434,7 @@ export default {
 
   methods: {
     dropSrcset,
+    unitLabel,
 
     /** The list from the address; with none, what the shopper has added to
      *  compare (then the address is set to it, so it can be shared). */
@@ -549,7 +571,7 @@ export default {
      *  left "$0" big in front of a tiny ".10". */
     money(amount) {
       try {
-        return new Intl.NumberFormat("en-US", { style: "currency", currency: this.currency || "USD" }).format(amount);
+        return new Intl.NumberFormat(locale(), { style: "currency", currency: this.currency || "USD" }).format(amount);
       } catch {
         return `${Number(amount).toFixed(2)} ${this.currency || ""}`.trim();
       }

@@ -21,7 +21,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="k-order">
     <div class="k-wrap">
-      <nav aria-label="Back" class="k-cart__crumbs">
+      <nav :aria-label="t('common.back', 'Back')" class="k-cart__crumbs">
         <router-link
           :to="
             buildReturnRoute(
@@ -31,7 +31,7 @@
             )
           "
         >
-          <v-icon size="16">chevron_left</v-icon>{{ $route.query.return_id ? "Your returns" : "Your orders" }}
+          <v-icon size="16">chevron_left</v-icon>{{ $route.query.return_id ? t("order.back.returns", "Your returns") : t("account.yourOrders", "Your orders") }}
         </router-link>
       </nav>
 
@@ -49,12 +49,12 @@
            "Cart not found" toast. -->
       <div v-if="!basket && failed" class="k-order__missing">
         <v-icon size="30">{{ USER() ? "receipt_long" : "lock_outline" }}</v-icon>
-        <h1>We can’t open this order</h1>
-        <p v-if="USER()">It isn’t in your account. The link may be wrong, or the order belongs to someone else.</p>
-        <p v-else>If you placed it, sign in to see it, or open the link in your order email on the device you ordered from.</p>
+        <h1>{{ t("order.missing.title", "We can’t open this order") }}</h1>
+        <p v-if="USER()">{{ t("order.missing.user", "It isn’t in your account. The link may be wrong, or the order belongs to someone else.") }}</p>
+        <p v-else>{{ t("order.missing.guest", "If you placed it, sign in to see it, or open the link in your order email on the device you ordered from.") }}</p>
         <div class="k-order__missingacts">
-          <button v-if="!USER()" class="k-btn k-btn--solid" type="button" @click="signIn">Sign in</button>
-          <router-link :to="buildReturnRoute(history_list_page_name)" :class="USER() ? 'k-btn--solid' : 'k-btn--line'" class="k-btn">Your orders</router-link>
+          <button v-if="!USER()" class="k-btn k-btn--solid" type="button" @click="signIn">{{ t("common.signIn", "Sign in") }}</button>
+          <router-link :to="buildReturnRoute(history_list_page_name)" :class="USER() ? 'k-btn--solid' : 'k-btn--line'" class="k-btn">{{ t("account.yourOrders", "Your orders") }}</router-link>
         </div>
       </div>
       <div v-else-if="!basket" class="k-order__loading">
@@ -81,6 +81,7 @@ import { Basket } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import {EventBus} from "@selldone/components-vue/utils/events/EventBus.ts";
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageBasketOrder",
@@ -153,7 +154,7 @@ export default {
     type(type) {
       if (type)
         this.setPageTitle(
-          `Order ${type.basket_code}-` + this.$route.params.basket_id,
+          t("order.pageTitle", "Order {code}", { code: `${type.basket_code}-${this.$route.params.basket_id}` }),
         ); // Set Page Title!
     },
     "$route.params.basket_id"() {

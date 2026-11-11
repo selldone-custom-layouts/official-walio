@@ -22,6 +22,7 @@
 declare const window: any;
 
 import { baseCurrency, money as regionMoney } from "../region-switcher/region";
+import { t } from "../kalio/i18n/kalio-i18n";
 
 /* ━━━━━━━━━━━━ Photos ━━━━━━━━━━━━
    import.meta.glob lists only the files that exist when the Layout is
@@ -102,12 +103,14 @@ export const DEALS_FILTER = JSON.stringify({ only_has_discount: true });
 /* ━━━━━━━━━━━━ Ways to get it ━━━━━━━━━━━━
    Selldone's transportation types, grouped as a shopper says them. A type
    not listed here is shown under its own title, as "Delivery". */
-const WAYS: { types: string[]; word: string; icon: string; line: string }[] = [
-  { types: ["Pickup"], word: "Pickup", icon: "storefront", line: "Order online, collect at the shop" },
-  { types: ["Motorbike", "Bicycle"], word: "Delivery", icon: "two_wheeler", line: "A courier brings it to your door" },
-  { types: ["CargoSmall", "Cargo", "Truck"], word: "Shipping", icon: "local_shipping", line: "Shipped to your address" },
-  { types: ["Post", "PostFast"], word: "By post", icon: "local_post_office", line: "Sent to your address by post" },
-  { types: ["Airplane", "Global"], word: "Worldwide", icon: "public", line: "Shipped wherever you are" },
+/* key: a code the Layout compares (never a translated word); word and line
+   are read when drawn, so they follow the visitor's language. */
+const WAYS: { types: string[]; key: string; word: () => string; icon: string; line: () => string }[] = [
+  { types: ["Pickup"], key: "Pickup", word: () => t("walio.way.pickup", "Pickup"), icon: "storefront", line: () => t("walio.way.pickupLine", "Order online, collect at the shop") },
+  { types: ["Motorbike", "Bicycle"], key: "Delivery", word: () => t("walio.way.delivery", "Delivery"), icon: "two_wheeler", line: () => t("walio.way.deliveryLine", "A courier brings it to your door") },
+  { types: ["CargoSmall", "Cargo", "Truck"], key: "Shipping", word: () => t("walio.way.shipping", "Shipping"), icon: "local_shipping", line: () => t("walio.way.shippingLine", "Shipped to your address") },
+  { types: ["Post", "PostFast"], key: "Post", word: () => t("walio.way.post", "By post"), icon: "local_post_office", line: () => t("walio.way.postLine", "Sent to your address by post") },
+  { types: ["Airplane", "Global"], key: "Worldwide", word: () => t("walio.way.worldwide", "Worldwide"), icon: "public", line: () => t("walio.way.worldwideLine", "Shipped wherever you are") },
 ];
 
 export interface Way {
@@ -125,11 +128,11 @@ export interface Way {
 /** The shop's enabled delivery methods, one card per kind. */
 export function waysOf(shop: any): Way[] {
   const out: Way[] = [];
-  for (const t of (shop?.transportations || []).filter((t: any) => t && t.enable)) {
-    const kind = WAYS.find((w) => w.types.includes(t.type));
-    const key = kind ? kind.word : t.type;
-    const free = !!t.free_shipping && !(Number(t.free_shipping_limit) > 0);
-    const freeOver = t.free_shipping && Number(t.free_shipping_limit) > 0 ? Number(t.free_shipping_limit) : null;
+  for (const tr of (shop?.transportations || []).filter((x: any) => x && x.enable)) {
+    const kind = WAYS.find((w) => w.types.includes(tr.type));
+    const key = kind ? kind.key : tr.type;
+    const free = !!tr.free_shipping && !(Number(tr.free_shipping_limit) > 0);
+    const freeOver = tr.free_shipping && Number(tr.free_shipping_limit) > 0 ? Number(tr.free_shipping_limit) : null;
     const known = out.find((w) => w.key === key);
     if (known) {
       /* Two methods of one kind: the more generous free rule wins. */
@@ -139,17 +142,17 @@ export function waysOf(shop: any): Way[] {
     }
     out.push({
       key,
-      word: t.title || (kind ? kind.word : "Delivery"),
+      word: tr.title || (kind ? kind.word() : t("walio.way.delivery", "Delivery")),
       icon: kind ? kind.icon : "local_shipping",
-      line: kind ? kind.line : "Brought to your address",
+      line: kind ? kind.line() : t("walio.way.otherLine", "Brought to your address"),
       free,
       freeOver,
-      currency: t.currency || null, // null: the shop's base currency (shop.currency does not exist)
+      currency: tr.currency || null, // null: the shop's base currency (shop.currency does not exist)
     });
   }
   /* In the order shoppers expect: pickup, delivery, shipping, post. */
   const rank = (way: Way) => {
-    const at = WAYS.findIndex((w) => w.word === way.key);
+    const at = WAYS.findIndex((w) => w.key === way.key);
     return at === -1 ? WAYS.length : at;
   };
   return out.sort((a, b) => rank(a) - rank(b));

@@ -21,10 +21,10 @@
     <v-card class="position-relative" rounded="t-xl">
       <div class="k-quickbuy__bar">
         <router-link v-if="product" :to="productRoute" class="k-more">
-          Full details
+          {{ t("quickbuy.fullDetails", "Full details") }}
           <v-icon class="k-flip" size="20">chevron_right</v-icon>
         </router-link>
-        <button aria-label="Close" class="k-quickbuy__close" type="button" @click="$emit('update:modelValue', false)">
+        <button :aria-label="t('common.close', 'Close')" class="k-quickbuy__close" type="button" @click="$emit('update:modelValue', false)">
           <v-icon>close</v-icon>
         </button>
       </div>

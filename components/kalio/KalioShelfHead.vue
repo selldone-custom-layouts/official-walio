@@ -15,7 +15,7 @@
 -->
 <template>
   <div class="k-shelf-head k-wrap">
-    <nav v-if="crumbs.length" aria-label="Breadcrumb" class="k-shelf-head__crumbs">
+    <nav v-if="crumbs.length" :aria-label="t('listing.breadcrumb', 'Breadcrumb')" class="k-shelf-head__crumbs">
       <template v-for="(crumb, i) in crumbs" :key="i">
         <v-icon v-if="i" aria-hidden="true" class="k-flip" size="16">chevron_right</v-icon>
         <router-link v-if="crumb.to" :to="crumb.to">{{ crumb.label }}</router-link>
@@ -38,7 +38,7 @@
     </header>
 
     <div v-if="tabs.length" :class="{ '-at-start': at_start, '-at-end': at_end }" class="k-shelf-head__tabs-wrap">
-      <nav ref="tabs" :aria-label="tabsLabel" class="k-shelf-head__tabs" @scroll.passive="measure">
+      <nav ref="tabs" :aria-label="tabsLabel || t('aisle.aisles', 'Aisles')" class="k-shelf-head__tabs" @scroll.passive="measure">
         <template v-for="tab in tabs" :key="tab.key">
           <router-link
             v-if="tab.to"
@@ -54,10 +54,10 @@
           </a>
         </template>
       </nav>
-      <button v-if="!at_start" aria-label="Scroll back" class="k-shelf-head__nudge -back" tabindex="-1" type="button" @click="nudge(-1)">
+      <button v-if="!at_start" :aria-label="t('rail.scrollBack', 'Scroll back')" class="k-shelf-head__nudge -back" tabindex="-1" type="button" @click="nudge(-1)">
         <v-icon class="k-flip" size="20">chevron_left</v-icon>
       </button>
-      <button v-if="!at_end" aria-label="Scroll on" class="k-shelf-head__nudge -on" tabindex="-1" type="button" @click="nudge(1)">
+      <button v-if="!at_end" :aria-label="t('listing.tabs.scrollOn', 'Scroll on')" class="k-shelf-head__nudge -on" tabindex="-1" type="button" @click="nudge(1)">
         <v-icon class="k-flip" size="20">chevron_right</v-icon>
       </button>
     </div>
@@ -80,7 +80,8 @@ export default {
     meta: { type: String, default: null },
     /** [{ key, label, to? , href?, click?, on? }] */
     tabs: { type: Array, default: () => [] },
-    tabsLabel: { type: String, default: "Aisles" },
+    /** The row's name for screen readers; "Aisles" in the visitor's language when not given. */
+    tabsLabel: { type: String, default: null },
     loading: Boolean,
   },
 

@@ -32,14 +32,14 @@
 <template>
   <div class="k-cart">
     <div class="k-wrap k-cart__wrap">
-      <nav aria-label="Back" class="k-cart__crumbs">
-        <a href="#" @click.prevent="$router.go(-1)"><v-icon size="16">chevron_left</v-icon>Keep shopping</a>
+      <nav :aria-label="t('common.back', 'Back')" class="k-cart__crumbs">
+        <a href="#" @click.prevent="$router.go(-1)"><v-icon class="k-flip" size="16">chevron_left</v-icon>{{ t("basket.keepShopping", "Keep shopping") }}</a>
       </nav>
 
       <div class="k-cart__head">
-        <h1 class="k-cart__title">Checkout</h1>
+        <h1 class="k-cart__title">{{ t("walio.checkout.title", "Checkout") }}</h1>
         <span v-if="seller_count > 1" class="k-cart__one">
-          <v-icon size="18">storefront</v-icon>{{ seller_count }} sellers, one cart and one checkout.
+          <v-icon size="18">storefront</v-icon>{{ t("basket.sellers", { one: "{n} seller, one basket and one checkout.", other: "{n} sellers, one basket and one checkout." }, { n: seller_count }) }}
         </span>
         <s-shop-share-order-button v-if="basket?.items?.length" :basket="basket" class="k-cart__share" />
       </div>
@@ -47,7 +47,7 @@
       <!-- Walio 1.1.0 (checkout design B): where the shopper is, as steps.
            Each step is done when Selldone has what it needs: the items, an
            address (or nothing to deliver), a way to send the receipt. -->
-      <ol v-if="basket?.items?.length" aria-label="Checkout steps" class="w-stepper">
+      <ol v-if="basket?.items?.length" :aria-label="t('walio.checkout.steps', 'Checkout steps')" class="w-stepper">
         <li v-for="(st, i) in steps" :key="st.key" :class="st.state" class="w-stepper__s">
           <span v-if="i" aria-hidden="true" class="w-stepper__ln"></span>
           <i aria-hidden="true"><v-icon v-if="st.state === '-done'" size="16">check</v-icon><template v-else>{{ i + 1 }}</template></i>
@@ -55,7 +55,7 @@
         </li>
       </ol>
 
-      <nav v-if="filtered_types.length > 1" aria-label="Baskets" class="k-cart__types">
+      <nav v-if="filtered_types.length > 1" :aria-label="t('basket.types', 'Baskets')" class="k-cart__types">
         <button
           v-for="item in filtered_types"
           :key="item.code"
@@ -72,7 +72,7 @@
         <!-- ▆▆▆▆▆▆▆▆ Left: lines, details, often added ▆▆▆▆▆▆▆▆ -->
         <div class="k-cart__main">
           <!-- Tario: the checkout reads as numbered steps. -->
-          <h2 class="t-step"><span>1</span>Review your items</h2>
+          <h2 class="t-step"><span>1</span>{{ t("walio.checkout.review", "Review your items") }}</h2>
           <kalio-cart-lines :basket="basket" />
 
           <s-storefront-coupons-list
@@ -97,25 +97,25 @@
             @update:model-value="selectLottery"
           ></s-storefront-lottery-prizes-list>
 
-          <h2 class="t-step"><span>2</span>Delivery &amp; contact</h2>
+          <h2 class="t-step"><span>2</span>{{ t("walio.checkout.delivery", "Delivery & contact") }}</h2>
           <div :class="`-n${detail_cards}`" class="k-cart__details">
             <!-- Delivery method (and when): "When · Truck" read as nonsense
                  to the owner (6 November 2026); the method is the heading's
                  subject, the time its chip. -->
             <section v-if="show_when" class="k-cart__detail">
-              <h3><span class="k-cart__ico"><v-icon size="18">local_shipping</v-icon></span>Delivery method</h3>
+              <h3><span class="k-cart__ico"><v-icon size="18">local_shipping</v-icon></span>{{ t("basket.delivery.title", "Delivery method") }}</h3>
               <p>{{ when_text }}</p>
               <div class="k-cart__chips">
                 <span v-if="when_chip" class="k-cart__chip -on">{{ when_chip }}</span>
                 <button class="k-cart__chip" type="button" @click="delivery_sheet = true">
-                  {{ when_chip ? "Change" : "Choose" }}
+                  {{ when_chip ? t("basket.change", "Change") : t("basket.choose", "Choose") }}
                 </button>
               </div>
             </section>
 
             <!-- Where -->
             <section v-if="has_delivery" :class="{ '-todo': !is_valid_location }" class="k-cart__detail">
-              <h3><span class="k-cart__ico"><v-icon size="18">place</v-icon></span>Where</h3>
+              <h3><span class="k-cart__ico"><v-icon size="18">place</v-icon></span>{{ t("basket.where.title", "Where") }}</h3>
               <template v-if="is_valid_location && receiver_info?.address">
                 <p class="k-cart__addr">
                   <b v-if="receiver_info.name">{{ receiver_info.name }}</b>
@@ -126,28 +126,28 @@
                   <v-icon size="16">error_outline</v-icon>{{ error_message_payment }}
                 </p>
                 <button class="k-cart__link" type="button" @click="openAddress()">
-                  {{ error_message_payment ? "Add the missing details" : "Change" }}
+                  {{ error_message_payment ? t("basket.where.addMissing", "Add the missing details") : t("basket.change", "Change") }}
                 </button>
               </template>
               <template v-else>
                 <p>
                   {{
                     isService
-                      ? "Where the service takes place."
+                      ? t("basket.where.service", "Where the service takes place.")
                       : all_is_pickup
-                        ? "Your billing address."
-                        : "Your address, for the receipt and the seller."
+                        ? t("basket.where.billing", "Your billing address.")
+                        : t("address.lede.default", "Your address, for the receipt and the seller.")
                   }}
                 </p>
                 <button class="k-cart__map" type="button" @click="openAddress()">
-                  <v-icon size="18">place</v-icon>{{ no_map ? "Add your address" : "Add on the map" }}
+                  <v-icon size="18">place</v-icon>{{ no_map ? t("basket.addAddress", "Add your address") : t("basket.where.addOnMap", "Add on the map") }}
                 </button>
               </template>
             </section>
 
             <!-- Who -->
             <section class="k-cart__detail">
-              <h3><span class="k-cart__ico"><v-icon size="18">mail_outline</v-icon></span>Who</h3>
+              <h3><span class="k-cart__ico"><v-icon size="18">mail_outline</v-icon></span>{{ t("basket.who.title", "Who") }}</h3>
               <template v-if="user">
                 <div class="k-cart__user">
                   <img :src="getUserAvatar(user.id)" alt="" height="36" width="36" />
@@ -160,38 +160,38 @@
               <!-- Back from signing in (Google and the rest come back to this
                    page), the account is still on its way: not "Sign in". -->
               <p v-else-if="busy_user" class="k-cart__user -wait">
-                <v-progress-circular indeterminate size="18" width="2" />Checking your sign-in…
+                <v-progress-circular indeterminate size="18" width="2" />{{ t("basket.who.checking", "Checking your sign-in…") }}
               </p>
               <template v-else-if="has_guest_payment">
                 <p>
-                  We send the receipt here.
-                  <button class="k-cart__link -inline" type="button" @click="NeedLogin">Sign in</button>
+                  {{ t("basket.who.receipt", "We send the receipt here.") }}
+                  <button class="k-cart__link -inline" type="button" @click="NeedLogin">{{ t("common.signIn", "Sign in") }}</button>
                 </p>
                 <input
                   v-model.trim="guest_email"
                   :class="{ '-error': guest_email_touched && !guest_email_ok }"
-                  aria-label="Email"
+                  :aria-label="t('basket.who.email', 'Email')"
                   autocomplete="email"
                   class="k-cart__input"
                   inputmode="email"
-                  placeholder="Email"
+                  :placeholder="t('basket.who.email', 'Email')"
                   type="email"
                   @blur="onGuestEmail"
                 />
                 <small v-if="guest_email_touched && !guest_email_ok" class="k-cart__need">
-                  <v-icon size="16">error_outline</v-icon>Enter an email like name@example.com
+                  <v-icon size="16">error_outline</v-icon>{{ t("basket.who.emailHint", "Enter an email like name@example.com") }}
                 </small>
               </template>
               <template v-else>
-                <p>Sign in to place the order.</p>
-                <button class="k-btn k-btn--solid" type="button" @click="NeedLogin">Sign in</button>
+                <p>{{ t("basket.who.signInToOrder", "Sign in to place the order.") }}</p>
+                <button class="k-btn k-btn--solid" type="button" @click="NeedLogin">{{ t("common.signIn", "Sign in") }}</button>
               </template>
             </section>
           </div>
 
           <!-- Billing address and the shop's own checkout questions -->
           <section v-if="canPayAndComplete" class="k-cart__more">
-            <p class="k-eyebrow">Billing</p>
+            <p class="k-eyebrow">{{ t("basket.billing", "Billing") }}</p>
             <s-shop-billing-address-form
               v-model="billing"
               :receiver-info="receiver_info"
@@ -211,7 +211,7 @@
         <aside class="k-cart__side">
           <div :class="{ '-busy': busy_bill || refreshing_price }" class="k-cart__receipt">
             <u-loading-progress v-if="busy_save"></u-loading-progress>
-            <h2 class="t-step -summary"><span>3</span>Order summary <small>· {{ units }} {{ units === 1 ? "item" : "items" }}</small></h2>
+            <h2 class="t-step -summary"><span>3</span>{{ t("walio.checkout.summary", "Order summary") }} <small>· {{ t("cart.units", { one: "{n} item", other: "{n} items" }, { n: units }) }}</small></h2>
             <div class="k-cart__top">
               <p class="k-cart__total">
                 <u-loading-ellipsis v-if="busy_bill" css-mode light></u-loading-ellipsis>
@@ -219,29 +219,29 @@
                 <small v-if="isSubscription && subscription_period_obj">/ {{ $t(subscription_period_obj.title) }}</small>
               </p>
               <span v-if="saved_total >= 0.01" class="k-cart__save">
-                You save <u-price :amount="saved_total" :currency="basket.currency"></u-price>
+                {{ save_words[0] }}<u-price :amount="saved_total" :currency="basket.currency"></u-price>{{ save_words[1] }}
               </span>
             </div>
 
             <div v-if="bill" class="k-cart__rows">
               <p class="k-cart__row">
-                <span>Items ({{ units }})</span><u-price :amount="raw_items_price" :currency="basket.currency"></u-price>
+                <span>{{ t("basket.receipt.items", "Items ({n})", { n: units }) }}</span><u-price :amount="raw_items_price" :currency="basket.currency"></u-price>
               </p>
               <p v-if="total_items_discount" class="k-cart__row -save">
-                <span>You save</span><span>−<u-price :amount="total_items_discount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.youSave", "You save") }}</span><span>−<u-price :amount="total_items_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="total_offers_amount" class="k-cart__row -save">
-                <span>Offers</span><span>−<u-price :amount="total_offers_amount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.offers", "Offers") }}</span><span>−<u-price :amount="total_offers_amount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="cross_selling_discount > 0" class="k-cart__row -save">
-                <span>Bought together</span><span>−<u-price :amount="cross_selling_discount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.boughtTogether", "Bought together") }}</span><span>−<u-price :amount="cross_selling_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="discount_code_amount > 0" class="k-cart__row -save">
-                <span>Code{{ discount_code?.code ? ` ${discount_code.code}` : "" }}</span>
+                <span>{{ discount_code?.code ? t("basket.receipt.codeNamed", "Code {code}", { code: discount_code.code }) : t("basket.receipt.code", "Code") }}</span>
                 <span>−<u-price :amount="discount_code_amount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="customer_club_discount > 0" class="k-cart__row -save">
-                <span>Club</span><span>−<u-price :amount="customer_club_discount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.club", "Club") }}</span><span>−<u-price :amount="customer_club_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="coupon" class="k-cart__row -save">
                 <span>{{ coupon.title || $t("global.commons.coupon") }}</span>
@@ -256,10 +256,10 @@
                 <span>{{ $t("global.commons.my_wallet") }}</span><span>−<u-price :amount="wallet" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="!isService && receiver_info && is_valid_location" :class="{ '-free': shipping_cost === 0 }" class="k-cart__row">
-                <span>{{ all_is_pickup ? "Pickup" : "Delivery" }}</span>
+                <span>{{ all_is_pickup ? t("basket.receipt.pickup", "Pickup") : t("basket.receipt.delivery", "Delivery") }}</span>
                 <u-price v-if="shipping_cost > 0" :amount="shipping_cost" :currency="basket.currency"></u-price>
-                <span v-else-if="shipping_cost === 0">Free</span>
-                <span v-else>Paid on delivery</span>
+                <span v-else-if="shipping_cost === 0">{{ t("shipping.free", "Free") }}</span>
+                <span v-else>{{ t("shipping.paidOnDelivery", "Paid on delivery") }}</span>
               </p>
               <p v-if="bill.tax" class="k-cart__row">
                 <span>{{ $t("global.commons.tax") }}</span><u-price :amount="bill.tax" :currency="basket.currency"></u-price>
@@ -269,7 +269,7 @@
               </p>
             </div>
             <p v-else-if="!busy_bill" class="k-cart__need">
-              <v-icon size="16">error_outline</v-icon>We could not work out the bill. Please reload the page.
+              <v-icon size="16">error_outline</v-icon>{{ t("basket.receipt.billError", "We could not work out the bill. Please reload the page.") }}
             </p>
 
             <!-- Lottery prize with sizes: the shopper picks one -->
@@ -367,13 +367,13 @@
           {{ $t("basket_page.basket_empty") }}
         </h1>
         <p class="k-basket-empty__lede">
-          The aisles are stocked. Pick up where you left off.
+          {{ t("basket.empty.lede", "The aisles are stocked. Pick up where you left off.") }}
         </p>
         <router-link
           :to="{ name: window.$storefront.routes.SHOP_PAGE }"
           class="k-btn k-btn--solid"
         >
-          Start shopping
+          {{ t("pages.startShopping", "Start shopping") }}
         </router-link>
       </div>
 
@@ -392,7 +392,7 @@
       class="k-cart__bar"
     >
       <span class="k-cart__bar-total">
-        <small>Total</small>
+        <small>{{ t("basket.bar.total", "Total") }}</small>
         <u-price :amount="final_price" :currency="basket.currency"></u-price>
       </span>
       <button :class="{ '-off': !can_press_pay }" class="k-cart__go" type="button" @click="onPay">
@@ -415,10 +415,10 @@
       <div class="k-sheet">
         <div class="k-sheet__head">
           <div>
-            <h2>How should it reach you?</h2>
-            <p>The delivery method, and a day and time if you want one.</p>
+            <h2>{{ t("shipping.sheet.title", "How should it reach you?") }}</h2>
+            <p>{{ t("shipping.sheet.lede", "The delivery method, and a day and time if you want one.") }}</p>
           </div>
-          <button aria-label="Close" class="k-sheet__x" type="button" @click="delivery_sheet = false">
+          <button :aria-label="t('common.close', 'Close')" class="k-sheet__x" type="button" @click="delivery_sheet = false">
             <v-icon>close</v-icon>
           </button>
         </div>
@@ -450,7 +450,7 @@
           </p>
         </div>
         <div class="k-sheet__foot">
-          <button class="k-sheet__go" type="button" @click="delivery_sheet = false">Done</button>
+          <button class="k-sheet__go" type="button" @click="delivery_sheet = false">{{ t("common.done", "Done") }}</button>
         </div>
       </div>
     </v-dialog>
@@ -461,8 +461,8 @@
       v-model="address_sheet"
       :center="center"
       :countries="$shop.countries?.length ? $shop.countries : null"
-      :heading="isService ? 'Where should we come?' : all_is_pickup ? 'Your billing address' : 'Where should it go?'"
-      :lede="isService ? 'The address for the service.' : 'Your address, for the receipt and the seller.'"
+      :heading="isService ? t('address.title.service', 'Where should we come?') : all_is_pickup ? t('address.title.billing', 'Your billing address') : t('address.title.go', 'Where should it go?')"
+      :lede="isService ? t('address.lede.service', 'The address for the service.') : t('address.lede.default', 'Your address, for the receipt and the seller.')"
       :no-map="no_map"
       :receiver-info="receiver_info"
       @save="onClickSetLocation"
@@ -509,6 +509,7 @@ import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import KalioCartLines from "../../../components/kalio/checkout/KalioCartLines.vue";
 import KalioOftenAdded from "../../../components/kalio/KalioOftenAdded.vue";
 import KalioAddressSheet from "../../../components/kalio/checkout/KalioAddressSheet.vue";
+import { formatDate, t } from "../../../components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageBasketCart",
@@ -969,7 +970,20 @@ export default {
     address_line() {
       const info = this.receiver_info;
       if (!info) return "";
-      return [info.address, info.no && `No. ${info.no}`, info.unit && `Unit ${info.unit}`].filter(Boolean).join(", ");
+      return [
+        info.address,
+        info.no && t("basket.where.no", "No. {no}", { no: String(info.no) }),
+        info.unit && t("basket.where.unit", "Unit {unit}", { unit: String(info.unit) }),
+      ]
+        .filter(Boolean)
+        .join(", ");
+    },
+    /** "You save {amount}": the words before and after the price the
+     *  template draws, so a language can put the amount where it reads. */
+    save_words() {
+      const text = t("basket.receipt.youSaveAmount", "You save {amount}");
+      const at = text.indexOf("{amount}");
+      return at < 0 ? [text + " ", ""] : [text.slice(0, at), text.slice(at + "{amount}".length)];
     },
     /** Every way the shop has to send this basket (shipping methods, pickup
      *  points), from the bill. */
@@ -996,7 +1010,7 @@ export default {
       const info = this.delivery_info || {};
       const parts = [];
       if (info.date) {
-        parts.push(new Date(info.date).toLocaleDateString(this.$i18n?.locale || "en", { weekday: "short", month: "short", day: "numeric" }));
+        parts.push(formatDate(info.date, { weekday: "short", month: "short", day: "numeric" }));
       } else if (info.custom && info.days?.length && info.days.length < 7) {
         parts.push(info.days.map((day) => (WeekDays[day] ? this.$t(WeekDays[day].name).slice(0, 3) : day)).join(", "));
       }
@@ -1004,28 +1018,28 @@ export default {
         parts.push(info.time_spans.map((span) => (TimeSpans[span] ? this.$t(TimeSpans[span].name) : span)).join(", "));
       }
       if (!parts.length && this.transportation_now && this.transportation_now.type !== ShopTransportations.Pickup.code)
-        parts.push("Any time");
+        parts.push(t("shipping.anyTime", "Any time"));
       return parts.join(" · ");
     },
     when_text() {
-      const t = this.transportation_now;
-      if (!t) return "Choose how it reaches you.";
-      const name = this.transportationName(t);
-      if (t.type === ShopTransportations.Pickup.code) {
+      const way = this.transportation_now;
+      if (!way) return t("basket.delivery.chooseHow", "Choose how it reaches you.");
+      const name = this.transportationName(way);
+      if (way.type === ShopTransportations.Pickup.code) {
         const place = this.receiver_info?.title || this.receiver_info?.name || this.receiver_info?.address;
-        return place ? `Pickup from ${place}.` : `${name}.`;
+        return place ? t("basket.delivery.pickupFrom", "Pickup from {place}.", { place }) : t("basket.delivery.method", "{name}.", { name });
       }
-      return this.shipping_cost === 0 ? `${name}, free.` : `${name}.`;
+      return this.shipping_cost === 0 ? t("basket.delivery.methodFree", "{name}, free.", { name }) : t("basket.delivery.method", "{name}.", { name });
     },
     /* Walio: the four steps over the checkout. */
     steps() {
       const delivery = !this.has_delivery || this.isService || (this.is_valid_location && !this.error_message_payment);
       const contact = !!this.user || (this.has_guest_payment && !!this.guest_email && this.guest_email_ok);
       const list = [
-        { key: "cart", label: "Cart", done: true },
-        { key: "delivery", label: "Delivery", done: delivery },
-        { key: "contact", label: "Contact", done: contact },
-        { key: "pay", label: "Review & pay", done: false },
+        { key: "cart", label: t("walio.cart.title", "Cart"), done: true },
+        { key: "delivery", label: t("walio.checkout.stepDelivery", "Delivery"), done: delivery },
+        { key: "contact", label: t("walio.checkout.stepContact", "Contact"), done: contact },
+        { key: "pay", label: t("walio.checkout.stepPay", "Review & pay"), done: false },
       ];
       const now = list.findIndex((s) => !s.done);
       return list.map((s, i) => ({ ...s, state: s.done ? "-done" : i === now ? "-now" : "" }));
@@ -1049,12 +1063,12 @@ export default {
     },
     /** What still stands between the shopper and paying, in a line. */
     pay_blocker() {
-      if (!this.user && !this.has_guest_payment) return "Sign in to place the order.";
-      if (this.has_delivery && !this.is_valid_location) return "Add your address to pay.";
+      if (!this.user && !this.has_guest_payment) return t("basket.who.signInToOrder", "Sign in to place the order.");
+      if (this.has_delivery && !this.is_valid_location) return t("basket.pay.needAddress", "Add your address to pay.");
       if (this.error_message_payment) return this.error_message_payment;
-      if (this.enter_guest_email_error) return "Add your email to pay.";
-      if (!this.guest_email_ok) return "Check your email address.";
-      if (this.bill && !this.can_pay) return "This basket cannot be paid yet.";
+      if (this.enter_guest_email_error) return t("basket.pay.needEmail", "Add your email to pay.");
+      if (!this.guest_email_ok) return t("basket.pay.checkEmail", "Check your email address.");
+      if (this.bill && !this.can_pay) return t("basket.pay.cannotPay", "This basket cannot be paid yet.");
       if (
         this.payment_ways &&
         !this.payment_ways.length &&
@@ -1062,7 +1076,7 @@ export default {
         !this.is_service_need_pricing &&
         !this.isSubscription
       )
-        return "This shop is not taking payments yet. Please check back soon.";
+        return t("basket.pay.noGateways", "This shop is not taking payments yet. Please check back soon.");
       return null;
     },
     can_press_pay() {
@@ -1070,9 +1084,9 @@ export default {
     },
     pay_label() {
       if (this.is_service_need_pricing) return this.$t("basket_page.pre_confirm_service");
-      if (!this.user && !this.has_guest_payment) return "Sign in";
-      if (this.has_delivery && !this.is_valid_location) return "Add your address";
-      return "Pay";
+      if (!this.user && !this.has_guest_payment) return t("common.signIn", "Sign in");
+      if (this.has_delivery && !this.is_valid_location) return t("basket.addAddress", "Add your address");
+      return t("basket.pay.label", "Pay");
     },
     pay_label_short() {
       return this.is_service_need_pricing ? this.$t("basket_page.pre_confirm_service") : this.pay_label;
@@ -1129,7 +1143,7 @@ export default {
 
     this.type = this.$route.params.type;
 
-    this.setPageTitle("Open cart"); // Set Page Title!
+    this.setPageTitle(t("basket.pageTitle", "Open cart")); // Set Page Title!
 
     GtagEcommerce.MeasuringCheckoutSteps(this.basket, 0, "");
 
@@ -1484,8 +1498,8 @@ export default {
 
             this.fetchBasketAndShop();
             NotificationService.showSuccessAlert(
-              "Order submitted",
-              "Your order has been submitted successfully. We will send bill to you.",
+              t("basket.toast.submittedTitle", "Order submitted"),
+              t("basket.toast.submittedText", "Your order has been submitted successfully. We will send bill to you."),
             );
             this.$router.push({
               name: "MyServiceOrderInfoPage",

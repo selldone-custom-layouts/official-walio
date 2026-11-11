@@ -55,8 +55,12 @@
   --k-star-off: #858585; /* an empty star is an icon: 3:1 or more on white */
 
   /* Type */
-  --k-display: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --k-body: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* The script faces (Arabic, Gurmukhi, Devanagari) come after the Latin one:
+     a glyph Nunito Sans lacks falls through to them. kalio-i18n loads each
+     only when its language is picked; until then the system face shows. */
+  --k-scripts: "Noto Sans Arabic", "Noto Sans Gurmukhi", "Noto Sans Devanagari";
+  --k-display: "Nunito Sans", var(--k-scripts), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --k-body: "Nunito Sans", var(--k-scripts), system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Geometry */
   --k-radius: 10px;
@@ -135,8 +139,8 @@ s:has(> .u--price) {
     content: "";
     position: absolute;
     top: 55%;
-    right: -1px;
-    left: -1px;
+    inset-inline-end: -1px;
+    inset-inline-start: -1px;
     height: 1.5px;
     border-radius: 1px;
     background: currentColor;

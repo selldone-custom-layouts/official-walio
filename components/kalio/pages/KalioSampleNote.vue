@@ -11,19 +11,21 @@
   <aside class="k-sample" role="note">
     <v-icon size="20">science</v-icon>
     <p>
-      <b>Sample text — {{ shopTitle }} is a test shop.</b>{{ " " }}<slot />
+      <b>{{ t("sample.note", "Sample text — {shop} is a test shop.", { shop: shopTitle }) }}</b>{{ " " }}<slot />
     </p>
   </aside>
 </template>
 
 <script>
+import { t } from "../i18n/kalio-i18n";
+
 export default {
   name: "KalioSampleNote",
   inject: ["$shop"],
 
   computed: {
     shopTitle() {
-      return this.$shop?.title || "This shop";
+      return this.$shop?.title || t("sample.thisShop", "This shop");
     },
   },
 };

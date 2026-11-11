@@ -13,7 +13,7 @@
     <header v-if="kind !== 'PHYSICAL'" class="k-board__head">
       <div class="k-board__titles">
         <h2>{{ title }}</h2>
-        <p>Kept apart from your grocery orders.</p>
+        <p>{{ t("orders.kinds.apart", "Kept apart from your grocery orders.") }}</p>
       </div>
       <kalio-order-kinds :current="kind" />
     </header>
@@ -24,6 +24,7 @@
 <script lang="ts">
 import KalioOrderKinds from "../../../components/kalio/account/KalioOrderKinds.vue";
 import { otherKinds } from "../../../components/kalio/account/kalio-account";
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageUserOrders",
@@ -43,7 +44,7 @@ export default {
       return byRoute[this.$route.name] || "PHYSICAL";
     },
     title() {
-      return otherKinds().find((k) => k.key === this.kind)?.word || "Orders";
+      return otherKinds().find((k) => k.key === this.kind)?.word || t("orders.kind.orders", "Orders");
     },
   },
 
@@ -54,7 +55,7 @@ export default {
   },
 
   created() {
-    this.setPageTitle("My orders");
+    this.setPageTitle(t("account.pageTitle.orders", "My orders"));
     this.toGroceries();
   },
 

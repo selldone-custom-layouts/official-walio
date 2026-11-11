@@ -18,6 +18,7 @@
 import { reactive } from "vue";
 import { Basket } from "@selldone/core-js";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
+import { locale, t } from "../i18n/kalio-i18n";
 
 declare const window: any;
 
@@ -196,13 +197,14 @@ export function loadGiftcards(vm: any): Promise<number> {
 
 export const STATES = Object.values(Basket.PhysicalOrderStates || {}) as any[];
 
-/** The five steps as an order card names them, in STATES' order. */
+/** The five steps as an order card names them, in STATES' order (the
+ *  words are getters, so they follow the visitor's language). */
 export const TRAIL = [
-  { icon: "receipt_long", word: "Placed" },
-  { icon: "task_alt", word: "Accepted" },
-  { icon: "inventory_2", word: "Packing" },
-  { icon: "local_shipping", word: "On the way" },
-  { icon: "home", word: "Delivered" },
+  { icon: "receipt_long", get word() { return t("orders.step.placed", "Placed"); } },
+  { icon: "task_alt", get word() { return t("orders.step.accepted", "Accepted"); } },
+  { icon: "inventory_2", get word() { return t("orders.step.packing", "Packing"); } },
+  { icon: "local_shipping", get word() { return t("orders.step.onTheWay", "On the way"); } },
+  { icon: "home", get word() { return t("orders.step.delivered", "Delivered"); } },
 ];
 
 /** Where an order is, 0 (awaiting review) to 4 (delivered). */
@@ -216,26 +218,31 @@ export function stepOf(order: any): number {
  *   pay  — waiting for payment     go   — on the way
  *   ok   — delivered               off  — cancelled or rejected
  *   prep — with the shop (reviewed, confirmed, being prepared)
+ * `key` names the exact state: the word is in the visitor's language, so
+ * code compares the key, never the word.
  */
-export function standing(order: any): { tone: string; word: string; icon: string | null } {
-  if (!order) return { tone: "prep", word: "", icon: null };
-  if (order.status === "Canceled" || order.reject) return { tone: "off", word: order.reject ? "Not accepted" : "Cancelled", icon: "close" };
-  if (order.status === "Reserved") return { tone: "pay", word: "Waiting for payment", icon: "schedule" };
+export function standing(order: any): { tone: string; key: string; word: string; icon: string | null } {
+  if (!order) return { tone: "prep", key: "none", word: "", icon: null };
+  if (order.status === "Canceled" || order.reject)
+    return order.reject
+      ? { tone: "off", key: "rejected", word: t("orders.status.notAccepted", "Not accepted"), icon: "close" }
+      : { tone: "off", key: "cancelled", word: t("orders.status.cancelled", "Cancelled"), icon: "close" };
+  if (order.status === "Reserved") return { tone: "pay", key: "reserved", word: t("orders.status.waitingForPayment", "Waiting for payment"), icon: "schedule" };
   const state = order.delivery_state;
-  if (state === Basket.PhysicalOrderStates.ToCustomer.code) return { tone: "ok", word: "Delivered", icon: "check" };
-  if (state === Basket.PhysicalOrderStates.SentOrder.code) return { tone: "go", word: "On the way", icon: null };
-  if (state === Basket.PhysicalOrderStates.PreparingOrder.code) return { tone: "prep", word: "Being prepared", icon: "inventory_2" };
-  if (state === Basket.PhysicalOrderStates.OrderConfirm.code) return { tone: "prep", word: "Confirmed", icon: "thumb_up" };
-  return { tone: "prep", word: "With the shop", icon: "hourglass_top" };
+  if (state === Basket.PhysicalOrderStates.ToCustomer.code) return { tone: "ok", key: "delivered", word: t("orders.status.delivered", "Delivered"), icon: "check" };
+  if (state === Basket.PhysicalOrderStates.SentOrder.code) return { tone: "go", key: "sent", word: t("orders.status.onTheWay", "On the way"), icon: null };
+  if (state === Basket.PhysicalOrderStates.PreparingOrder.code) return { tone: "prep", key: "preparing", word: t("orders.status.beingPrepared", "Being prepared"), icon: "inventory_2" };
+  if (state === Basket.PhysicalOrderStates.OrderConfirm.code) return { tone: "prep", key: "confirmed", word: t("orders.status.confirmed", "Confirmed"), icon: "thumb_up" };
+  return { tone: "prep", key: "review", word: t("orders.status.withShop", "With the shop"), icon: "hourglass_top" };
 }
 
-/** The filters over the order list. */
+/** The filters over the order list (the words are getters, in the visitor's language). */
 export const FILTERS = [
-  { key: "all", word: "All", test: () => true },
-  { key: "go", word: "On the way", test: (o: any) => ["go", "prep"].includes(standing(o).tone) },
-  { key: "pay", word: "To pay", test: (o: any) => standing(o).tone === "pay" },
-  { key: "ok", word: "Delivered", test: (o: any) => standing(o).tone === "ok" },
-  { key: "off", word: "Cancelled", test: (o: any) => standing(o).tone === "off" },
+  { key: "all", get word() { return t("orders.filter.all", "All"); }, test: () => true },
+  { key: "go", get word() { return t("orders.filter.onTheWay", "On the way"); }, test: (o: any) => ["go", "prep"].includes(standing(o).tone) },
+  { key: "pay", get word() { return t("orders.filter.toPay", "To pay"); }, test: (o: any) => standing(o).tone === "pay" },
+  { key: "ok", get word() { return t("orders.filter.delivered", "Delivered"); }, test: (o: any) => standing(o).tone === "ok" },
+  { key: "off", get word() { return t("orders.filter.cancelled", "Cancelled"); }, test: (o: any) => standing(o).tone === "off" },
 ];
 
 /** "SM-1", from the full order once read; Selldone's own fallback before. */
@@ -258,10 +265,10 @@ export function productIds(order: any): number[] {
 export function paidWords(order: any): string {
   const full = account.details[order?.id];
   const gateway = full?.payment?.gateway?.name;
-  if (order.status === "Payed") return gateway ? `Paid · ${gateway}` : "Paid";
-  if (order.status === "COD") return "Pay on delivery";
-  if (order.status === "Reserved") return "Not paid yet";
-  if (order.status === "Canceled") return "Cancelled";
+  if (order.status === "Payed") return gateway ? t("orders.paid.with", "Paid · {gateway}", { gateway }) : t("orders.paid.paid", "Paid");
+  if (order.status === "COD") return t("orders.paid.onDelivery", "Pay on delivery");
+  if (order.status === "Reserved") return t("orders.paid.notYet", "Not paid yet");
+  if (order.status === "Canceled") return t("orders.paid.cancelled", "Cancelled");
   return "";
 }
 
@@ -286,32 +293,40 @@ export function sellersOf(order: any, vendorsById: Map<number, any>): string[] {
   return names;
 }
 
+/** "A, B and C", as the visitor's language writes a list. */
 export function joinNames(names: string[]): string {
   if (names.length <= 1) return names[0] || "";
-  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  try {
+    return new (Intl as any).ListFormat(locale(), { type: "conjunction" }).format(names);
+  } catch {
+    return t("orders.names.and", "{names} and {last}", { names: names.slice(0, -1).join(", "), last: names[names.length - 1] });
+  }
 }
 
 /** "Good morning", by the shopper's clock. */
 export function greeting(): string {
   const h = new Date().getHours();
-  if (h < 5) return "Good evening";
-  if (h < 12) return "Good morning";
-  if (h < 18) return "Good afternoon";
-  return "Good evening";
+  if (h < 5) return t("account.greeting.evening", "Good evening");
+  if (h < 12) return t("account.greeting.morning", "Good morning");
+  if (h < 18) return t("account.greeting.afternoon", "Good afternoon");
+  return t("account.greeting.evening", "Good evening");
 }
 
 /** The account's sections, in the order both designs show them. */
 export function sections(): { key: string; word: string; icon: string; route: any; group: string; user: boolean }[] {
   const r = window.$storefront.routes;
+  const shopping = t("account.group.shopping", "Shopping");
+  const money = t("account.group.money", "Money");
+  const you = t("account.group.you", "You");
   return [
-    { key: "orders", word: "Orders", icon: "receipt_long", route: { name: r.HISTORY_ORDERS_PHYSICAL }, group: "Shopping", user: false },
-    { key: "returns", word: "Returns", icon: "assignment_return", route: { name: r.USER_RETURN_REQUESTS }, group: "Shopping", user: true },
-    { key: "saved", word: "Saved", icon: "favorite_border", route: { name: r.USER_FAVORITES_PAGE }, group: "Shopping", user: true },
-    { key: "wallet", word: "Wallet", icon: "account_balance_wallet", route: { name: r.USER_WALLETS_PAGE }, group: "Money", user: true },
-    { key: "gift", word: "Gift cards", icon: "card_giftcard", route: { name: r.USER_GIFTCARDS_PAGE }, group: "Money", user: true },
-    { key: "addresses", word: "Addresses", icon: "place", route: { name: r.USER_ADDRESSES_PAGE }, group: "You", user: true },
-    { key: "reviews", word: "Reviews", icon: "rate_review", route: { name: r.USER_COMMENTS_PAGE }, group: "You", user: true },
-    { key: "profile", word: "Profile", icon: "person_outline", route: { name: r.USER_PROFILE_PAGE }, group: "You", user: true },
+    { key: "orders", word: t("account.section.orders", "Orders"), icon: "receipt_long", route: { name: r.HISTORY_ORDERS_PHYSICAL }, group: shopping, user: false },
+    { key: "returns", word: t("account.section.returns", "Returns"), icon: "assignment_return", route: { name: r.USER_RETURN_REQUESTS }, group: shopping, user: true },
+    { key: "saved", word: t("account.section.saved", "Saved"), icon: "favorite_border", route: { name: r.USER_FAVORITES_PAGE }, group: shopping, user: true },
+    { key: "wallet", word: t("account.section.wallet", "Wallet"), icon: "account_balance_wallet", route: { name: r.USER_WALLETS_PAGE }, group: money, user: true },
+    { key: "gift", word: t("account.section.giftCards", "Gift cards"), icon: "card_giftcard", route: { name: r.USER_GIFTCARDS_PAGE }, group: money, user: true },
+    { key: "addresses", word: t("account.section.addresses", "Addresses"), icon: "place", route: { name: r.USER_ADDRESSES_PAGE }, group: you, user: true },
+    { key: "reviews", word: t("account.section.reviews", "Reviews"), icon: "rate_review", route: { name: r.USER_COMMENTS_PAGE }, group: you, user: true },
+    { key: "profile", word: t("account.section.profile", "Profile"), icon: "person_outline", route: { name: r.USER_PROFILE_PAGE }, group: you, user: true },
   ];
 }
 
@@ -319,11 +334,11 @@ export function sections(): { key: string; word: string; icon: string; route: an
 export function otherKinds(): { key: string; word: string; route: any }[] {
   const r = window.$storefront.routes;
   return [
-    { key: "VIRTUAL", word: "Virtual items", route: { name: r.HISTORY_ORDERS_VIRTUAL } },
-    { key: "FILE", word: "Downloads", route: { name: r.HISTORY_ORDERS_FILE } },
-    { key: "SERVICE", word: "Services", route: { name: r.HISTORY_ORDERS_SERVICE } },
-    { key: "SUBSCRIPTION", word: "Subscriptions", route: { name: r.HISTORY_ORDERS_SUBSCRIPTION } },
-    { key: "POS", word: "In store", route: { name: r.HISTORY_ORDERS_POS } },
-    { key: "AVO", word: "Custom orders", route: { name: r.HISTORY_ORDERS_AVOCADO } },
+    { key: "VIRTUAL", word: t("orders.kind.virtual", "Virtual items"), route: { name: r.HISTORY_ORDERS_VIRTUAL } },
+    { key: "FILE", word: t("orders.kind.file", "Downloads"), route: { name: r.HISTORY_ORDERS_FILE } },
+    { key: "SERVICE", word: t("orders.kind.service", "Services"), route: { name: r.HISTORY_ORDERS_SERVICE } },
+    { key: "SUBSCRIPTION", word: t("orders.kind.subscription", "Subscriptions"), route: { name: r.HISTORY_ORDERS_SUBSCRIPTION } },
+    { key: "POS", word: t("orders.kind.pos", "In store"), route: { name: r.HISTORY_ORDERS_POS } },
+    { key: "AVO", word: t("orders.kind.avocado", "Custom orders"), route: { name: r.HISTORY_ORDERS_AVOCADO } },
   ];
 }

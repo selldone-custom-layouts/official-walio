@@ -18,16 +18,16 @@
     <section class="w-404__panel k-wrap">
       <div class="w-404__l">
         <span class="w-404__big">404</span>
-        <h1>We couldn't find that page</h1>
-        <p>It may have moved. Everything else is right where you left it — your cart included.</p>
+        <h1>{{ t("walio.404.title", "We couldn't find that page") }}</h1>
+        <p>{{ t("walio.404.text", "It may have moved. Everything else is right where you left it — your cart included.") }}</p>
         <div class="w-404__acts">
-          <router-link :to="{ path: '/' }" class="w-404__btn -solid">Back to the home page</router-link>
-          <router-link :to="catalogue" class="w-404__btn -ghost">Browse every product</router-link>
+          <router-link :to="{ path: '/' }" class="w-404__btn -solid">{{ t("walio.404.home", "Back to the home page") }}</router-link>
+          <router-link :to="catalogue" class="w-404__btn -ghost">{{ t("home.browseAll", "Browse every product") }}</router-link>
         </div>
       </div>
       <div :style="pic ? { backgroundImage: `url(${pic})` } : null" aria-hidden="true" class="w-404__r"></div>
     </section>
-    <walio-row :filter="{ only_has_discount: true }" :limit="12" :more-to="deals" title="Today's top deals" />
+    <walio-row :filter="{ only_has_discount: true }" :limit="12" :more-to="deals" :title="t('walio.404.deals', 'Today\'s top deals')" />
   </div>
 </template>
 

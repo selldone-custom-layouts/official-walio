@@ -9,7 +9,7 @@
 <template>
   <div
     v-if="count > 0 && rate > 0"
-    :aria-label="`Rated ${score} out of 5 by ${count} ${count === 1 ? 'person' : 'people'}`"
+    :aria-label="t('card.rating', { one: 'Rated {score} out of 5 by {n} person', other: 'Rated {score} out of 5 by {n} people' }, { n: count, score })"
     class="k-card-rate"
     role="img"
   >
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { t } from "./i18n/kalio-i18n";
+
 export default {
   name: "KalioCardRating",
 
@@ -41,7 +43,7 @@ export default {
     short() {
       const n = this.count;
       if (n < 1000) return String(n);
-      return (n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, "") + "k";
+      return t("card.thousands", "{n}k", { n: (n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, "") });
     },
   },
 };

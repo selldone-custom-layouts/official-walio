@@ -35,18 +35,18 @@
         raw-images-path
       ></products-dense-images-circles>
       <span class="k-ship__from">
-        <template v-if="warehouse?.title">From {{ warehouse.title }}</template>
+        <template v-if="warehouse?.title">{{ t("shipping.from", "From {place}", { place: warehouse.title }) }}</template>
       </span>
       <span v-if="cost !== null && cost !== undefined" :class="{ '-free': cost === 0 }" class="k-ship__cost">
         <u-price v-if="cost > 0" :amount="cost"></u-price>
-        <template v-else-if="cost === 0">Free</template>
-        <template v-else>Paid on delivery</template>
+        <template v-else-if="cost === 0">{{ t("shipping.free", "Free") }}</template>
+        <template v-else>{{ t("shipping.paidOnDelivery", "Paid on delivery") }}</template>
       </span>
     </header>
 
     <!-- How it gets there -->
     <template v-if="transportation_exclude_pickup?.length || pickups?.length">
-      <p class="k-ship__label">How you get it</p>
+      <p class="k-ship__label">{{ t("shipping.howLabel", "How you get it") }}</p>
       <div class="k-ship__ways">
         <button
           v-for="item in transportation_exclude_pickup"
@@ -62,10 +62,10 @@
           <span class="k-ship__name">
             <b>{{ item.title ? item.title : getShopTransportationObject(item.type) ? $t(getShopTransportationObject(item.type).name) : item.type }}</b>
             <!-- The parts joined with " · ", so no line starts with a dot. -->
-            <small>{{ [item.message, item.cod && cod_payment_exists ? "Pay on delivery" : "", item.sod ? "Pay at the door" : ""].filter(Boolean).join(" · ") }}</small>
+            <small>{{ [item.message, item.cod && cod_payment_exists ? t("shipping.payOnDelivery", "Pay on delivery") : "", item.sod ? t("shipping.payAtDoor", "Pay at the door") : ""].filter(Boolean).join(" · ") }}</small>
           </span>
           <span v-if="item.free_shipping" class="k-ship__free">
-            Free<template v-if="item.free_shipping_limit"> over {{ money(item.free_shipping_limit, item.currency, { short: "auto" }) }}</template>
+            {{ item.free_shipping_limit ? t("shipping.freeOver", "Free over {amount}", { amount: money(item.free_shipping_limit, item.currency, { short: "auto" }) }) : t("shipping.free", "Free") }}
           </span>
         </button>
 
@@ -80,10 +80,10 @@
           <span aria-hidden="true" class="k-ship__radio"></span>
           <span aria-hidden="true" class="k-ship__ico -pickup"><v-icon size="20">storefront</v-icon></span>
           <span class="k-ship__name">
-            <b>Pickup · {{ pickup.title || pickup.name || pickup.address }}</b>
+            <b>{{ t("shipping.pickupAt", "Pickup · {place}", { place: pickup.title || pickup.name || pickup.address }) }}</b>
             <small>{{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}<template v-if="pickup.phone"> · {{ pickup.phone }}</template></small>
           </span>
-          <span class="k-ship__free">Free</span>
+          <span class="k-ship__free">{{ t("shipping.free", "Free") }}</span>
         </button>
       </div>
     </template>
@@ -91,23 +91,23 @@
     <!-- When -->
     <template v-if="transportation">
       <template v-if="!showCustomDeliveryTimeButton">
-        <p class="k-ship__label">When</p>
-        <p class="k-ship__hint"><v-icon size="16">place</v-icon>Add your address first; the times depend on where it goes.</p>
+        <p class="k-ship__label">{{ t("shipping.when", "When") }}</p>
+        <p class="k-ship__hint"><v-icon size="16">place</v-icon>{{ t("shipping.addressFirst", "Add your address first; the times depend on where it goes.") }}</p>
       </template>
       <template v-else>
-        <p class="k-ship__label">When</p>
+        <p class="k-ship__label">{{ t("shipping.when", "When") }}</p>
         <div v-if="!need_ask_shipping_date" class="k-ship__modes">
           <button :class="{ '-on': !customDeliveryTimes }" class="k-ship__mode" type="button" @click="customDeliveryTimes = false">
-            <b>Any time</b><small>As soon as it is ready</small>
+            <b>{{ t("shipping.anyTime", "Any time") }}</b><small>{{ t("shipping.anyTimeHint", "As soon as it is ready") }}</small>
           </button>
           <button :class="{ '-on': customDeliveryTimes }" class="k-ship__mode" type="button" @click="customDeliveryTimes = true">
-            <b>Choose a time</b><small>Days and hours that suit you</small>
+            <b>{{ t("shipping.chooseTime", "Choose a time") }}</b><small>{{ t("shipping.chooseTimeHint", "Days and hours that suit you") }}</small>
           </button>
         </div>
 
         <div v-if="customDeliveryTimes" class="k-ship__times">
           <template v-if="[ETA.weekday_timeframe.code, ETA.weekday.code].includes(transportation?.eta)">
-            <p class="k-ship__sub">Days that suit you</p>
+            <p class="k-ship__sub">{{ t("shipping.days", "Days that suit you") }}</p>
             <div class="k-ship__days">
               <button
                 v-for="day in dayItems"
@@ -124,7 +124,7 @@
           </template>
 
           <template v-if="[ETA.weekday_timeframe.code, ETA.timeframe.code].includes(transportation?.eta)">
-            <p class="k-ship__sub">Parts of the day</p>
+            <p class="k-ship__sub">{{ t("shipping.parts", "Parts of the day") }}</p>
             <div class="k-ship__spans">
               <button
                 v-for="span in timeItems"
@@ -145,7 +145,7 @@
           </template>
 
           <template v-if="need_ask_shipping_date">
-            <p class="k-ship__sub">Date</p>
+            <p class="k-ship__sub">{{ t("shipping.date", "Date") }}</p>
             <input
               :min="minDate"
               :type="transportation.eta === ETA.date.code ? 'date' : 'datetime-local'"
@@ -158,7 +158,7 @@
 
         <p v-if="max_lead_time > 0 || transportation?.etd" class="k-ship__hint">
           <v-icon size="16">schedule</v-icon>
-          Ready in about {{ max_lead_time + (transportation?.etd ? transportation.etd : 0) }} hours.
+          {{ t("shipping.readyIn", { one: "Ready in about {n} hour.", other: "Ready in about {n} hours." }, { n: max_lead_time + (transportation?.etd ? transportation.etd : 0) }) }}
         </p>
       </template>
     </template>
@@ -168,6 +168,7 @@
 <script lang="ts">
 import { money } from "../../../components/region-switcher/region";
 import { defineComponent } from "vue";
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 import ProductsDenseImagesCircles from "@selldone/components-vue/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
 import { ETA } from "@selldone/core-js/enums/logistic/ETA.ts";
@@ -368,7 +369,7 @@ export default defineComponent({
         } else {
           out.push({
             value: item,
-            name: `Invalid ${item}`,
+            name: t("shipping.invalid", "Invalid {value}", { value: String(item) }),
             icon: null,
             props: { disabled: true },
           });
@@ -399,7 +400,7 @@ export default defineComponent({
         } else {
           out.push({
             value: item,
-            name: `Invalid ${item}`,
+            name: t("shipping.invalid", "Invalid {value}", { value: String(item) }),
             icon: null,
             props: { disabled: true },
           });

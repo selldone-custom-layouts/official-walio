@@ -90,7 +90,7 @@
             :filters="filters_def"
             :model-value="t_filter"
             :sort="t_sort"
-            :sort-fallback="category_name ? 'Featured' : 'Best match'"
+            :sort-fallback="category_name ? t('walio.sort.featured', 'Featured') : t('walio.sort.bestMatch', 'Best match')"
             @update:model-value="setFilter"
             @update:sort="setSort"
           />
@@ -98,7 +98,7 @@
             <walio-seller-main v-if="vendor_id" :key="'sm' + vendor_id" :vendor-id="vendor_id" />
             <div class="w-tools">
               <span v-if="catalogue_total !== null">
-                <b>{{ catalogue_total.toLocaleString() }} {{ catalogue_total === 1 ? "product" : "products" }}</b>
+                <b>{{ t("walio.shelf.products", { one: "{n} product", other: "{n} products" }, { n: catalogue_total }) }}</b>
                 <span class="w-tools__in">{{ where_line }}</span>
               </span>
               <walio-filter-rail
@@ -107,11 +107,11 @@
                 :model-value="t_filter"
                 :sort="t_sort"
                 compact
-                sort-fallback="Featured"
+                :sort-fallback="t('walio.sort.featured', 'Featured')"
                 @update:model-value="setFilter"
                 @update:sort="setSort"
               />
-              <walio-sort-menu v-else :model-value="t_sort" :fallback="category_name ? 'Featured' : 'Best match'" @update:model-value="setSort" />
+              <walio-sort-menu v-else :model-value="t_sort" :fallback="category_name ? t('walio.sort.featured', 'Featured') : t('walio.sort.bestMatch', 'Best match')" @update:model-value="setSort" />
             </div>
             <s-products-listing
               ref="listing"
@@ -131,11 +131,11 @@
 
         <!-- ▆▆▆▆▆▆▆▆ Under the grid ▆▆▆▆▆▆▆▆ -->
         <template v-if="!vendor_id">
-          <walio-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
+          <walio-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" :title="t('walio.listing.popular', 'Popular right now')" />
           <section v-if="more_aisles.length" class="t-keep">
-            <h2 class="t-keep__h">Keep shopping</h2>
+            <h2 class="t-keep__h">{{ t("walio.listing.keep", "Keep shopping") }}</h2>
             <div class="t-keep__list">
-              <router-link v-for="a in more_aisles" :key="a.id" :to="aisleTo(a)">{{ a.title || a.name }}</router-link>
+              <router-link v-for="a in more_aisles" :key="a.id" :to="aisleTo(a)"><bdi>{{ a.title || a.name }}</bdi></router-link>
             </div>
           </section>
         </template>
@@ -155,6 +155,7 @@ import WalioShelfTop from "../../components/walio/shop/WalioShelfTop.vue";
 import WalioFilterRail from "../../components/walio/shop/WalioFilterRail.vue";
 import WalioRow from "../../components/walio/WalioRow.vue";
 import { fromRoute } from "../../components/walio/shop/walio-filters";
+import { t } from "../../components/kalio/i18n/kalio-i18n";
 import { aisleRoute, aisles, countProducts, offers, vendors } from "../../components/kalio/kalio-catalog";
 import WalioSellerSide from "../../components/walio/shop/WalioSellerSide.vue";
 import WalioSellerMain from "../../components/walio/shop/WalioSellerMain.vue";
@@ -235,9 +236,9 @@ export default {
 
     /* "in Dairy & Eggs", "for “milk”", "from Mason". */
     where_line() {
-      if (this.vendor_id) return "from this seller";
-      if (this.category_name) return `in ${this.listing_parent?.title || this.category_name}`;
-      if (this.search_query) return `for “${this.search_query}”`;
+      if (this.vendor_id) return t("walio.listing.fromSeller", "from this seller");
+      if (this.category_name) return t("walio.listing.inAisle", "in {aisle}", { aisle: this.listing_parent?.title || this.category_name });
+      if (this.search_query) return t("walio.listing.forSearch", "for “{q}”", { q: this.search_query });
       return "";
     },
 

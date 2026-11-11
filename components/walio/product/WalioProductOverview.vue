@@ -13,7 +13,7 @@
   <div :style="{ '--k-tint': tint }" class="k-pdp w-pdp">
     <div class="k-pdp__grid">
       <!-- ▆▆▆▆▆▆▆▆ Packshot ▆▆▆▆▆▆▆▆ -->
-      <section v-if="showCover" aria-label="Product images" class="k-pdp__media">
+      <section v-if="showCover" :aria-label="t('pdp.images', 'Product images')" class="k-pdp__media">
         <div class="k-pdp__stage">
           <s-shop-product-slide-show :current-variant="current_variant" :vertical="false" />
         </div>
@@ -25,7 +25,7 @@
           v-if="$product.brand"
           :to="{ name: window.$storefront.routes.SHOP_PAGE, query: { search: $product.brand } }"
           class="w-pdp__brand"
-          >Shop all {{ $product.brand }}</router-link
+          >{{ t("walio.pdp.shopAll", "Shop all {brand}", { brand: $product.brand }) }}</router-link
         >
         <router-link v-else-if="aisle" :to="aisleRoute" class="w-pdp__brand">{{ aisle.title || aisle.name }}</router-link>
 
@@ -39,7 +39,7 @@
           <span :style="{ '--k-rate': $product.rate }" class="k-stars"></span>
           <b>{{ numeralFormat($product.rate, "0.0") }}</b>
           <a class="k-pdp__rating-link" href="#k-reviews" @click.prevent="toReviews">
-            {{ numeralFormat($product.rate_count, "0,0") }} {{ $product.rate_count === 1 ? "rating" : "ratings" }}
+            {{ t("reviews.ratingCount", { one: "{n} rating", other: "{n} ratings" }, { n: $product.rate_count }) }}
           </a>
         </div>
 
@@ -85,8 +85,8 @@
 
         <!-- How do you want it? (product page A): the shop's ways, with what each costs -->
         <template v-if="ways.length">
-          <p class="w-pdp__lbl">How do you want it?</p>
-          <div :class="'-n' + ways.length" class="w-ful" role="radiogroup" aria-label="How do you want it?">
+          <p class="w-pdp__lbl">{{ t("walio.pdp.how", "How do you want it?") }}</p>
+          <div :class="'-n' + ways.length" class="w-ful" role="radiogroup" :aria-label="t('walio.pdp.how', 'How do you want it?')">
             <button
               v-for="w in ways"
               :key="w.key"
@@ -100,10 +100,10 @@
               <v-icon size="22">{{ w.icon }}</v-icon>
               <span class="w-ful__tx">
                 <b>{{ w.word }}</b>
-                <span>{{ w.key === "Pickup" ? "At the shop" : w.key === "Delivery" ? "To your door" : "To your address" }}</span>
-                <em v-if="w.free">Free</em>
-                <em v-else-if="w.freeOver">Free over {{ money(w.freeOver, w.currency, "auto") }}</em>
-                <em v-else class="-n">Price with your address</em>
+                <span>{{ w.key === "Pickup" ? t("walio.way.atShop", "At the shop") : w.key === "Delivery" ? t("walio.way.toDoor", "To your door") : t("walio.way.toAddress", "To your address") }}</span>
+                <em v-if="w.free">{{ t("shipping.free", "Free") }}</em>
+                <em v-else-if="w.freeOver">{{ t("shipping.freeOver", "Free over {amount}", { amount: money(w.freeOver, w.currency, "auto") }) }}</em>
+                <em v-else class="-n">{{ t("walio.way.priceWithAddress", "Price with your address") }}</em>
               </span>
             </button>
           </div>
@@ -216,6 +216,7 @@
 <script>
 import KalioProductOverview from "../../kalio/product/KalioProductOverview.vue";
 import { money, waysOf } from "../walio-home";
+import { t } from "../../kalio/i18n/kalio-i18n";
 
 export default {
   name: "WalioProductOverview",
@@ -233,9 +234,9 @@ export default {
     perks() {
       const out = [];
       const ship = this.ways.find((w) => w.freeOver);
-      if (ship) out.push({ icon: "local_shipping", text: `Free ${ship.word.toLowerCase()} on orders over ${this.money(ship.freeOver, ship.currency, "auto")}` });
+      if (ship) out.push({ icon: "local_shipping", text: t("walio.pdp.perkFree", "Free {way} on orders over {amount}", { way: ship.word.toLowerCase(), amount: this.money(ship.freeOver, ship.currency, "auto") }) });
       const pick = this.ways.find((w) => w.key === "Pickup" && w.free);
-      if (pick) out.push({ icon: "storefront", text: "Free pickup at the shop" });
+      if (pick) out.push({ icon: "storefront", text: t("walio.pdp.perkPickup", "Free pickup at the shop") });
       return out;
     },
   },

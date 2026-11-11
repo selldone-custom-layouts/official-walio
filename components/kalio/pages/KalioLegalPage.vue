@@ -18,8 +18,8 @@
     <header class="k-legal__head">
       <h1 class="k-official__title">{{ title }}</h1>
       <p v-if="!busy" class="k-legal__date">
-        Last updated
-        <b>{{ updated || "Sample — not published" }}</b>
+        {{ t("legal.lastUpdated", "Last updated") }}
+        <b>{{ updated || t("legal.samplePublished", "Sample — not published") }}</b>
       </p>
     </header>
 
@@ -29,14 +29,14 @@
       <kalio-sample-note v-if="missing" class="k-legal__note">
         {{
           kind === "terms"
-            ? `These terms are general text written to show the page. They are not ${shopTitle}'s real terms and do not form an agreement.`
-            : `This policy is general text written to show the page. It is not ${shopTitle}'s real privacy policy.`
+            ? t("legal.note.terms", "These terms are general text written to show the page. They are not {shop}'s real terms and do not form an agreement.", { shop: shopTitle })
+            : t("legal.note.privacy", "This policy is general text written to show the page. It is not {shop}'s real privacy policy.", { shop: shopTitle })
         }}
       </kalio-sample-note>
 
       <!-- Walio 1.1.0 (Terms and Privacy design B): the short version as four
            cards, and the sections as folding rows. -->
-      <section v-if="missing" aria-label="The short version" class="w-cards4">
+      <section v-if="missing" :aria-label="t('legal.short', 'The short version')" class="w-cards4">
         <div v-for="(line, i) in sample.short.slice(0, 4)" :key="line">
           <v-icon size="26">{{ ["storefront", "payments", "assignment_return", "chat_bubble_outline"][i] }}</v-icon>
           <p>{{ line }}</p>
@@ -44,8 +44,8 @@
       </section>
 
       <div :class="{ '-solo': !toc.length || missing }" class="k-legal__cols">
-        <nav v-if="toc.length && !missing" aria-label="On this page" class="k-legal__toc">
-          <p>On this page</p>
+        <nav v-if="toc.length && !missing" :aria-label="t('legal.onThisPage', 'On this page')" class="k-legal__toc">
+          <p>{{ t("legal.onThisPage", "On this page") }}</p>
           <a
             v-for="entry in toc"
             :key="entry.id"
@@ -78,17 +78,17 @@
           <div v-else ref="real" class="k-legal__real" v-html="profile.body"></div>
 
           <section v-if="kind === 'terms'" id="k-legal-ask" class="k-legal__sec -last">
-            <h2><span>?</span>Questions</h2>
-            <p>Write to the shop from the Contact page. For an order, use the message thread on the order page.</p>
+            <h2><span>?</span>{{ t("legal.questions", "Questions") }}</h2>
+            <p>{{ t("legal.questionsText", "Write to the shop from the Contact page. For an order, use the message thread on the order page.") }}</p>
             <div class="k-legal__acts">
-              <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--solid">Contact the shop</router-link>
-              <router-link :to="{ name: 'ShopFAQ' }" class="k-btn k-btn--line">Questions and answers</router-link>
+              <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--solid">{{ t("contact.shop", "Contact the shop") }}</router-link>
+              <router-link :to="{ name: 'ShopFAQ' }" class="k-btn k-btn--line">{{ t("faq.title", "Questions and answers") }}</router-link>
             </div>
           </section>
 
           <section v-else id="k-legal-cookies" class="k-legal__sec -last">
-            <h2><span>★</span>Your cookie choices</h2>
-            <p>Change these at any time on this page.</p>
+            <h2><span>★</span>{{ t("legal.cookies", "Your cookie choices") }}</h2>
+            <p>{{ t("legal.cookiesText", "Change these at any time on this page.") }}</p>
             <kalio-cookie-choices />
           </section>
         </div>
@@ -102,6 +102,7 @@ import KalioSampleNote from "./KalioSampleNote.vue";
 import KalioCookieChoices from "./KalioCookieChoices.vue";
 import { plainText, privacySample, termsSample } from "./kalio-sample-pages";
 import { dateParts } from "./kalio-journal";
+import { t } from "../i18n/kalio-i18n";
 
 export default {
   name: "KalioLegalPage",
@@ -123,10 +124,10 @@ export default {
 
   computed: {
     shopTitle() {
-      return this.$shop?.title || "This shop";
+      return this.$shop?.title || t("sample.thisShop", "This shop");
     },
     title() {
-      return this.kind === "terms" ? "Terms of use" : "Privacy";
+      return this.kind === "terms" ? t("legal.title.terms", "Terms of use") : t("legal.title.privacy", "Privacy");
     },
     sample() {
       return this.kind === "terms" ? termsSample(this.shopTitle) : privacySample(this.shopTitle);
@@ -141,8 +142,8 @@ export default {
       if (!head.length) return [];
       const tail =
         this.kind === "terms"
-          ? { id: "k-legal-ask", mark: "?", title: "Questions" }
-          : { id: "k-legal-cookies", mark: "★", title: "Your cookie choices" };
+          ? { id: "k-legal-ask", mark: "?", title: t("legal.questions", "Questions") }
+          : { id: "k-legal-cookies", mark: "★", title: t("legal.cookies", "Your cookie choices") };
       return [...head, tail];
     },
   },

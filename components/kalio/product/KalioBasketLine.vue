@@ -18,14 +18,18 @@
     <p class="k-basket-line__cap">
       <i aria-hidden="true"></i>
       <template v-if="shown > 0">
-        {{ shown }} in your basket<template v-if="seller">, from {{ seller }}</template>
+        {{
+          seller
+            ? t("pdp.basket.inBasketFrom", { one: "{n} in your basket, from {seller}", other: "{n} in your basket, from {seller}" }, { n: shown, seller: seller })
+            : t("pdp.basket.inBasket", { one: "{n} in your basket", other: "{n} in your basket" }, { n: shown })
+        }}
       </template>
-      <template v-else>Taking it out of your basket…</template>
+      <template v-else>{{ t("pdp.basket.removing", "Taking it out of your basket…") }}</template>
     </p>
     <div class="k-basket-line__row">
-      <div aria-label="Quantity in basket" class="k-basket-line__qty" role="group">
+      <div :aria-label="t('pdp.basket.qty', 'Quantity in basket')" class="k-basket-line__qty" role="group">
         <button
-          :aria-label="shown > 1 ? 'One fewer' : 'Remove from basket'"
+          :aria-label="shown > 1 ? t('pdp.basket.oneFewer', 'One fewer') : t('pdp.basket.remove', 'Remove from basket')"
           :disabled="shown <= 0"
           type="button"
           @click="step(-1)"
@@ -33,12 +37,12 @@
           <v-icon size="22">{{ shown > 1 ? "remove" : "delete_outline" }}</v-icon>
         </button>
         <output aria-live="polite">{{ shown }}</output>
-        <button :disabled="shown >= max" aria-label="One more" type="button" @click="step(1)">
+        <button :disabled="shown >= max" :aria-label="t('pdp.basket.oneMore', 'One more')" type="button" @click="step(1)">
           <v-icon size="22">add</v-icon>
         </button>
       </div>
       <router-link :to="checkoutRoute" class="k-basket-line__go">
-        Checkout
+        {{ t("pdp.basket.checkout", "Checkout") }}
         <template v-if="total !== null">
           <span aria-hidden="true">·</span>
           <span>{{ money(total, currency) }}</span>

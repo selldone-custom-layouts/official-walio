@@ -10,21 +10,21 @@
 -->
 <template>
   <div class="w-top">
-    <nav aria-label="Breadcrumb" class="t-crumbs">
+    <nav :aria-label="t('listing.breadcrumb', 'Breadcrumb')" class="t-crumbs">
       <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE }">{{ $shop.title }}</router-link>
-      <v-icon aria-hidden="true" size="16">chevron_right</v-icon>
+      <v-icon aria-hidden="true" class="k-flip" size="16">chevron_right</v-icon>
       <span aria-current="page">{{ crumb }}</span>
     </nav>
 
     <section v-if="mode === 'aisle'" :style="{ background: tint }" class="w-banner">
       <div class="w-banner__tx">
-        <small>Aisle</small>
+        <small>{{ t("walio.shelf.aisle", "Aisle") }}</small>
         <h1>{{ aisle ? aisle.title || aisle.name : "" }}</h1>
         <p v-if="aisle && aisle.description">{{ aisle.description }}</p>
         <div class="w-banner__facts">
-          <span v-if="total !== null">{{ total.toLocaleString() }} {{ total === 1 ? "product" : "products" }}</span>
-          <span v-if="onSale" class="-hot"><v-icon size="16">local_offer</v-icon>{{ onSale.toLocaleString() }} on sale</span>
-          <span v-if="sellers.length">{{ sellers.length === 1 ? `Sold by ${sellers[0]}` : `${sellers.length} sellers` }}</span>
+          <span v-if="total !== null">{{ t("walio.shelf.products", { one: "{n} product", other: "{n} products" }, { n: total }) }}</span>
+          <span v-if="onSale" class="-hot"><v-icon size="16">local_offer</v-icon>{{ t("walio.shelf.onSale", "{n} on sale", { n: onSale }) }}</span>
+          <span v-if="sellers.length">{{ sellers.length === 1 ? t("seller.soldBy", "Sold by {name}", { name: sellers[0] }) : t("walio.shelf.sellers", { one: "{n} seller", other: "{n} sellers" }, { n: sellers.length }) }}</span>
         </div>
       </div>
       <div aria-hidden="true" class="w-banner__packs">
@@ -35,24 +35,24 @@
     <template v-else>
       <div class="t-top__q">
         <h1 class="t-top__h1">{{ title }}</h1>
-        <span v-if="total !== null" class="t-top__count">{{ total.toLocaleString() }} {{ total === 1 ? "product" : "products" }}</span>
+        <span v-if="total !== null" class="t-top__count">{{ t("walio.shelf.products", { one: "{n} product", other: "{n} products" }, { n: total }) }}</span>
       </div>
       <div v-if="hits.length" class="t-inaisles">
-        <span class="t-inaisles__l">In aisles:</span>
+        <span class="t-inaisles__l">{{ t("walio.shelf.inAisles", "In aisles:") }}</span>
         <router-link v-for="h in hits" :key="h.aisle.id" :to="h.to" class="t-inaisles__a">
-          <img v-if="h.image" :src="h.image" alt="" />{{ h.aisle.title || h.aisle.name }}<b v-if="h.count">{{ h.count }}</b>
+          <img v-if="h.image" :src="h.image" alt="" /><bdi>{{ h.aisle.title || h.aisle.name }}</bdi><b v-if="h.count">{{ h.count }}</b>
         </router-link>
       </div>
       <router-link v-if="search && top" :to="productTo(top)" class="w-match">
         <span class="w-match__im"><img :src="image(top, false)" :srcset="srcset(top)" alt="" sizes="(max-width: 760px) 96px, 200px" @error="dropSrcset" /></span>
         <span class="w-match__tx">
-          <small>Top match</small>
+          <small>{{ t("walio.shelf.topMatch", "Top match") }}</small>
           <b>{{ top.title }}</b>
           <span class="w-match__price">
             <u-price :amount="price(top).now" :currency="price(top).currency" :class="{ '-sale': price(top).was }" />
             <s v-if="price(top).was"><u-price :amount="price(top).was" :currency="price(top).currency" /></s>
           </span>
-          <em>See the product<v-icon size="18">chevron_right</v-icon></em>
+          <em>{{ t("walio.shelf.seeProduct", "See the product") }}<v-icon class="k-flip" size="18">chevron_right</v-icon></em>
         </span>
       </router-link>
     </template>
@@ -61,6 +61,7 @@
 
 <script>
 import { currentCurrency } from "../../region-switcher/region";
+import { t } from "../../kalio/i18n/kalio-i18n";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { aisleImage, aisleIndex, dropSrcset, priceOf, productImage, productSrcset, tintFor } from "../../kalio/kalio-catalog";
 
@@ -95,13 +96,13 @@ export default {
       return !!this.filter?.only_has_discount;
     },
     title() {
-      if (this.search) return `Results for “${this.search}”`;
-      if (this.deals) return "Today’s deals";
-      return "All products";
+      if (this.search) return t("walio.shelf.results", "Results for “{q}”", { q: this.search });
+      if (this.deals) return t("walio.shelf.todaysDeals", "Today’s deals");
+      return t("walio.shelf.all", "All products");
     },
     crumb() {
       if (this.mode === "aisle") return this.aisle ? this.aisle.title || this.aisle.name : this.categoryName;
-      return this.search ? "Search" : this.title;
+      return this.search ? t("walio.shelf.search", "Search") : this.title;
     },
     tint() {
       return tintFor(this.aisle) || "#e6f1fc";

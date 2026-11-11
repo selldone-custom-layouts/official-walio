@@ -14,6 +14,9 @@
 }
 
 /* Right-pointing chevrons point the other way in a right-to-left language. */
+/* <html dir> is set by kalio-i18n on a language pick, so teleported
+   panels (outside v-app) flip too. */
+html[dir="rtl"] .k-flip,
 .v-locale--is-rtl .k-flip {
   transform: scaleX(-1);
 }
@@ -852,10 +855,12 @@ a.k-by:hover {
       bottom: -6px;
       gap: 2px;
 
+      /* A little lower than before, so a longer "from" line (Arabic, French)
+         clears the packshots under a two-line aisle name. */
       img {
         width: 66px;
-        height: 110px;
-        margin-bottom: -17px;
+        height: 100px;
+        margin-bottom: -20px;
       }
     }
 
@@ -997,8 +1002,8 @@ $k-shelf-pic-phone: 150px;
       content: "";
       position: absolute;
       top: $k-shelf-pic;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       height: 18px;
       background: linear-gradient(#e9d9bc, #d8c39d);
       box-shadow: 0 14px 18px -12px rgba(92, 66, 28, 0.55);
@@ -1274,8 +1279,8 @@ $k-shelf-pic-phone: 150px;
         content: "";
         position: absolute;
         top: $k-shelf-pic;
-        left: -48px;
-        right: -48px;
+        inset-inline-start: -48px;
+        inset-inline-end: -48px;
         height: 18px;
         background: linear-gradient(#e9d9bc, #d8c39d);
         box-shadow: 0 14px 18px -12px rgba(92, 66, 28, 0.55);
@@ -1307,8 +1312,8 @@ $k-shelf-pic-phone: 150px;
 
       &::after {
         top: $k-shelf-pic-phone;
-        left: -20px;
-        right: -20px;
+        inset-inline-start: -20px;
+        inset-inline-end: -20px;
       }
     }
 
@@ -1627,8 +1632,8 @@ $k-shelf-pic-phone: 150px;
       &::after {
         content: "";
         position: absolute;
-        left: 0;
-        right: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
         bottom: -1px;
         height: 2px;
         border-radius: 2px;

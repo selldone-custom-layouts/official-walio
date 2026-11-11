@@ -13,7 +13,7 @@
   aisle's cheapest products, by Selldone's own pricing.
 -->
 <template>
-  <section v-if="tiles.length" aria-label="Aisle picks" class="k-mosaic k-wrap">
+  <section v-if="tiles.length" :aria-label="t('mosaic.label', 'Aisle picks')" class="k-mosaic k-wrap">
     <router-link
       v-for="tile in tiles"
       :key="tile.key"
@@ -29,7 +29,7 @@
       <span class="k-mtile__title">{{ tile.title }}</span>
       <span v-if="tile.lede" class="k-mtile__lede">{{ tile.lede }}</span>
       <span v-if="tile.from" class="k-mtile__from">
-        from <u-price :amount="tile.from" :currency="currency" />
+        <template v-for="(part, i) in t('mosaic.from', 'from {price}').split('{price}')" :key="i"><u-price v-if="i" :amount="tile.from" :currency="currency" />{{ part }}</template>
       </span>
       <span v-else-if="tile.note" class="k-mtile__from">{{ tile.note }}</span>
       <span :class="tile.kind === 'lead' ? 'k-btn k-btn--solid' : 'k-mtile__go'">
@@ -37,9 +37,9 @@
         <v-icon class="k-flip" size="18">chevron_right</v-icon>
       </span>
       <span v-if="tile.sticker" aria-hidden="true" class="k-mtile__sticker">
-        <small>Up to</small>
+        <small>{{ t("mosaic.sticker.upTo", "Up to") }}</small>
         <strong>{{ tile.sticker }}%</strong>
-        <small>off</small>
+        <small>{{ t("mosaic.sticker.off", "off") }}</small>
       </span>
       <span aria-hidden="true" class="k-mtile__pics">
         <img v-for="product in tile.pics" :key="product.id" :src="picture(product)" :srcset="srcset(product)" alt="" loading="lazy" sizes="(max-width: 600px) 30vw, 140px" @error="dropSrcset" />
@@ -64,17 +64,19 @@ import {
   vendorImage,
   vendors,
 } from "./kalio-catalog";
+import { t } from "./i18n/kalio-i18n";
 
-const HEADLINES = [
-  [/breakfast|cereal/i, "Breakfast, sorted"],
-  [/snack/i, "The snack drawer"],
-  [/produce|fruit|veg/i, "Picked for the week"],
-  [/dairy|egg|milk/i, "Fridge, restocked"],
-  [/bread|bakery/i, "Fresh from the oven"],
-  [/meat|seafood|fish/i, "From the butcher’s counter"],
-  [/pantry/i, "Stock the cupboard"],
-  [/beverage|drink/i, "Something to sip"],
-  [/frozen/i, "Ready when you are"],
+/* Read when a tile is drawn, so the lines follow the visitor's language. */
+const HEADLINES = () => [
+  [/breakfast|cereal/i, t("mosaic.headline.breakfast", "Breakfast, sorted")],
+  [/snack/i, t("mosaic.headline.snack", "The snack drawer")],
+  [/produce|fruit|veg/i, t("mosaic.headline.produce", "Picked for the week")],
+  [/dairy|egg|milk/i, t("mosaic.headline.dairy", "Fridge, restocked")],
+  [/bread|bakery/i, t("mosaic.headline.bakery", "Fresh from the oven")],
+  [/meat|seafood|fish/i, t("mosaic.headline.meat", "From the butcher’s counter")],
+  [/pantry/i, t("mosaic.headline.pantry", "Stock the cupboard")],
+  [/beverage|drink/i, t("mosaic.headline.beverage", "Something to sip")],
+  [/frozen/i, t("mosaic.headline.frozen", "Ready when you are")],
 ];
 const SELLER_GROUND = "#fbe6d8";
 
@@ -93,7 +95,8 @@ export default {
 
   data() {
     return {
-      tiles: [],
+      /* The tiles' facts; their words are added in tiles, in the visitor's language. */
+      built: [],
     };
   },
 
@@ -103,6 +106,26 @@ export default {
     },
     currency() {
       return currentCurrency();
+    },
+    tiles() {
+      return this.built.map((tile) => {
+        if (tile.kind === "seller") {
+          return {
+            ...tile,
+            eyebrow: t("seller.label", "Seller"),
+            title: t("mosaic.seller.title", "{name}’s shelf", { name: tile.name }),
+            note: t("listing.productCount", { one: "{n} product", other: "{n} products" }, { n: tile.count }),
+            cta: t("mosaic.seller.cta", "Visit the shop"),
+          };
+        }
+        const lead = tile.kind === "lead";
+        return {
+          ...tile,
+          eyebrow: lead ? tile.name : t("mosaic.aisle.eyebrow", "Aisle"),
+          title: lead ? this.headline(tile.aisle) : tile.name,
+          cta: lead ? t("mosaic.lead.cta", "Shop {aisle}", { aisle: tile.name.toLowerCase() }) : t("mosaic.aisle.cta", "Shop the aisle"),
+        };
+      });
     },
   },
 
@@ -133,7 +156,7 @@ export default {
 
     headline(aisle) {
       const label = `${aisle.title || ""} ${aisle.name || ""}`;
-      const hit = HEADLINES.find(([pattern]) => pattern.test(label));
+      const hit = HEADLINES().find(([pattern]) => pattern.test(label));
       return hit ? hit[1] : aisle.title || aisle.name;
     },
 
@@ -163,11 +186,10 @@ export default {
           key: "aisle-" + aisle.id,
           kind: lead ? "lead" : "aisle",
           ground: lead ? deepen(tintFor(aisle)) : tintFor(aisle),
-          eyebrow: lead ? title : "Aisle",
-          title: lead ? this.headline(aisle) : title,
+          aisle,
+          name: title,
           lede: lead ? aisle.description || null : null,
           from: lead || !Number.isFinite(from) ? null : from,
-          cta: lead ? `Shop ${title.toLowerCase()}` : "Shop the aisle",
           to: aisleRoute(aisle),
           sticker: lead ? Math.max(0, ...seen.map((product) => percentOff(this.shop, product))) || null : null,
           pics: popular,
@@ -184,18 +206,16 @@ export default {
           key: "seller-" + seller.id,
           kind: "seller",
           ground: SELLER_GROUND,
-          eyebrow: "Seller",
           mark: vendorImage(seller, true),
-          title: `${seller.name}’s shelf`,
-          note: `${shelf.length} products`,
-          cta: "Visit the shop",
+          name: seller.name,
+          count: shelf.length,
           to: sellerRoute(seller),
           /* Two packs from two different aisles of their shelf. */
           pics: [shelf[0], shelf.find((product) => product.category_id !== shelf[0].category_id)].filter(Boolean),
         });
       }
 
-      this.tiles = tiles;
+      this.built = tiles;
     },
   },
 };

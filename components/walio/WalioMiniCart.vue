@@ -11,8 +11,8 @@
 <template>
   <div class="w-mini">
     <header class="w-mini__h">
-      <b>Cart<template v-if="group"> · {{ group.units }} {{ group.units === 1 ? "item" : "items" }}</template></b>
-      <router-link v-if="group" :to="cartTo" class="w-mini__edit" @click="$emit('close')">Edit cart</router-link>
+      <b>{{ t("walio.cart.title", "Cart") }}<template v-if="group"> · {{ t("cart.units", { one: "{n} item", other: "{n} items" }, { n: group.units }) }}</template></b>
+      <router-link v-if="group" :to="cartTo" class="w-mini__edit" @click="$emit('close')">{{ t("walio.cart.edit", "Edit cart") }}</router-link>
     </header>
     <template v-if="group">
       <ul class="w-mini__list">
@@ -22,29 +22,29 @@
             <i v-if="item.count > 1">{{ item.count }}</i>
           </router-link>
           <router-link :to="productTo(item)" class="w-mini__name" @click="$emit('close')">
-            {{ item.product?.title }}
-            <small v-if="sellerNames.get(item.vendor_id)">Sold by {{ sellerNames.get(item.vendor_id) }}</small>
+            <bdi>{{ item.product?.title }}</bdi>
+            <small v-if="sellerNames.get(item.vendor_id)">{{ t("seller.soldBy", "Sold by {name}", { name: sellerNames.get(item.vendor_id) }) }}</small>
           </router-link>
           <span class="w-mini__price">{{ money(item.price * item.count, item.currency || group.currency) }}</span>
         </li>
       </ul>
       <footer class="w-mini__f">
-        <p class="w-mini__row"><span>Subtotal</span><span>{{ money(group.total, group.currency) }}</span></p>
+        <p class="w-mini__row"><span>{{ t("walio.cart.subtotal", "Subtotal") }}</span><span>{{ money(group.total, group.currency) }}</span></p>
         <p v-if="group.saved >= 0.01 || free_left > 0" class="w-mini__note">
-          <template v-if="group.saved >= 0.01">You save {{ money(group.saved, group.currency) }}</template>
+          <template v-if="group.saved >= 0.01">{{ t("cart.youSave", "You save {amount}", { amount: money(group.saved, group.currency) }) }}</template>
           <template v-if="group.saved >= 0.01 && free_left > 0"> · </template>
-          <template v-if="free_left > 0">{{ money(free_left, group.currency) }} away from free shipping</template>
+          <template v-if="free_left > 0">{{ t("walio.cart.awayFree", "{amount} away from free shipping", { amount: money(free_left, group.currency) }) }}</template>
         </p>
         <div class="w-mini__btns">
-          <router-link :to="cartTo" class="t-btn -line" @click="$emit('close')">View cart</router-link>
-          <router-link :to="cartTo" class="t-btn -main" @click="$emit('close')">Check out</router-link>
+          <router-link :to="cartTo" class="t-btn -line" @click="$emit('close')">{{ t("walio.cart.view", "View cart") }}</router-link>
+          <router-link :to="cartTo" class="t-btn -main" @click="$emit('close')">{{ t("walio.cart.checkOut", "Check out") }}</router-link>
         </div>
       </footer>
     </template>
     <div v-else class="w-mini__empty">
       <v-icon size="30">shopping_cart</v-icon>
-      <p>Your cart is empty</p>
-      <router-link :to="deals" class="t-btn -main" @click="$emit('close')">Shop today’s deals</router-link>
+      <p>{{ t("cart.empty.title", "Your basket is empty") }}</p>
+      <router-link :to="deals" class="t-btn -main" @click="$emit('close')">{{ t("walio.cart.shopDeals", "Shop today’s deals") }}</router-link>
     </div>
   </div>
 </template>

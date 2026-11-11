@@ -84,6 +84,7 @@
 </template>
 
 <script lang="ts">
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import SShopProductCard from "@selldone/components-vue/storefront/product/card/SShopProductCard.vue";
@@ -145,7 +146,7 @@ export default {
   },
 
   created() {
-    this.setPageTitle("Saved"); // Set Page Title!
+    this.setPageTitle(t("account.pageTitle.saved", "Saved")); // Set Page Title!
   },
 
   methods: {

@@ -706,7 +706,7 @@
 
     em {
       position: absolute;
-      right: -5px;
+      inset-inline-end: -5px;
       bottom: -5px;
       display: grid;
       place-items: center;
@@ -1149,18 +1149,18 @@
         content: "";
         position: absolute;
         top: 13px;
-        left: 0;
-        right: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
         height: 3px;
         background: var(--k-line);
       }
 
       &:first-child::before {
-        left: 14px;
+        inset-inline-start: 14px;
       }
 
       &:last-child::before {
-        right: auto;
+        inset-inline-end: auto;
         width: 14px;
       }
 
@@ -1175,7 +1175,7 @@
       > i {
         position: absolute;
         top: 0;
-        left: 0;
+        inset-inline-start: 0;
         display: grid;
         place-items: center;
         width: 29px;
@@ -1529,7 +1529,7 @@
   &__have {
     position: absolute;
     top: 8px;
-    left: 8px;
+    inset-inline-start: 8px;
     padding: 3px 9px;
     border-radius: var(--k-pill);
     background: var(--k-green);
@@ -1540,7 +1540,7 @@
 
   &__add {
     position: absolute;
-    right: 8px;
+    inset-inline-end: 8px;
     bottom: 8px;
     display: grid;
     place-items: center;
@@ -1838,7 +1838,7 @@
           display: block;
           position: absolute;
           top: 34px;
-          right: 0;
+          inset-inline-end: 0;
           white-space: nowrap;
           text-align: end;
         }

@@ -23,12 +23,12 @@
       <h2 :id="headingId" class="t-sec__title">{{ title }}</h2>
       <div class="t-sec__tools">
         <router-link v-if="moreTo" :to="moreTo" class="t-sec__more">
-          {{ moreLabel }}<v-icon class="k-flip" size="20">chevron_right</v-icon>
+          {{ moreLabel || t("common.seeAll", "See all") }}<v-icon class="k-flip" size="20">chevron_right</v-icon>
         </router-link>
-        <button :disabled="at_start" aria-label="Scroll back" class="t-arrow -small" type="button" @click="scrollBy(-1)">
+        <button :disabled="at_start" :aria-label="t('rail.scrollBack', 'Scroll back')" class="t-arrow -small" type="button" @click="scrollBy(-1)">
           <v-icon class="k-flip" size="20">chevron_left</v-icon>
         </button>
-        <button :disabled="at_end" aria-label="Scroll forward" class="t-arrow -small" type="button" @click="scrollBy(1)">
+        <button :disabled="at_end" :aria-label="t('rail.scrollForward', 'Scroll forward')" class="t-arrow -small" type="button" @click="scrollBy(1)">
           <v-icon class="k-flip" size="20">chevron_right</v-icon>
         </button>
       </div>
@@ -84,7 +84,7 @@ export default {
     dir: { type: String, default: null },
     limit: { type: Number, default: 12 },
     moreTo: { type: Object, default: null },
-    moreLabel: { type: String, default: "See all" },
+    moreLabel: { type: String, default: null },
     lazy: Boolean,
     /** Deal the products out aisle by aisle. */
     spread: Boolean,

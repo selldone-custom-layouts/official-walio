@@ -105,6 +105,7 @@
 </template>
 
 <script lang="ts">
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 import SGiftcardView from "@selldone/components-vue/storefront/giftcard/view/SGiftcardView.vue";
 import SDataIteratorToolbar from "@selldone/components-vue/ui/toolbar/SDataIteratorToolbar.vue";
 import SGiftcardAdd from "@selldone/components-vue/storefront/giftcard/add/SGiftcardAdd.vue";
@@ -171,7 +172,7 @@ export default {
   },
 
   created() {
-    this.setPageTitle("My gift cards"); // Set Page Title!
+    this.setPageTitle(t("account.pageTitle.giftcards", "My gift cards")); // Set Page Title!
   },
 
   methods: {

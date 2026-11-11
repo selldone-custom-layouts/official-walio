@@ -51,6 +51,7 @@ Selldone's own basket, checkout, payments, vendor offers and orders keep working
 - **Checkout:** Cart ✓ — Delivery — Contact — Review & pay over numbered steps: review your items by seller, delivery and contact (a map-first address sheet), and an order summary that leads to whatever is missing.
 - **Account:** a greeting with tabs and an overview; orders as a table. **Sign-in** is a whole page.
 - **Language and currency:** a pill in the header (a panel of chips) and a row in the phone menu (a bottom sheet); a pick converts every amount on every page with the shop's rates.
+- **Languages:** Walio's own words in every language the shop enables (English, Arabic right to left, Punjabi, Spanish, Danish, French): `components/kalio/i18n/` (the shared Kalio base plus `walio.<lang>.ts`); each language loads only when a shopper picks it.
 - **Pages:** About as a magazine (How an order works), Terms and Privacy as cards and folding sections, a journal with a side column, articles in one wide reading column with the shopping list in a row under the text, and a blue 404.
 - **Everywhere:** no pop-ups and no phone bottom bar.
 

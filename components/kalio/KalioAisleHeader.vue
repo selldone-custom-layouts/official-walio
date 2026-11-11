@@ -28,6 +28,7 @@
 <script>
 import KalioShelfHead from "./KalioShelfHead.vue";
 import { aisleImage, aisleRoute, aisles, countProducts } from "./kalio-catalog";
+import { t } from "./i18n/kalio-i18n";
 
 export default {
   name: "KalioAisleHeader",
@@ -60,8 +61,8 @@ export default {
     },
     meta() {
       const parts = [];
-      if (this.total !== null) parts.push(`${this.total.toLocaleString()} ${this.total === 1 ? "product" : "products"}`);
-      if (this.on_offer) parts.push(`${this.on_offer.toLocaleString()} on offer`);
+      if (this.total !== null) parts.push(t("listing.productCount", { one: "{n} product", other: "{n} products" }, { n: this.total }));
+      if (this.on_offer) parts.push(t("aisle.onOfferCount", { one: "{n} on offer", other: "{n} on offer" }, { n: this.on_offer }));
       return parts.join(" · ") || null;
     },
     tabs() {

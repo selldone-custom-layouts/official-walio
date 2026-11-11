@@ -22,9 +22,9 @@
   <div class="k-official">
     <slot name="header"></slot>
     <div class="k-wrap">
-      <nav aria-label="Breadcrumb" class="k-official__crumbs">
-        <router-link :to="{ name: 'ShopPage' }">{{ $shop?.title || "Home" }}</router-link>
-        <v-icon size="16">chevron_right</v-icon>
+      <nav :aria-label="t('pages.breadcrumb', 'Breadcrumb')" class="k-official__crumbs">
+        <router-link :to="{ name: 'ShopPage' }">{{ $shop?.title || t("pages.home", "Home") }}</router-link>
+        <v-icon class="k-flip" size="16">chevron_right</v-icon>
         <span>{{ page_name }}</span>
       </nav>
       <router-view class="k-official__body" />

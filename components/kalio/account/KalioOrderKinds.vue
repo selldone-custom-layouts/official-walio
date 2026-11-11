@@ -14,9 +14,9 @@
       </button>
     </template>
     <div class="k-kinds__menu">
-      <p class="k-kinds__label">Kind of order</p>
+      <p class="k-kinds__label">{{ t("orders.kinds.label", "Kind of order") }}</p>
       <router-link :class="{ '-on': current === 'PHYSICAL' }" :to="groceries">
-        <v-icon size="19">local_grocery_store</v-icon>Groceries
+        <v-icon size="19">local_grocery_store</v-icon>{{ t("orders.kind.groceries", "Groceries") }}
       </router-link>
       <router-link v-for="kind in kinds" :key="kind.key" :class="{ '-on': current === kind.key }" :to="kind.route">
         <v-icon size="19">{{ ICONS[kind.key] }}</v-icon>{{ kind.word }}<em v-if="countOf(kind.key)">{{ countOf(kind.key) }}</em>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { t } from "../i18n/kalio-i18n";
 import { otherKinds } from "./kalio-account";
 
 const ICONS = { VIRTUAL: "language", FILE: "download", SERVICE: "support_agent", SUBSCRIPTION: "autorenew", POS: "storefront", AVO: "edit_note" };
@@ -47,8 +48,8 @@ export default {
       return { name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL };
     },
     currentWord() {
-      if (this.current === "PHYSICAL") return "Groceries";
-      return this.kinds.find((kind) => kind.key === this.current)?.word || "Orders";
+      if (this.current === "PHYSICAL") return t("orders.kind.groceries", "Groceries");
+      return this.kinds.find((kind) => kind.key === this.current)?.word || t("orders.kind.orders", "Orders");
     },
   },
   methods: {

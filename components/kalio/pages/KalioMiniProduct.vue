@@ -14,7 +14,7 @@
         <img :src="picture" :srcset="srcset(product)" alt="" loading="lazy" sizes="64px" @error="dropSrcset" />
       </router-link>
       <kalio-card-step v-if="inBasket" :product="product" class="k-mini__step" inline />
-      <button v-else :aria-label="`Add ${product.title}`" class="k-mini__add" type="button" @click="add">
+      <button v-else :aria-label="t('journal.mini.add', 'Add {name}', { name: product.title })" class="k-mini__add" type="button" @click="add">
         <v-icon size="20">add</v-icon>
       </button>
     </div>

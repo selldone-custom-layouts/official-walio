@@ -23,19 +23,19 @@
               <v-icon v-else size="26">person_outline</v-icon>
             </span>
             <div class="k-acct__words">
-              <h1>{{ user ? `${hello}, ${firstName}` : "Your orders" }}</h1>
+              <h1>{{ user ? t("account.greeting.line", "{greeting}, {name}", { greeting: hello, name: firstName }) : t("account.yourOrders", "Your orders") }}</h1>
               <p>{{ summary }}</p>
             </div>
             <button v-if="user" :disabled="busy_out" class="k-acct__out" type="button" @click="signOut">
               <v-progress-circular v-if="busy_out" indeterminate size="16" width="2" />
-              <v-icon v-else size="18">logout</v-icon>Sign out
+              <v-icon v-else size="18">logout</v-icon>{{ t("account.signOut", "Sign out") }}
             </button>
-            <button v-else-if="!pending" class="k-acct__in" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in</button>
+            <button v-else-if="!pending" class="k-acct__in" type="button" @click="signIn"><v-icon size="18">person</v-icon>{{ t("common.signIn", "Sign in") }}</button>
           </div>
 
-          <nav aria-label="Your account" class="k-acct__tabs">
+          <nav :aria-label="t('account.nav', 'Your account')" class="k-acct__tabs">
             <router-link v-if="user" :class="{ '-on': $route.name === ACCOUNT_HOME }" :to="{ name: ACCOUNT_HOME }">
-              <v-icon size="19">grid_view</v-icon>Overview
+              <v-icon size="19">grid_view</v-icon>{{ t("account.overview", "Overview") }}
             </router-link>
             <router-link v-for="item in shown" :key="item.key" :class="{ '-on': isOn(item) }" :to="item.route">
               <v-icon size="19">{{ item.icon }}</v-icon>{{ item.word }}<em v-if="countOf(item)">{{ countOf(item) }}</em>
@@ -58,11 +58,11 @@
             <v-icon v-else size="22">person_outline</v-icon>
           </span>
           <div>
-            <b>{{ user ? user.name : pending ? "One moment…" : "Shopping as a guest" }}</b>
-            <small>{{ user ? user.phone || user.email : "Orders placed on this device" }}</small>
+            <b>{{ user ? user.name : pending ? t("account.oneMoment", "One moment…") : t("account.guest", "Shopping as a guest") }}</b>
+            <small>{{ user ? user.phone || user.email : t("account.guestNote", "Orders placed on this device") }}</small>
           </div>
         </div>
-        <nav aria-label="Your account" class="k-acct__nav">
+        <nav :aria-label="t('account.nav', 'Your account')" class="k-acct__nav">
           <template v-for="group in groups" :key="group.name">
             <p class="k-acct__grp">{{ group.name }}</p>
             <router-link v-for="item in group.items" :key="item.key" :class="{ '-on': isOn(item) }" :to="item.route">
@@ -72,9 +72,9 @@
         </nav>
         <button v-if="user" :disabled="busy_out" class="k-acct__railout" type="button" @click="signOut">
           <v-progress-circular v-if="busy_out" indeterminate size="16" width="2" />
-          <v-icon v-else size="20">logout</v-icon>Sign out
+          <v-icon v-else size="20">logout</v-icon>{{ t("account.signOut", "Sign out") }}
         </button>
-        <button v-else-if="!pending" class="k-acct__in -rail" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in for the rest</button>
+        <button v-else-if="!pending" class="k-acct__in -rail" type="button" @click="signIn"><v-icon size="18">person</v-icon>{{ t("account.signInForRest", "Sign in for the rest") }}</button>
       </aside>
       <div class="k-acct__main">
         <router-view />
@@ -85,9 +85,8 @@
 
 <script>
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+import { t } from "../i18n/kalio-i18n";
 import { ACCOUNT_HOME, ACCOUNT_STYLE, account, greeting, loadAddresses, loadOrders, sections, standing } from "./kalio-account";
-
-const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
 export default {
   name: "KalioAccountShell",
@@ -112,7 +111,7 @@ export default {
       return !this.user && !!this.$store.getters.getBusyUser;
     },
     firstName() {
-      return (this.user?.name || "").trim().split(/\s+/)[0] || "there";
+      return (this.user?.name || "").trim().split(/\s+/)[0] || t("account.greeting.there", "there");
     },
     initials() {
       const parts = (this.user?.name || "").trim().split(/\s+/).filter(Boolean);
@@ -138,22 +137,20 @@ export default {
     },
     /** What is happening to the orders, in a sentence. */
     summary() {
-      if (this.pending) return "One moment, opening your account…";
-      if (!account.loaded) return this.user ? "Your orders, money and addresses in one place." : "The orders placed on this device.";
+      if (this.pending) return t("account.summary.opening", "One moment, opening your account…");
+      if (!account.loaded) return this.user ? t("account.summary.default", "Your orders, money and addresses in one place.") : t("account.summary.guest", "The orders placed on this device.");
       const tones = account.orders.map((o) => standing(o).tone);
-      const moving = tones.filter((t) => t === "go" || t === "prep").length;
-      const paying = tones.filter((t) => t === "pay").length;
-      const say = (n) => (n < WORDS.length ? WORDS[n] : String(n));
-      const parts = [];
-      if (moving) parts.push(moving === 1 ? "one order is on its way to you" : `${say(moving)} orders are on their way to you`);
-      if (paying) parts.push(paying === 1 ? "one is waiting for payment" : `${say(paying)} are waiting for payment`);
-      if (!parts.length) {
-        if (!account.total) return "No orders yet. Your first basket is a few taps away.";
-        return tones[0] === "ok" ? "Everything you ordered has reached you." : "Your orders, money and addresses in one place.";
-      }
-      if (!moving && paying) parts[0] = paying === 1 ? "one order is waiting for payment" : `${say(paying)} orders are waiting for payment`;
-      const sentence = parts.join(", ");
-      return sentence[0].toUpperCase() + sentence.slice(1) + ".";
+      const moving = tones.filter((tone) => tone === "go" || tone === "prep").length;
+      const paying = tones.filter((tone) => tone === "pay").length;
+      if (moving && paying)
+        return t("account.summary.both", "{moving}, {paying}.", {
+          moving: t("account.summary.movingLead", { one: "One order is on its way to you", other: "{n} orders are on their way to you" }, { n: moving }),
+          paying: t("account.summary.payingToo", { one: "one is waiting for payment", other: "{n} are waiting for payment" }, { n: paying }),
+        });
+      if (moving) return t("account.summary.moving", { one: "One order is on its way to you.", other: "{n} orders are on their way to you." }, { n: moving });
+      if (paying) return t("account.summary.paying", { one: "One order is waiting for payment.", other: "{n} orders are waiting for payment." }, { n: paying });
+      if (!account.total) return t("account.summary.none", "No orders yet. Your first basket is a few taps away.");
+      return tones[0] === "ok" ? t("account.summary.allDelivered", "Everything you ordered has reached you.") : t("account.summary.default", "Your orders, money and addresses in one place.");
     },
   },
 

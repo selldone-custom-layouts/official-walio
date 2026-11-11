@@ -20,11 +20,11 @@
   <div class="k-official k-faq">
     <slot name="header"></slot>
     <div class="k-wrap">
-      <nav aria-label="Breadcrumb" class="k-official__crumbs">
-        <router-link :to="{ name: 'ShopPage' }">{{ shop?.title || "Home" }}</router-link>
+      <nav :aria-label="t('pages.breadcrumb', 'Breadcrumb')" class="k-official__crumbs">
+        <router-link :to="{ name: 'ShopPage' }">{{ shop?.title || t("pages.home", "Home") }}</router-link>
         <v-icon size="16">chevron_right</v-icon>
-        <router-link v-if="current_tag" :to="{ name: 'ShopFAQ' }">Questions and answers</router-link>
-        <span v-else>Questions and answers</span>
+        <router-link v-if="current_tag" :to="{ name: 'ShopFAQ' }">{{ t("faq.title", "Questions and answers") }}</router-link>
+        <span v-else>{{ t("faq.title", "Questions and answers") }}</span>
         <template v-if="current_tag">
           <v-icon size="16">chevron_right</v-icon>
           <span>{{ current_tag }}</span>
@@ -33,19 +33,19 @@
 
       <div class="k-faq__head">
         <div>
-          <h1 class="k-official__title">Questions and answers</h1>
-          <p class="k-faq__lede">Answers to what shoppers ask most. Can’t find yours? Ask the shop.</p>
+          <h1 class="k-official__title">{{ t("faq.title", "Questions and answers") }}</h1>
+          <p class="k-faq__lede">{{ t("faq.lede", "Answers to what shoppers ask most. Can’t find yours? Ask the shop.") }}</p>
         </div>
         <button v-if="USER()" class="k-btn k-btn--solid" type="button" @click="dialog_faq = true">
-          <v-icon size="18">add</v-icon>Ask a question
+          <v-icon size="18">add</v-icon>{{ t("faq.ask", "Ask a question") }}
         </button>
         <button v-else class="k-btn k-btn--line" type="button" @click="signIn">
-          <v-icon size="18">person_outline</v-icon>Sign in to ask
+          <v-icon size="18">person_outline</v-icon>{{ t("faq.signInToAsk", "Sign in to ask") }}
         </button>
       </div>
 
-      <nav v-if="tags?.length" aria-label="Topics" class="k-faq__tags">
-        <router-link :class="{ '-on': !current_tag }" :to="{ name: 'ShopFAQ' }" exact>All</router-link>
+      <nav v-if="tags?.length" :aria-label="t('faq.topics', 'Topics')" class="k-faq__tags">
+        <router-link :class="{ '-on': !current_tag }" :to="{ name: 'ShopFAQ' }" exact>{{ t("faq.all", "All") }}</router-link>
         <router-link v-for="tag in tags" :key="tag" :class="{ '-on': current_tag === tag }" :to="{ name: 'ShopFAQ', params: { tag: tag } }">{{ tag }}</router-link>
       </nav>
 
@@ -60,10 +60,10 @@
       </div>
       <div v-else-if="!busy_fetch" class="k-official__missing">
         <v-icon size="30">forum</v-icon>
-        <h2>No questions here yet</h2>
-        <p>{{ shop?.title || "The shop" }} has not answered any questions here so far. Ask yours, or write to the shop directly.</p>
+        <h2>{{ t("faq.empty.title", "No questions here yet") }}</h2>
+        <p>{{ t("faq.empty.text", "{shop} has not answered any questions here so far. Ask yours, or write to the shop directly.", { shop: shop?.title || t("pages.theShop", "The shop") }) }}</p>
         <div class="k-official__missingacts">
-          <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--solid">Contact the shop</router-link>
+          <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--solid">{{ t("contact.shop", "Contact the shop") }}</router-link>
         </div>
       </div>
 
@@ -124,6 +124,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import { throttle } from "lodash-es";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
+import { t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageFaq",
@@ -174,7 +175,7 @@ export default {
     }, window.SERACH_THROTTLE),
   },
   created() {
-    this.setPageTitle("FAQ"); // Set Page Title!
+    this.setPageTitle(t("faq.pageTitle", "FAQ")); // Set Page Title!
     this.fetchFAQData();
     this.fetchFAQTags();
   },

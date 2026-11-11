@@ -18,34 +18,34 @@
         <div class="d-flex align-center justify-space-between flex-wrap gap-2">
           <div class="d-flex align-center">
             <v-icon class="me-2">compare_arrows</v-icon>
-            <div class="text-h6 font-weight-black">Compare</div>
+            <div class="text-h6 font-weight-black">{{ t("compare.pageName", "Compare") }}</div>
           </div>
 
           <div class="d-flex align-center gap-2">
             <v-btn variant="text" @click="clear" :disabled="busy">
-              Clear
+              {{ t("compare.clear", "Clear") }}
             </v-btn>
             <v-btn variant="outlined" @click="$router.push('/listing')" :disabled="busy">
-              Back to listing
+              {{ t("compare.listing.back", "Back to listing") }}
             </v-btn>
           </div>
         </div>
 
         <div class="text-muted small mt-2">
-          Select items to compare. Minimum 2 items is recommended.
+          {{ t("compare.listing.hint", "Select items to compare. Minimum 2 items is recommended.") }}
         </div>
 
         <v-divider class="my-4" />
 
         <div v-if="!busy && items.length < 2" class="text-muted py-4">
-          Add at least two items for a meaningful comparison.
+          {{ t("compare.listing.needTwo", "Add at least two items for a meaningful comparison.") }}
         </div>
 
         <div v-else class="table-wrap">
           <v-table class="compare-table">
             <thead>
             <tr>
-              <th class="th-label">Field</th>
+              <th class="th-label">{{ t("compare.listing.field", "Field") }}</th>
               <th v-for="it in items" :key="`h_${it.id}`" class="th-item">
                 <div class="th-item-head">
                   <div class="th-thumb">
@@ -53,7 +53,7 @@
                       v-if="thumb(it)"
                       :src="getShopImagePath(thumb(it)!)"
                       class="th-thumb-img"
-                      alt="thumb"
+                      :alt="t('compare.listing.thumb', 'thumb')"
                     />
                     <div v-else class="th-thumb-empty">
                       <v-icon size="18">image</v-icon>
@@ -62,7 +62,7 @@
 
                   <div class="th-title">
                     <div class="font-weight-black text-truncate">
-                      {{ it.title || `Item #${it.id}` }}
+                      {{ it.title || t("compare.listing.item", "Item #{id}", { id: String(it.id) }) }}
                     </div>
                     <div class="text-muted small text-truncate">
                       {{ it.category?.title || "—" }}
@@ -79,7 +79,7 @@
 
             <tbody>
             <tr>
-              <td class="td-label">Rating</td>
+              <td class="td-label">{{ t("compare.rating", "Rating") }}</td>
               <td v-for="it in items" :key="`r_${it.id}`">
                 <div class="d-flex align-center">
                   <v-rating :model-value="Number(it.reviews_average_rating || 0)" readonly density="compact" half-increments />
@@ -92,7 +92,7 @@
             </tr>
 
             <tr>
-              <td class="td-label">Price</td>
+              <td class="td-label">{{ t("compare.listing.price", "Price") }}</td>
               <td v-for="it in items" :key="`p_${it.id}`">
                 <div class="text-muted">
                   {{ priceText(it) || "—" }}
@@ -101,28 +101,28 @@
             </tr>
 
             <tr>
-              <td class="td-label">Phone</td>
+              <td class="td-label">{{ t("compare.listing.phone", "Phone") }}</td>
               <td v-for="it in items" :key="`t_${it.id}`">
                 <div class="text-muted wrap-anywhere">{{ it.tel || "—" }}</div>
               </td>
             </tr>
 
             <tr>
-              <td class="td-label">Email</td>
+              <td class="td-label">{{ t("compare.listing.email", "Email") }}</td>
               <td v-for="it in items" :key="`e_${it.id}`">
                 <div class="text-muted wrap-anywhere">{{ it.email || "—" }}</div>
               </td>
             </tr>
 
             <tr>
-              <td class="td-label">Website</td>
+              <td class="td-label">{{ t("compare.listing.website", "Website") }}</td>
               <td v-for="it in items" :key="`w_${it.id}`">
                 <div class="text-muted wrap-anywhere">{{ domain(it.website) || "—" }}</div>
               </td>
             </tr>
 
             <tr>
-              <td class="td-label">Address</td>
+              <td class="td-label">{{ t("compare.listing.address", "Address") }}</td>
               <td v-for="it in items" :key="`a_${it.id}`">
                 <div class="text-muted wrap-anywhere">{{ addressText(it) || "—" }}</div>
               </td>
@@ -147,6 +147,7 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { ListingCompareStore } from "@selldone/components-vue/storefront/listing/compare/ListingCompareStore";
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageListingCompare",
@@ -242,7 +243,7 @@ export default {
         })
         .then(({ data }) => {
           if (data?.error) {
-            this.error_text = data.error_msg || "Failed to load compare data.";
+            this.error_text = data.error_msg || t("compare.listing.loadFailed", "Failed to load compare data.");
             return;
           }
 

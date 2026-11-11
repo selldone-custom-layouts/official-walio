@@ -10,7 +10,12 @@
  * Nothing here is a promise: the terms do not form an agreement and the
  * policy is not the shop's policy. Dates, numbers and names in the letter
  * are marked as examples.
+ *
+ * Each sentence or paragraph is its own key, in the visitor's language; the
+ * pages call these functions at render time, so a language change follows.
  */
+
+import { t } from "../i18n/kalio-i18n";
 
 export interface Section {
   title: string;
@@ -20,52 +25,52 @@ export interface Section {
 export function termsSample(shop: string): { short: string[]; sections: Section[] } {
   return {
     short: [
-      `Products are sold by independent sellers; ${shop} runs the shop.`,
-      "You pay at checkout, or on delivery where a seller offers it.",
-      "Report a damaged or wrong item within 7 days.",
-      "Each order has a message thread with its seller.",
+      t("sample.terms.short.sellers", "Products are sold by independent sellers; {shop} runs the shop.", { shop }),
+      t("sample.terms.short.pay", "You pay at checkout, or on delivery where a seller offers it."),
+      t("sample.terms.short.report", "Report a damaged or wrong item within 7 days."),
+      t("sample.terms.short.thread", "Each order has a message thread with its seller."),
     ],
     sections: [
       {
-        title: "Who we are",
+        title: t("sample.terms.who.title", "Who we are"),
         text: [
-          `${shop} is an online marketplace. The products are sold by independent sellers; ${shop} runs the shop where you find them and place your order.`,
+          t("sample.terms.who.p1", "{shop} is an online marketplace. The products are sold by independent sellers; {shop} runs the shop where you find them and place your order.", { shop }),
         ],
       },
       {
-        title: "Your account",
+        title: t("sample.terms.account.title", "Your account"),
         text: [
-          "You need an account, or a guest checkout where the shop offers one, to order. Keep your sign-in details to yourself and tell us if you think someone else has used them.",
-          "Sample paragraph: a fuller explanation would go here, written in plain words, with examples of what this means for an order.",
+          t("sample.terms.account.p1", "You need an account, or a guest checkout where the shop offers one, to order. Keep your sign-in details to yourself and tell us if you think someone else has used them."),
+          t("sample.terms.account.p2", "Sample paragraph: a fuller explanation would go here, written in plain words, with examples of what this means for an order."),
         ],
       },
       {
-        title: "Orders and prices",
+        title: t("sample.terms.orders.title", "Orders and prices"),
         text: [
-          "Prices are set by each seller and shown with taxes as stated at checkout. An order is placed when you confirm it; the seller confirms it when they accept it.",
+          t("sample.terms.orders.p1", "Prices are set by each seller and shown with taxes as stated at checkout. An order is placed when you confirm it; the seller confirms it when they accept it."),
         ],
       },
       {
-        title: "Payment",
+        title: t("sample.terms.payment.title", "Payment"),
         text: [
-          `You pay at checkout, or on delivery where the seller offers cash on delivery. Card payments are handled by the payment provider and are not stored by ${shop}.`,
+          t("sample.terms.payment.p1", "You pay at checkout, or on delivery where the seller offers cash on delivery. Card payments are handled by the payment provider and are not stored by {shop}.", { shop }),
         ],
       },
       {
-        title: "Delivery",
+        title: t("sample.terms.delivery.title", "Delivery"),
         text: [
-          "Delivery times and costs are shown before you pay. The seller sends the items; you can follow the order and message the seller from your account.",
+          t("sample.terms.delivery.p1", "Delivery times and costs are shown before you pay. The seller sends the items; you can follow the order and message the seller from your account."),
         ],
       },
       {
-        title: "Returns and refunds",
+        title: t("sample.terms.returns.title", "Returns and refunds"),
         text: [
-          "If something arrives damaged or wrong, tell the seller from the order page within 7 days. Fresh food can be refunded but not returned.",
+          t("sample.terms.returns.p1", "If something arrives damaged or wrong, tell the seller from the order page within 7 days. Fresh food can be refunded but not returned."),
         ],
       },
       {
-        title: "Changes to these terms",
-        text: ["We may update these terms. The date at the top shows the latest version."],
+        title: t("sample.terms.changes.title", "Changes to these terms"),
+        text: [t("sample.terms.changes.p1", "We may update these terms. The date at the top shows the latest version.")],
       },
     ],
   };
@@ -74,42 +79,44 @@ export function termsSample(shop: string): { short: string[]; sections: Section[
 export function privacySample(shop: string): { short: string[]; sections: Section[] } {
   return {
     short: [
-      "We use your details to take and deliver orders.",
-      "Sellers see only what they need to send your order.",
-      "We do not sell your data.",
-      "You choose which optional cookies to allow.",
+      t("sample.privacy.short.use", "We use your details to take and deliver orders."),
+      t("sample.privacy.short.sellers", "Sellers see only what they need to send your order."),
+      t("sample.privacy.short.sell", "We do not sell your data."),
+      t("sample.privacy.short.cookies", "You choose which optional cookies to allow."),
     ],
     sections: [
       {
-        title: "What we collect",
+        title: t("sample.privacy.collect.title", "What we collect"),
         text: [
-          "Your name, contact details and delivery address; what you order; and how you use the shop (pages viewed, searches).",
+          t("sample.privacy.collect.p1", "Your name, contact details and delivery address; what you order; and how you use the shop (pages viewed, searches)."),
         ],
       },
       {
-        title: "Why we use it",
+        title: t("sample.privacy.why.title", "Why we use it"),
         text: [
-          "To take and deliver your orders, to let sellers and you talk about an order, to keep the shop secure and to improve it.",
-          "Sample paragraph: a fuller explanation would go here, written in plain words, with an example for each use.",
+          t("sample.privacy.why.p1", "To take and deliver your orders, to let sellers and you talk about an order, to keep the shop secure and to improve it."),
+          t("sample.privacy.why.p2", "Sample paragraph: a fuller explanation would go here, written in plain words, with an example for each use."),
         ],
       },
       {
-        title: "Who sees it",
+        title: t("sample.privacy.who.title", "Who sees it"),
         text: [
-          "The seller who fills your order sees what they need to send it. Payment providers handle card details. We do not sell your data.",
+          t("sample.privacy.who.p1", "The seller who fills your order sees what they need to send it. Payment providers handle card details. We do not sell your data."),
         ],
       },
       {
-        title: "How long we keep it",
-        text: ["Order records for as long as the law requires; your account until you close it."],
+        title: t("sample.privacy.keep.title", "How long we keep it"),
+        text: [t("sample.privacy.keep.p1", "Order records for as long as the law requires; your account until you close it.")],
       },
       {
-        title: "Your rights",
-        text: ["You can see, correct, download or delete your data, and say no to marketing at any time."],
+        title: t("sample.privacy.rights.title", "Your rights"),
+        text: [t("sample.privacy.rights.p1", "You can see, correct, download or delete your data, and say no to marketing at any time.")],
       },
       {
-        title: "Cookies",
-        text: ["Essential cookies keep you signed in and your basket full. Anything optional is your choice, below."],
+        title: t("sample.privacy.cookies.title", "Cookies"),
+        text: [
+          t("sample.privacy.cookies.p1", "Essential cookies keep you signed in and your basket full. Anything optional is your choice, below."),
+        ],
       },
     ],
   };
@@ -117,23 +124,44 @@ export function privacySample(shop: string): { short: string[]; sections: Sectio
 
 export function aboutSample(shop: string) {
   return {
-    title: "Why we built one basket",
-    lead: "Good grocers are often small, and shopping several of them used to mean several trips, several baskets and several deliveries. We wanted their shelves side by side, in one place, with one checkout.",
+    title: t("sample.about.title", "Why we built one basket"),
+    lead: t("sample.about.lead", "Good grocers are often small, and shopping several of them used to mean several trips, several baskets and several deliveries. We wanted their shelves side by side, in one place, with one checkout."),
     text: [
-      `So ${shop} is a marketplace: each product comes from an independent seller, prices are theirs, and they pack and send what you order from them. We look after the shop itself — the aisles, the basket and the account where you follow your orders.`,
+      t("sample.about.p1", "So {shop} is a marketplace: each product comes from an independent seller, prices are theirs, and they pack and send what you order from them. We look after the shop itself — the aisles, the basket and the account where you follow your orders.", { shop }),
     ],
     values: [
-      { title: "Clear prices", text: "The price you see is the one you pay, with the unit price under it and savings marked plainly." },
-      { title: "Your choice of seller", text: "When two shops stock the same item, both are shown and you pick." },
-      { title: "Less waste", text: "Sizes that fit a week, and seasonal picks in the journal." },
-      { title: "People you can reach", text: "Every order has a message thread with the shop that sent it." },
+      {
+        title: t("sample.about.values.prices.title", "Clear prices"),
+        text: t("sample.about.values.prices.text", "The price you see is the one you pay, with the unit price under it and savings marked plainly."),
+      },
+      {
+        title: t("sample.about.values.choice.title", "Your choice of seller"),
+        text: t("sample.about.values.choice.text", "When two shops stock the same item, both are shown and you pick."),
+      },
+      {
+        title: t("sample.about.values.waste.title", "Less waste"),
+        text: t("sample.about.values.waste.text", "Sizes that fit a week, and seasonal picks in the journal."),
+      },
+      {
+        title: t("sample.about.values.people.title", "People you can reach"),
+        text: t("sample.about.values.people.text", "Every order has a message thread with the shop that sent it."),
+      },
     ],
     timeline: [
-      { when: "Spring", text: "The first seller joins and the first aisles open. (Example.)" },
-      { when: "Summer", text: "A second seller joins; both sell from one basket. (Example.)" },
-      { when: "Today", text: "Every aisle, every seller, one checkout. (Example.)" },
+      {
+        when: t("sample.about.timeline.spring.when", "Spring"),
+        text: t("sample.about.timeline.spring.text", "The first seller joins and the first aisles open. (Example.)"),
+      },
+      {
+        when: t("sample.about.timeline.summer.when", "Summer"),
+        text: t("sample.about.timeline.summer.text", "A second seller joins; both sell from one basket. (Example.)"),
+      },
+      {
+        when: t("sample.about.timeline.today.when", "Today"),
+        text: t("sample.about.timeline.today.text", "Every aisle, every seller, one checkout. (Example.)"),
+      },
     ],
-    sign: `— the ${shop} team`,
+    sign: t("sample.about.sign", "— the {shop} team", { shop }),
   };
 }
 

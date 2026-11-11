@@ -270,7 +270,7 @@
         content: "";
         position: absolute;
         top: 4px;
-        left: 4px;
+        inset-inline-start: 4px;
         width: 20px;
         height: 20px;
         border-radius: 50%;
@@ -379,7 +379,7 @@
   &__rm {
     position: absolute;
     top: 8px;
-    right: 8px;
+    inset-inline-end: 8px;
     z-index: 3;
     display: grid;
     place-items: center;
@@ -417,7 +417,7 @@
   &__off {
     position: absolute;
     top: 6px;
-    left: 6px;
+    inset-inline-start: 6px;
     z-index: 2;
     display: inline-flex;
     align-items: center;
@@ -787,7 +787,7 @@
 
     &__rm {
       top: 6px;
-      right: 6px;
+      inset-inline-end: 6px;
       width: 30px;
       height: 30px;
     }
@@ -826,7 +826,7 @@
       grid-column: 1 / -1;
       justify-self: start;
       position: sticky;
-      left: 0;
+      inset-inline-start: 0;
     }
 
     &__k {
@@ -927,8 +927,8 @@
   &__res {
     position: absolute;
     top: 112px;
-    right: 8px;
-    left: 8px;
+    inset-inline-end: 8px;
+    inset-inline-start: 8px;
     z-index: 10;
     margin: 0;
     padding: 6px;

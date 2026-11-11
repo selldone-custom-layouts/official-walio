@@ -27,7 +27,7 @@
         <!-- 🎗️ Created by a subscription basket -->
         <span
           v-if="basket.subscription_id"
-          title="This order created by a subscription."
+          :title="t('order.fromSubscriptionTip', 'This order created by a subscription.')"
         >
           <span class="mx-1 text-muted">/</span>
           <img :src="ProductType.SUBSCRIPTION.image" height="20" width="20" />

@@ -18,7 +18,7 @@
       v-if="instagram"
       :instagram="instagram"
     ></s-instagram-view>
-    <v-container v-else> Not exist!</v-container>
+    <v-container v-else> {{ t("listing.instagram.missing", "Not exist!") }}</v-container>
   </div>
 </template>
 

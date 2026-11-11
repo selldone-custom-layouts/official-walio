@@ -51,7 +51,7 @@
           <span class="k-book__words">
             <b>
               <flag v-if="address.country" :iso="address.country" :squared="false" class="k-book__flag" />
-              {{ address.title || "Address" }}
+              {{ address.title || t("account.address.untitled", "Address") }}
             </b>
             <span class="k-book__line">{{ getFullAddress(address) }}</span>
             <small v-if="address.name || address.phone">
@@ -62,18 +62,18 @@
 
           <span :class="{ '-asking': confirming === address.id }" class="k-book__acts">
             <template v-if="confirming === address.id">
-              <span class="k-book__ask">Delete this address?</span>
+              <span class="k-book__ask">{{ t("account.address.deleteAsk", "Delete this address?") }}</span>
               <button :disabled="busy_delete" class="k-book__btn -danger" type="button" @click="remove(address)">
-                <v-progress-circular v-if="busy_delete" indeterminate size="14" width="2" />Delete
+                <v-progress-circular v-if="busy_delete" indeterminate size="14" width="2" />{{ t("account.address.delete", "Delete") }}
               </button>
-              <button class="k-book__btn" type="button" @click="confirming = null">Keep</button>
+              <button class="k-book__btn" type="button" @click="confirming = null">{{ t("account.address.keep", "Keep") }}</button>
             </template>
             <template v-else>
               <button class="k-book__btn" type="button" @click="showEdit(address)">
-                <v-icon size="17">edit</v-icon>Edit
+                <v-icon size="17">edit</v-icon>{{ t("common.edit", "Edit") }}
               </button>
               <button
-                :aria-label="`Delete ${address.title || 'this address'}`"
+                :aria-label="address.title ? t('account.address.deleteNamed', 'Delete {name}', { name: address.title }) : t('account.address.deleteThis', 'Delete this address')"
                 class="k-book__btn -icon"
                 type="button"
                 @click="confirming = address.id"
@@ -87,9 +87,9 @@
 
       <div v-else-if="!busy && loaded" class="k-board__empty k-book__empty">
         <v-icon size="28">add_location_alt</v-icon>
-        <p>No saved addresses yet. Save one here and pick it at checkout in a tap.</p>
+        <p>{{ t("account.address.empty", "No saved addresses yet. Save one here and pick it at checkout in a tap.") }}</p>
         <button class="k-btn k-btn--solid" type="button" @click="showAdd">
-          <v-icon size="20">add_location</v-icon>Add an address
+          <v-icon size="20">add_location</v-icon>{{ t("account.addAddress", "Add an address") }}
         </button>
       </div>
     </div>
@@ -99,8 +99,8 @@
       :busy="busy_save"
       :center="center"
       :countries="$shop?.countries?.length ? $shop.countries : null"
-      :heading="editing ? 'Edit address' : 'New address'"
-      :lede="editing ? 'Move the pin or change the details, then save.' : 'Name it, place the pin, and check the details.'"
+      :heading="editing ? t('account.address.editTitle', 'Edit address') : t('account.address.newTitle', 'New address')"
+      :lede="editing ? t('account.address.editLede', 'Move the pin or change the details, then save.') : t('account.address.newLede', 'Name it, place the pin, and check the details.')"
       :no-map="noMap"
       :phone-required="false"
       :receiver-info="editing"
@@ -119,6 +119,7 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import { MapHelper } from "@selldone/core-js/helper";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import KalioAddressSheet from "@app-storefront/components/kalio/checkout/KalioAddressSheet.vue";
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 
 /* The fields an address keeps (Selldone's address book). */
 const FIELDS = ["country", "state", "state_code", "city", "address", "location", "no", "unit", "name", "phone", "message", "postal"];
@@ -155,7 +156,7 @@ export default {
   },
 
   created() {
-    this.setPageTitle("My address book"); // Set Page Title!
+    this.setPageTitle(t("account.pageTitle.addresses", "My address book")); // Set Page Title!
     this.fetchAddressBook();
   },
 

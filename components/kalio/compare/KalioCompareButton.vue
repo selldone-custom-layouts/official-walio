@@ -10,7 +10,7 @@
 <template>
   <div v-if="products.length" class="s--storefront-products-comparison-button">
     <button
-      :aria-label="`Compare ${products.length} products`"
+      :aria-label="t('compare.fab.label', { one: 'Compare {n} product', other: 'Compare {n} products' }, { n: products.length })"
       :class="{ '-bump': bump }"
       class="s--storefront-products-comparison-circle-progress k-compare-fab k-cmp-fab"
       type="button"

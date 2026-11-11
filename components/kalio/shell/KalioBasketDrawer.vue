@@ -20,18 +20,18 @@
         <div class="k-bdrawer__sum">
           <p class="k-bdrawer__total">
             <small>
-              Subtotal · {{ group.units }} {{ group.units === 1 ? "item" : "items" }}
+              {{ t("cart.subtotal", { one: "Subtotal · {n} item", other: "Subtotal · {n} items" }, { n: group.units }) }}
               <template v-if="groups.length > 1"> · {{ typeName(group.type) }}</template>
             </small>
             <span class="u--price">{{ money(group.total, group.currency) }}</span>
           </p>
           <span v-if="group.saved >= 0.01" class="k-bdrawer__save">
-            You save {{ money(group.saved, group.currency) }}
+            {{ t("cart.youSave", "You save {amount}", { amount: money(group.saved, group.currency) }) }}
           </span>
         </div>
         <router-link :to="checkoutRoute(group.type)" class="k-bdrawer__go" @click="$emit('close')">
           <v-icon size="20">shopping_bag</v-icon>
-          Checkout
+          {{ t("cart.checkout", "Checkout") }}
         </router-link>
       </div>
 
@@ -41,20 +41,20 @@
             <img v-if="image(item.product)" :src="image(item.product)" alt="" height="36" loading="lazy" width="36" />
           </router-link>
           <router-link :to="productRoute(item.product_id)" class="k-bdrawer__name" @click="$emit('close')">
-            <span>{{ item.product?.title }}</span>
+            <span dir="auto">{{ item.product?.title }}</span>
             <small v-if="meta(item)">{{ meta(item) }}</small>
           </router-link>
           <div
-            :aria-label="`Quantity of ${item.product?.title || 'this item'}`"
+            :aria-label="item.product?.title ? t('cart.qty.of', 'Quantity of {name}', { name: item.product.title }) : t('cart.qty.ofThis', 'Quantity of this item')"
             :class="{ '-busy': settling(item.product, item) }"
             class="k-bdrawer__qty"
             role="group"
           >
-            <button :aria-label="shown(item) > 1 ? 'One fewer' : 'Remove from basket'" type="button" @click="step(item, -1)">
+            <button :aria-label="shown(item) > 1 ? t('cart.qty.fewer', 'One fewer') : t('cart.qty.remove', 'Remove from basket')" type="button" @click="step(item, -1)">
               <v-icon size="16">{{ shown(item) > 1 ? "remove" : "delete_outline" }}</v-icon>
             </button>
             <output aria-live="polite">{{ shown(item) }}</output>
-            <button :disabled="shown(item) >= max(item)" aria-label="One more" type="button" @click="step(item, 1)">
+            <button :disabled="shown(item) >= max(item)" :aria-label="t('cart.qty.more', 'One more')" type="button" @click="step(item, 1)">
               <v-icon size="16">add</v-icon>
             </button>
           </div>

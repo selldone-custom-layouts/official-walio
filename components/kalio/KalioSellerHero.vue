@@ -15,21 +15,22 @@
 <template>
   <kalio-shelf-head
     :crumbs="crumbs"
-    :eyebrow="`Seller on ${shopTitle}`"
+    :eyebrow="t('seller.eyebrow', 'Seller on {shop}', { shop: shopTitle })"
     :image="mark"
-    :lede="vendor && vendor.description ? vendor.description : `An independent seller on ${shopTitle}.`"
+    :lede="vendor && vendor.description ? vendor.description : t('seller.fallbackLede', 'An independent seller on {shop}.', { shop: shopTitle })"
     :loading="busy"
     :meta="meta"
     :tabs="tabs"
     :title="vendor ? vendor.name : null"
     cover
-    tabs-label="Aisles this seller sells in"
+    :tabs-label="t('seller.tabsLabel', 'Aisles this seller sells in')"
   />
 </template>
 
 <script>
 import KalioShelfHead from "./KalioShelfHead.vue";
 import { aisleIndex, countProducts, featured, offers, vendorImage } from "./kalio-catalog";
+import { t } from "./i18n/kalio-i18n";
 
 export default {
   name: "KalioSellerHero",
@@ -54,12 +55,12 @@ export default {
       return vendorImage(this.vendor);
     },
     crumbs() {
-      return [{ label: this.shopTitle, to: this.homeRoute }, { label: this.vendor ? this.vendor.name : "Seller" }];
+      return [{ label: this.shopTitle, to: this.homeRoute }, { label: this.vendor ? this.vendor.name : t("seller.label", "Seller") }];
     },
     meta() {
       const parts = [];
-      if (this.total !== null) parts.push(`${this.total.toLocaleString()} ${this.total === 1 ? "product" : "products"}`);
-      if (this.on_offer) parts.push(`${this.on_offer.toLocaleString()} on offer`);
+      if (this.total !== null) parts.push(t("listing.productCount", { one: "{n} product", other: "{n} products" }, { n: this.total }));
+      if (this.on_offer) parts.push(t("aisle.onOfferCount", { one: "{n} on offer", other: "{n} on offer" }, { n: this.on_offer }));
       return parts.join(" · ") || null;
     },
     tabs() {

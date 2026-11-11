@@ -13,42 +13,43 @@
   <div class="k-cookies">
     <div class="k-cookies__row">
       <span>
-        <b>Essential</b>
-        <small>Sign-in, basket and checkout. Always on.</small>
+        <b>{{ t("cookies.essential", "Essential") }}</b>
+        <small>{{ t("cookies.essentialText", "Sign-in, basket and checkout. Always on.") }}</small>
       </span>
-      <span class="k-cookies__fixed"><v-icon size="16">lock</v-icon>Always on</span>
+      <span class="k-cookies__fixed"><v-icon size="16">lock</v-icon>{{ t("cookies.alwaysOn", "Always on") }}</span>
     </div>
 
     <div v-for="app in apps" :key="app.code" class="k-cookies__row">
       <span>
         <b>{{ app.name }}</b>
-        <small>{{ app.description || "An app this shop runs." }}</small>
+        <small>{{ app.description || t("cookies.appDefault", "An app this shop runs.") }}</small>
       </span>
       <v-switch v-model="choices[app.code]" :aria-label="app.name" color="primary" hide-details inset />
     </div>
 
     <div v-if="!apps.length" class="k-cookies__row -none">
       <span>
-        <b>Analytics and marketing</b>
-        <small>{{ shopTitle }} runs no tracking or marketing apps, so there is nothing optional to switch on or off.</small>
+        <b>{{ t("cookies.analytics", "Analytics and marketing") }}</b>
+        <small>{{ t("cookies.noApps", "{shop} runs no tracking or marketing apps, so there is nothing optional to switch on or off.", { shop: shopTitle }) }}</small>
       </span>
-      <span class="k-cookies__fixed -off">Not used</span>
+      <span class="k-cookies__fixed -off">{{ t("cookies.notUsed", "Not used") }}</span>
     </div>
 
     <div class="k-cookies__acts">
       <button :disabled="saving" class="k-btn k-btn--solid" type="button" @click="save(false)">
-        <v-icon v-if="saved" size="20">check</v-icon>{{ saved ? "Saved on this device" : "Save my choices" }}
+        <v-icon v-if="saved" size="20">check</v-icon>{{ saved ? t("cookies.saved", "Saved on this device") : t("cookies.save", "Save my choices") }}
       </button>
       <button v-if="apps.length" :disabled="saving" class="k-btn k-btn--line" type="button" @click="save(true)">
-        Allow all
+        {{ t("cookies.allowAll", "Allow all") }}
       </button>
-      <span v-if="accepted && !saved" class="k-cookies__state">You accepted the cookie notice on this device.</span>
+      <span v-if="accepted && !saved" class="k-cookies__state">{{ t("cookies.accepted", "You accepted the cookie notice on this device.") }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { t } from "../i18n/kalio-i18n";
 
 const ACCEPT_KEY = "GDPR-Cookie"; // Selldone's own key (SCookiePreferences)
 
@@ -73,7 +74,7 @@ export default {
 
   computed: {
     shopTitle() {
-      return this.$shop?.title || "This shop";
+      return this.$shop?.title || t("sample.thisShop", "This shop");
     },
     apps() {
       return (this.$shop?.apps || []).filter((app) => app && app.code);

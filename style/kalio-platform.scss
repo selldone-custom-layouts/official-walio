@@ -388,7 +388,7 @@
        padding it filled 55%). Sized, not scaled, so reduced motion keeps it. */
     .v-img__img {
       top: -10% !important;
-      left: -10% !important;
+      inset-inline-start: -10% !important;
       width: 120% !important;
       height: 120% !important;
       max-width: none !important;
@@ -1910,7 +1910,7 @@
    bumps once when a product joins the list (SComparisonButton). */
 .k-compare-fab.s--storefront-products-comparison-circle-progress {
   bottom: calc(14px + env(safe-area-inset-bottom)) !important;
-  left: 14px !important;
+  inset-inline-start: 14px !important;
   display: inline-flex !important;
   align-items: center;
   gap: 8px;

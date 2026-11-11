@@ -11,8 +11,8 @@
   <section v-if="cards.length" aria-labelledby="k-sellers-title" class="k-sellers k-wrap">
     <header class="k-section-head">
       <div>
-        <h2 id="k-sellers-title" class="k-section-head__title">Shop by seller</h2>
-        <p class="k-section-head__meta">Every product on {{ shopTitle }} comes from one of these shops</p>
+        <h2 id="k-sellers-title" class="k-section-head__title">{{ t("seller.shopBy", "Shop by seller") }}</h2>
+        <p class="k-section-head__meta">{{ t("seller.cards.meta", "Every product on {shop} comes from one of these shops", { shop: shopTitle }) }}</p>
       </div>
     </header>
 
@@ -25,10 +25,10 @@
           </span>
           <h3 class="k-seller__name">{{ card.vendor.name }}</h3>
           <p class="k-seller__lede">
-            {{ card.vendor.description || `An independent seller on ${shopTitle}.` }}
+            {{ card.vendor.description || t("seller.fallbackLede", "An independent seller on {shop}.", { shop: shopTitle }) }}
           </p>
           <router-link :to="card.to" class="k-more">
-            Visit {{ card.vendor.name }}’s shop
+            {{ t("seller.visitShop", "Visit {name}’s shop", { name: card.vendor.name }) }}
             <v-icon class="k-flip" size="18">chevron_right</v-icon>
           </router-link>
         </div>

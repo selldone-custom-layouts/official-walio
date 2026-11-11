@@ -30,6 +30,7 @@
 </template>
 
 <script lang="ts">
+import { t } from "../../../components/kalio/i18n/kalio-i18n";
 import SOrderReturnRequests from "@app-storefront/components/orders/return-request/SOrderReturnRequests.vue";
 
 export default {
@@ -56,7 +57,7 @@ export default {
     },
   },
   created() {
-    this.setPageTitle("My return requests"); // Set Page Title!
+    this.setPageTitle(t("account.pageTitle.returns", "My return requests")); // Set Page Title!
   },
 };
 </script>

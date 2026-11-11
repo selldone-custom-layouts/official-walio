@@ -24,7 +24,7 @@
       <kalio-order-kinds current="PHYSICAL" />
     </header>
 
-    <div v-if="!compact && account.orders.length" aria-label="Show" class="k-board__filters" role="tablist">
+    <div v-if="!compact && account.orders.length" :aria-label="t('orders.filter.label', 'Show')" class="k-board__filters" role="tablist">
       <button
         v-for="f in filters"
         :key="f.key"
@@ -45,27 +45,27 @@
 
     <div v-else-if="account.failed && !account.orders.length" class="k-board__empty">
       <v-icon size="28">cloud_off</v-icon>
-      <p>Your orders did not load.</p>
-      <button class="k-btn -line" type="button" @click="retry">Try again</button>
+      <p>{{ t("orders.loadFailed", "Your orders did not load.") }}</p>
+      <button class="k-btn -line" type="button" @click="retry">{{ t("orders.tryAgain", "Try again") }}</button>
     </div>
 
     <div v-else-if="!visible.length" class="k-board__empty">
       <v-icon size="28">{{ filter === "all" ? "shopping_basket" : "filter_alt_off" }}</v-icon>
       <p>{{ emptyWords }}</p>
-      <router-link v-if="filter === 'all'" :to="{ path: '/' }" class="k-btn -main">Start shopping</router-link>
-      <button v-else class="k-btn -line" type="button" @click="pick('all')">Show all orders</button>
+      <router-link v-if="filter === 'all'" :to="{ path: '/' }" class="k-btn -main">{{ t("account.startShopping", "Start shopping") }}</router-link>
+      <button v-else class="k-btn -line" type="button" @click="pick('all')">{{ t("orders.showAll", "Show all orders") }}</button>
     </div>
 
     <!-- ━━━━━━━━ B: rows ━━━━━━━━ -->
     <div v-else-if="mode === 'table'" class="k-board__table">
       <div aria-hidden="true" class="k-board__row -head">
-        <span>Order</span><span>Items</span><span>Total</span><span>Status</span><span></span>
+        <span>{{ t("orders.table.order", "Order") }}</span><span>{{ t("orders.table.items", "Items") }}</span><span>{{ t("orders.table.total", "Total") }}</span><span>{{ t("orders.table.status", "Status") }}</span><span></span>
       </div>
       <router-link v-for="order in visible" :key="order.id" :to="orderRoute(order)" class="k-board__row">
         <span class="k-board__code">
           <b>
             {{ code(order) }}
-            <span v-if="chatCount(order)" :title="`${chatCount(order)} messages`" class="k-board__chat"><v-icon size="15">chat_bubble_outline</v-icon>{{ chatCount(order) }}</span>
+            <span v-if="chatCount(order)" :title="t('orders.messageCount', { one: '{n} message', other: '{n} messages' }, { n: chatCount(order) })" class="k-board__chat"><v-icon size="15">chat_bubble_outline</v-icon>{{ chatCount(order) }}</span>
           </b>
           <small>{{ when(order.reserved_at) }}</small>
         </span>
@@ -78,7 +78,7 @@
         </span>
         <span class="k-board__money">
           <u-price :amount="order.price" :currency="order.currency" />
-          <small>{{ units(order) }} {{ units(order) === 1 ? "item" : "items" }}</small>
+          <small>{{ t("orders.items", { one: "{n} item", other: "{n} items" }, { n: units(order) }) }}</small>
         </span>
         <span class="k-board__status">
           <span :class="`-${standing(order).tone}`" class="k-tag">
@@ -118,10 +118,10 @@
           <div class="k-ocardx__words">
             <b>{{ headline(order) }}</b>
             <small>{{ subline(order) }}</small>
-            <ol v-if="!['pay', 'off'].includes(standing(order).tone)" aria-label="Order progress" class="k-ocardx__trail">
+            <ol v-if="!['pay', 'off'].includes(standing(order).tone)" :aria-label="t('orders.progress', 'Order progress')" class="k-ocardx__trail">
               <li
                 v-for="(step, i) in trail"
-                :key="step.word"
+                :key="step.icon"
                 :aria-current="barClass(order, i) === '-now' ? 'step' : undefined"
                 :class="barClass(order, i)"
                 :title="stepName(i)"
@@ -133,21 +133,21 @@
           </div>
           <div class="k-ocardx__acts">
             <router-link v-if="standing(order).tone === 'pay'" :to="orderRoute(order)" class="k-btn -pay">
-              <v-icon size="17">lock</v-icon>Pay <u-price :amount="order.price" :currency="order.currency" />
+              <v-icon size="17">lock</v-icon>{{ t("orders.pay", "Pay") }} <u-price :amount="order.price" :currency="order.currency" />
             </router-link>
-            <router-link v-else :to="orderRoute(order)" class="k-btn -main">View order</router-link>
+            <router-link v-else :to="orderRoute(order)" class="k-btn -main">{{ t("orders.viewOrder", "View order") }}</router-link>
 
             <button v-if="['ok', 'off'].includes(standing(order).tone)" :disabled="busy[order.id]" class="k-btn -line" type="button" @click="buyAgain(order)">
               <v-progress-circular v-if="busy[order.id]" indeterminate size="16" width="2" />
-              <v-icon v-else size="17">{{ done[order.id] ? "check" : "replay" }}</v-icon>{{ done[order.id] ? "In your cart" : "Buy again" }}
+              <v-icon v-else size="17">{{ done[order.id] ? "check" : "replay" }}</v-icon>{{ done[order.id] ? t("orders.inYourBasket", "In your basket") : t("orders.buyAgain", "Buy again") }}
             </button>
-            <router-link v-else-if="standing(order).tone === 'pay'" :to="orderRoute(order)" class="k-btn -line">View order</router-link>
-            <router-link v-else :to="orderRoute(order)" class="k-btn -line">Track it</router-link>
+            <router-link v-else-if="standing(order).tone === 'pay'" :to="orderRoute(order)" class="k-btn -line">{{ t("orders.viewOrder", "View order") }}</router-link>
+            <router-link v-else :to="orderRoute(order)" class="k-btn -line">{{ t("orders.trackIt", "Track it") }}</router-link>
 
             <router-link :to="orderRoute(order)" class="k-ocardx__chat">
               <v-icon size="17">chat_bubble_outline</v-icon>
-              <template v-if="chatCount(order)">Messages <span class="k-dot">{{ chatCount(order) }}</span></template>
-              <template v-else>Ask the shop</template>
+              <template v-if="chatCount(order)">{{ t("orders.messages", "Messages") }} <span class="k-dot">{{ chatCount(order) }}</span></template>
+              <template v-else>{{ t("orders.askShop", "Ask the shop") }}</template>
             </router-link>
           </div>
         </div>
@@ -156,11 +156,11 @@
 
     <div v-if="canShowMore" class="k-board__more">
       <button :disabled="account.loading" class="k-btn -line" type="button" @click="more">
-        <v-progress-circular v-if="account.loading" indeterminate size="16" width="2" />Show older orders
+        <v-progress-circular v-if="account.loading" indeterminate size="16" width="2" />{{ t("orders.showOlder", "Show older orders") }}
       </button>
     </div>
     <router-link v-if="compact && filtered.length > limit" :to="allRoute" class="k-board__all">
-      See all {{ account.total }} orders<v-icon size="18">chevron_right</v-icon>
+      {{ t("orders.seeAll", { one: "See all {n} orders", other: "See all {n} orders" }, { n: account.total }) }}<v-icon size="18">chevron_right</v-icon>
     </router-link>
   </section>
 </template>
@@ -168,6 +168,7 @@
 <script>
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { reorder } from "../kalio-basket";
+import { t } from "../i18n/kalio-i18n";
 import { productImage, vendors } from "../kalio-catalog";
 import KalioOrderKinds from "./KalioOrderKinds.vue";
 import {
@@ -221,14 +222,15 @@ export default {
 
   computed: {
     title() {
-      return ACCOUNT_STYLE === "desk" ? "Your orders" : "Order history";
+      return ACCOUNT_STYLE === "desk" ? t("account.yourOrders", "Your orders") : t("orders.history", "Order history");
     },
     line() {
       if (!account.loaded || ACCOUNT_STYLE !== "desk") return null;
       const n = account.total;
       if (!n) return null;
       const moving = account.orders.filter((o) => ["go", "prep"].includes(standing(o).tone)).length;
-      return `${n} ${n === 1 ? "order" : "orders"}${moving ? ` · ${moving} on ${moving === 1 ? "its" : "their"} way to you` : ""}`;
+      const orders = t("orders.line.count", { one: "{n} order", other: "{n} orders" }, { n });
+      return moving ? t("orders.line.moving", { one: "{orders} · {n} on its way to you", other: "{orders} · {n} on their way to you" }, { n: moving, orders }) : orders;
     },
     counts() {
       const out = {};
@@ -248,8 +250,13 @@ export default {
       return this.filtered.length > this.showing || (this.filter === "all" && account.orders.length < account.total);
     },
     emptyWords() {
-      if (this.filter === "all") return "No orders yet. What you buy shows up here, with where it is.";
-      return { go: "Nothing on the way right now.", pay: "Nothing waiting for payment.", ok: "Nothing delivered yet.", off: "No cancelled orders." }[this.filter];
+      if (this.filter === "all") return t("orders.empty.all", "No orders yet. What you buy shows up here, with where it is.");
+      return {
+        go: t("orders.empty.go", "Nothing on the way right now."),
+        pay: t("orders.empty.pay", "Nothing waiting for payment."),
+        ok: t("orders.empty.ok", "Nothing delivered yet."),
+        off: t("orders.empty.off", "No cancelled orders."),
+      }[this.filter];
     },
     allRoute() {
       return { name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL };
@@ -307,19 +314,22 @@ export default {
     headline(order) {
       const s = standing(order);
       const full = account.details[order.id];
-      if (s.tone === "ok") return full?.delivery_at ? `Reached you ${when(full.delivery_at)}` : "Delivered";
-      if (s.tone === "go") return "On its way to you";
-      if (s.tone === "pay") return "Pay to keep this order";
-      if (s.tone === "off") return order.reject ? "The shop could not take this order" : "This order was cancelled";
-      if (s.word === "Being prepared") return "The shop is packing it";
-      if (s.word === "Confirmed") return "The shop has accepted it";
-      return "Waiting for the shop to accept it";
+      if (s.tone === "ok") return full?.delivery_at ? t("orders.headline.reached", "Reached you {when}", { when: when(full.delivery_at) }) : t("orders.headline.delivered", "Delivered");
+      if (s.tone === "go") return t("orders.headline.onItsWay", "On its way to you");
+      if (s.tone === "pay") return t("orders.headline.pay", "Pay to keep this order");
+      if (s.tone === "off") return order.reject ? t("orders.headline.rejected", "The shop could not take this order") : t("orders.headline.cancelled", "This order was cancelled");
+      if (s.key === "preparing") return t("orders.headline.packing", "The shop is packing it");
+      if (s.key === "confirmed") return t("orders.headline.accepted", "The shop has accepted it");
+      return t("orders.headline.waiting", "Waiting for the shop to accept it");
     },
     subline(order) {
       const n = unitsOf(order);
       const names = joinNames(sellersOf(order, this.sellers));
       const place = placeOf(order);
-      return [`${n} ${n === 1 ? "item" : "items"}${names ? ` from ${names}` : ""}`, place && standing(order).tone !== "pay" ? `to ${place}` : null].filter(Boolean).join(" · ");
+      const items = names
+        ? t("orders.subline.itemsFrom", { one: "{n} item from {names}", other: "{n} items from {names}" }, { n, names })
+        : t("orders.items", { one: "{n} item", other: "{n} items" }, { n });
+      return [items, place && standing(order).tone !== "pay" ? t("orders.subline.to", "to {place}", { place }) : null].filter(Boolean).join(" · ");
     },
     /** Selldone's own name for a step, for the tooltip. */
     stepName(i) {
@@ -353,9 +363,9 @@ export default {
           this.done[order.id] = true;
           setTimeout(() => (this.done[order.id] = false), 2400);
         }
-        if (failed) NotificationService.showErrorAlert(null, `${failed} ${failed === 1 ? "item is" : "items are"} not sold any more and stayed out.`);
+        if (failed) NotificationService.showErrorAlert(null, t("orders.reorder.failed", { one: "{n} item is not sold any more and stayed out.", other: "{n} items are not sold any more and stayed out." }, { n: failed }));
       } catch (e) {
-        NotificationService.showErrorAlert(null, "This order could not be added again.");
+        NotificationService.showErrorAlert(null, t("orders.reorder.error", "This order could not be added again."));
       } finally {
         this.busy[order.id] = false;
       }

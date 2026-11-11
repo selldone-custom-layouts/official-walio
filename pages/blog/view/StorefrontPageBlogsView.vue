@@ -18,10 +18,10 @@
     <slot name="header"></slot>
 
     <div class="k-wrap">
-      <nav aria-label="Breadcrumb" class="k-official__crumbs">
+      <nav :aria-label="t('pages.breadcrumb', 'Breadcrumb')" class="k-official__crumbs">
         <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
         <v-icon size="16">chevron_right</v-icon>
-        <router-link :to="journalRoute()">Journal</router-link>
+        <router-link :to="journalRoute()">{{ t("blog.journal", "Journal") }}</router-link>
         <template v-if="topic">
           <v-icon size="16">chevron_right</v-icon>
           <router-link :to="journalRoute({ category: category.id })">{{ topic }}</router-link>
@@ -36,9 +36,9 @@
     <div v-else-if="failed" class="k-post__col">
       <div class="k-board__empty k-journal__empty">
         <v-icon size="30">menu_book</v-icon>
-        <h2>We can't find this note</h2>
-        <p>It may have been moved or taken down. The rest of the journal is still here.</p>
-        <router-link :to="journalRoute()" class="k-btn k-btn--solid">Back to the journal</router-link>
+        <h2>{{ t("blog.post.notFoundTitle", "We can't find this note") }}</h2>
+        <p>{{ t("blog.post.notFoundText", "It may have been moved or taken down. The rest of the journal is still here.") }}</p>
+        <router-link :to="journalRoute()" class="k-btn k-btn--solid">{{ t("blog.post.backToJournal", "Back to the journal") }}</router-link>
       </div>
     </div>
 
@@ -50,10 +50,10 @@
         <p class="k-post__meta">
           <span v-if="article.user?.name" class="k-who"><i>{{ initials(article.user.name) }}</i>{{ article.user.name }}</span>
           <span v-if="date">{{ date }}</span>
-          <span><v-icon size="17">schedule</v-icon>{{ minutes }} min read</span>
+          <span><v-icon size="17">schedule</v-icon>{{ t("blog.post.minRead", { one: "{n} min read", other: "{n} min read" }, { n: minutes }) }}</span>
         </p>
         <kalio-sample-note v-if="demo">
-          This note came with the shop's demo content to show the page. It is not a real {{ shopTitle }} article.
+          {{ t("blog.post.demoNote", "This note came with the shop's demo content to show the page. It is not a real {shop} article.", { shop: shopTitle }) }}
         </kalio-sample-note>
       </header>
 
@@ -67,7 +67,7 @@
 
         <section v-if="list.length" class="k-post__shop">
           <header>
-            <h2>{{ named ? "Shop this list" : "On offer this week" }}</h2>
+            <h2>{{ named ? t("blog.post.shopList", "Shop this list") : t("blog.onOffer", "On offer this week") }}</h2>
             <button
               v-if="addable.length > 1"
               :disabled="adding || allIn"
@@ -76,8 +76,8 @@
               @click="addAll"
             >
               <v-icon size="20">{{ allIn ? "check" : "shopping_basket" }}</v-icon>
-              <template v-if="allIn">All in your basket</template>
-              <template v-else>Add all {{ addable.length }} · <u-price :amount="addableTotal" :currency="currency" /></template>
+              <template v-if="allIn">{{ t("blog.post.allIn", "All in your basket") }}</template>
+              <template v-else>{{ addall_words[0] }}<u-price :amount="addableTotal" :currency="currency" />{{ addall_words[1] }}</template>
             </button>
           </header>
           <div class="k-post__shoprow">
@@ -86,19 +86,19 @@
         </section>
 
         <footer class="k-post__share">
-          <span>Share</span>
+          <span>{{ t("blog.post.share", "Share") }}</span>
           <button class="k-chip" type="button" @click="copyLink">
-            <v-icon size="18">{{ copied ? "check" : "link" }}</v-icon>{{ copied ? "Link copied" : "Copy link" }}
+            <v-icon size="18">{{ copied ? "check" : "link" }}</v-icon>{{ copied ? t("blog.post.linkCopied", "Link copied") : t("blog.post.copyLink", "Copy link") }}
           </button>
-          <a :href="mailto" class="k-chip"><v-icon size="18">mail_outline</v-icon>Email</a>
+          <a :href="mailto" class="k-chip"><v-icon size="18">mail_outline</v-icon>{{ t("blog.post.email", "Email") }}</a>
           <span class="k-post__spacer"></span>
           <router-link :to="journalRoute()" class="k-more">
-            <v-icon class="k-flip" size="20">chevron_left</v-icon>All notes
+            <v-icon class="k-flip" size="20">chevron_left</v-icon>{{ t("blog.allNotes", "All notes") }}
           </router-link>
         </footer>
 
         <section class="k-post__comments">
-          <h2>Comments</h2>
+          <h2>{{ t("blog.post.comments", "Comments") }}</h2>
           <s-article-comments
             :article-id="article.id"
             :article-user-id="article.user_id"
@@ -114,7 +114,7 @@
     </article>
 
     <section v-if="more.length" class="k-wrap k-post__more">
-      <h2>More from the journal</h2>
+      <h2>{{ t("blog.post.more", "More from the journal") }}</h2>
       <div class="k-post__morerow">
         <router-link v-for="note in more" :key="note.id" :to="postRoute(note)" class="k-post__card">
           <span class="k-post__cardpic">
@@ -155,6 +155,7 @@ import {
   readMinutes,
 } from "@app-storefront/components/kalio/pages/kalio-journal";
 import { plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
+import { t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
 
 export default {
   name: "StorefrontPageBlogsView",
@@ -179,7 +180,7 @@ export default {
 
   computed: {
     shopTitle() {
-      return this.$shop?.title || "The shop";
+      return this.$shop?.title || t("pages.theShop", "The shop");
     },
     currency() {
       return currentCurrency();
@@ -231,6 +232,14 @@ export default {
     addableTotal() {
       const shop = this.$store.getters.getShop;
       return this.addable.reduce((sum, product) => sum + (priceOf(shop, product, this.currency).now || 0), 0);
+    },
+    /* "Add all 3 · {amount}": the words around the price the template
+       draws, so a language can put the amount where it reads. */
+    addall_words() {
+      const n = this.addable.length;
+      const text = t("blog.post.addAll", { one: "Add all {n} · {amount}", other: "Add all {n} · {amount}" }, { n });
+      const at = text.indexOf("{amount}");
+      return at < 0 ? [text + " ", ""] : [text.slice(0, at), text.slice(at + "{amount}".length)];
     },
     allIn() {
       return this.addable.every(

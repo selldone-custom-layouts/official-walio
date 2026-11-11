@@ -25,50 +25,50 @@
     <div
       v-if="foot === 'step'"
       :class="{ '-busy': busy }"
-      aria-label="Quantity in cart"
+      :aria-label="t('card.qtyInBasket', 'Quantity in basket')"
       class="k-card-step -card"
       role="group"
     >
-      <button :aria-label="shown > 1 ? 'One fewer' : 'Remove from cart'" type="button" @click.prevent.stop="step(-1)">
+      <button :aria-label="shown > 1 ? t('cart.qty.fewer', 'One fewer') : t('cart.qty.remove', 'Remove from basket')" type="button" @click.prevent.stop="step(-1)">
         <v-icon size="19">{{ shown > 1 ? "remove" : "delete_outline" }}</v-icon>
       </button>
-      <output aria-live="polite" class="k-card-step__count">{{ shown }}<small> in cart</small></output>
-      <button aria-label="One more" type="button" @click.prevent.stop="step(1)">
+      <output aria-live="polite" class="k-card-step__count">{{ shown }}<small> {{ t("card.inBasket", "in basket") }}</small></output>
+      <button :aria-label="t('cart.qty.more', 'One more')" type="button" @click.prevent.stop="step(1)">
         <v-icon size="19">add</v-icon>
       </button>
     </div>
 
     <button v-else-if="foot === 'add'" :class="{ '-options': sized }" class="k-card-add" type="button" @click.prevent.stop="add">
       <template v-if="sized">
-        <span class="-long">Choose options</span><span class="-short">Options</span>
+        <span class="-long">{{ t("card.seeOptions", "See options") }}</span><span class="-short">{{ t("card.options", "Options") }}</span>
       </template>
       <template v-else>
-        <v-icon size="18">add</v-icon><span class="-long">Add to cart</span><span class="-short">Add</span>
+        <v-icon size="18">add</v-icon><span class="-long">{{ t("card.addToBasket", "Add to basket") }}</span><span class="-short">{{ t("card.add", "Add") }}</span>
       </template>
     </button>
 
-    <span v-else class="k-card-add -none">Out of stock</span>
+    <span v-else class="k-card-add -none">{{ t("card.outOfStock", "Out of stock") }}</span>
   </div>
 
   <div
     v-else-if="!card && line && shown > 0"
     :class="{ '-busy': busy, '-inline': inline, '-strip': strip }"
-    aria-label="Quantity in cart"
+    :aria-label="t('card.qtyInBasket', 'Quantity in basket')"
     class="k-card-step"
     role="group"
     @click.prevent.stop
   >
     <button
-      :aria-label="shown > 1 ? 'One fewer' : 'Remove from cart'"
+      :aria-label="shown > 1 ? t('cart.qty.fewer', 'One fewer') : t('cart.qty.remove', 'Remove from basket')"
       type="button"
       @click.prevent.stop="step(-1)"
     >
       <v-icon :size="inline ? 18 : 20">{{ shown > 1 ? "remove" : "delete_outline" }}</v-icon>
     </button>
     <output aria-live="polite" class="k-card-step__count">
-      {{ shown }}<small v-if="!inline">in cart</small>
+      {{ shown }}<small v-if="!inline">{{ t("card.inBasket", "in basket") }}</small>
     </output>
-    <button aria-label="One more" type="button" @click.prevent.stop="step(1)">
+    <button :aria-label="t('cart.qty.more', 'One more')" type="button" @click.prevent.stop="step(1)">
       <v-icon :size="inline ? 18 : 20">add</v-icon>
     </button>
   </div>

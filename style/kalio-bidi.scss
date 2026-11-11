@@ -1,0 +1,79 @@
+/* ▆▆▆▆▆▆▆▆ Merchant text in either direction (11 November 2026) ▆▆▆▆▆▆▆▆
+
+   What the merchant writes (product, aisle, brand and seller names,
+   descriptions, spec values, banner and article text) keeps its own
+   direction on a page of the other direction: an English "Breads & Bakery."
+   on an Arabic page keeps its full stop at its end, an Arabic name on an
+   English page reads right to left. unicode-bidi: plaintext takes each
+   paragraph's direction from its first strong letter. Text nodes without a
+   class of their own are wrapped in <bdi> (or carry dir="auto") in the
+   templates instead: the header's mega menu, aisle strip and phone menu
+   rows, the empty cart's chips, the footer's aisles, sellers and shop links,
+   "often added", the cart drawer's and cart window's lines, the home's idea
+   list and the listing's "Keep shopping" aisles.
+
+   The list is Molino's (kalio-layout/style/kalio-bidi.scss), plus Walio's
+   own pieces (the second group). */
+
+:is(
+    /* Kalio's own pieces */
+    .k-pdp__title,
+    .k-pdp__sub,
+    .k-pdp__aisle,
+    .k-pdp__brand,
+    .k-shelf-head__title,
+    .k-shelf-head__lede,
+    .k-shelf__name,
+    .k-aisle__label,
+    .k-aisle-index__name,
+    .k-aisle-index__lede,
+    .k-mtile__title,
+    .k-mtile__lede,
+    .k-seller__name,
+    .k-offer__name,
+    .k-again__name,
+    .k-lines__title,
+    .k-lines__name,
+    .k-cmp__nm,
+    .k-cmp-add__nm,
+    .k-mini__name,
+    .k-jentry__title,
+    .k-jentry__lede,
+    .k-footer__lede,
+    .k-rail__title,
+    /* Walio's own pieces */
+    .t-card__name,
+    .t-card__unit,
+    .t-top__h1,
+    .t-row__title,
+    .t-sec__title,
+    .w-cat b,
+    .w-banner__tx h1,
+    .w-banner__tx p,
+    .w-idea__list h3,
+    .w-idea__eyebrow,
+    .w-seller__who b,
+    .w-scard h1,
+    .w-scard__nav a,
+    .w-pdp__brand,
+    .w-hl li span,
+    .w-mini__name,
+    .w-grp summary,
+    .w-rail__pills button,
+    .t-crumbs a,
+    .t-crumbs span,
+    /* Selldone's pieces Kalio shows */
+    .s-product-variants__value,
+    .s-product-variants__caption > span,
+    .k-crumbs__here,
+    .sticky-title,
+    .s--product-card .toggle-hidden-on-hover .font-weight-bold,
+    .s--product-card .row-pro-title,
+    .s--title-en,
+    .s--product-spec td,
+    .s--product-spec th,
+    .s--product-spec li,
+    .s--product-section-article :is(p, li, h1, h2, h3, h4, h5, h6, td, th, blockquote, figcaption)
+  ) {
+  unicode-bidi: plaintext;
+}

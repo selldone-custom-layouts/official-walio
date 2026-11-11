@@ -16,16 +16,15 @@
     </span>
     <h1>{{ vendor ? vendor.name : "" }}</h1>
     <p>
-      An independent seller on {{ $shop.title }}<template v-if="sells_line">: {{ sells_line }}</template>, in the same cart as every
-      other seller.
+      {{ sells_line ? t("walio.seller.blurbSells", "An independent seller on {shop}: {sells}, in the same cart as every other seller.", { shop: $shop.title, sells: sells_line }) : t("walio.seller.blurb", "An independent seller on {shop}, in the same cart as every other seller.", { shop: $shop.title }) }}
     </p>
     <div class="w-scard__facts">
-      <div><b>{{ total !== null ? total.toLocaleString() : "–" }}</b><span>products</span></div>
-      <div><b>{{ on_sale !== null ? on_sale.toLocaleString() : "–" }}</b><span>on sale</span></div>
-      <div><b>{{ tiles.length }}</b><span>aisles</span></div>
+      <div><b>{{ total !== null ? formatNumber(total) : "–" }}</b><span>{{ t("walio.seller.factProducts", "products") }}</span></div>
+      <div><b>{{ on_sale !== null ? formatNumber(on_sale) : "–" }}</b><span>{{ t("walio.seller.factOnSale", "on sale") }}</span></div>
+      <div><b>{{ formatNumber(tiles.length) }}</b><span>{{ t("walio.seller.factAisles", "aisles") }}</span></div>
     </div>
-    <nav aria-label="The seller's aisles" class="w-scard__nav">
-      <router-link :class="{ '-on': !$route.params.category_name }" :to="sellerTo">Everything <span>{{ total ?? "" }}</span></router-link>
+    <nav :aria-label="t('walio.seller.aisles', 'The seller\'s aisles')" class="w-scard__nav">
+      <router-link :class="{ '-on': !$route.params.category_name }" :to="sellerTo">{{ t("walio.seller.everything", "Everything") }} <span>{{ total ?? "" }}</span></router-link>
       <router-link
         v-for="a in tiles"
         :key="a.aisle.id"
@@ -40,6 +39,7 @@
 
 <script>
 import { aisleRoute, aisles, countProducts, featured, offers, sellerRoute, vendorImage } from "../../kalio/kalio-catalog";
+import { locale } from "../../kalio/i18n/kalio-i18n";
 
 export default {
   name: "WalioSellerSide",
@@ -65,7 +65,11 @@ export default {
     sells_line() {
       const names = this.tiles.slice(0, 3).map((a) => String(a.aisle.title || a.aisle.name).toLowerCase().replace(/&amp;/g, "&"));
       if (names.length < 2) return names[0] || "";
-      return names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+      try {
+        return new Intl.ListFormat(locale(), { type: "conjunction" }).format(names);
+      } catch {
+        return names.join(", ");
+      }
     },
   },
 

@@ -22,10 +22,20 @@
 //   flows the router cannot open (the cart drawer, the checkout sheets).
 const PW = process.env.PW || "D:/Kalio Sample Shop Claude/kalio-marketplace/node_modules/playwright";
 const [base, wait = "main"] = process.argv.slice(2);
+/* Git Bash (MSYS) rewrites a path-like value in an env var: "/laptop-category" arrives as
+   "C:/Program Files/Git/laptop-category". Before 11 Nov 2026 the tools then opened that
+   as a route, landed on the 404 page and passed. Undo it, and say so. */
+function unmsys(p) {
+  const m = String(p).match(/^[A-Za-z]:[\\/](?:.*?[\\/])?Git[\\/](.*)$/);
+  if (!m) return p;
+  const fixed = "/" + m[1].split("\\").join("/");
+  console.warn(`note: page path "${p}" was rewritten by Git Bash; using "${fixed}" (set MSYS_NO_PATHCONV=1 to avoid this)`);
+  return fixed;
+}
 const PAGES = (process.env.PAGES || "home=/")
   .split(",")
   .map((p) => p.split("="))
-  .map(([name, ...rest]) => [name, rest.join("=")]);
+  .map(([name, ...rest]) => [name, unmsys(rest.join("="))]);
 const WIDTHS = (process.env.WIDTHS || "1440,390").split(",").map(Number);
 const STORAGE = process.env.STORAGE ? JSON.parse(process.env.STORAGE) : null;
 
