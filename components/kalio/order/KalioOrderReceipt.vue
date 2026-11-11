@@ -22,10 +22,10 @@
     <div class="k-cart__rows">
       <p class="k-cart__row"><span>{{ t("order.receipt.items", "Items ({n})", { n: units }) }}</span><u-price :amount="itemsBefore" :currency="basket.currency" /></p>
       <p v-if="saved >= 0.01" class="k-cart__row -save">
-        <span>{{ t("order.receipt.saved", "You saved") }}</span><span>−<u-price :amount="saved" :currency="basket.currency" /></span>
+        <span>{{ t("order.receipt.saved", "You saved") }}</span><span class="k-signed">−<u-price :amount="saved" :currency="basket.currency" /></span>
       </p>
       <p v-for="row in promoRows" :key="row.key" class="k-cart__row -save">
-        <span>{{ row.label }}</span><span>−<u-price :amount="row.amount" :currency="basket.currency" /></span>
+        <span>{{ row.label }}</span><span class="k-signed">−<u-price :amount="row.amount" :currency="basket.currency" /></span>
       </p>
       <p v-if="prizeProduct" class="k-cart__row -save">
         <span>{{ t("order.receipt.prize", "Prize") }}</span><span class="k-opay__prize">{{ prizeProduct }}</span>
@@ -43,7 +43,7 @@
         <span>{{ t("order.receipt.taxDelivery", "Tax on delivery") }}</span><u-price :amount="basket.tax_shipping" :currency="basket.currency" />
       </p>
       <p v-if="walletPaid > 0" class="k-cart__row -save">
-        <span>{{ t("order.receipt.wallet", "From your wallet") }}</span><span>−<u-price :amount="walletPaid" :currency="basket.currency" /></span>
+        <span>{{ t("order.receipt.wallet", "From your wallet") }}</span><span class="k-signed">−<u-price :amount="walletPaid" :currency="basket.currency" /></span>
       </p>
     </div>
 

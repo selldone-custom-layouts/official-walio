@@ -228,32 +228,32 @@
                 <span>{{ t("basket.receipt.items", "Items ({n})", { n: units }) }}</span><u-price :amount="raw_items_price" :currency="basket.currency"></u-price>
               </p>
               <p v-if="total_items_discount" class="k-cart__row -save">
-                <span>{{ t("basket.receipt.youSave", "You save") }}</span><span>−<u-price :amount="total_items_discount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.youSave", "You save") }}</span><span class="k-signed">−<u-price :amount="total_items_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="total_offers_amount" class="k-cart__row -save">
-                <span>{{ t("basket.receipt.offers", "Offers") }}</span><span>−<u-price :amount="total_offers_amount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.offers", "Offers") }}</span><span class="k-signed">−<u-price :amount="total_offers_amount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="cross_selling_discount > 0" class="k-cart__row -save">
-                <span>{{ t("basket.receipt.boughtTogether", "Bought together") }}</span><span>−<u-price :amount="cross_selling_discount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.boughtTogether", "Bought together") }}</span><span class="k-signed">−<u-price :amount="cross_selling_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="discount_code_amount > 0" class="k-cart__row -save">
                 <span>{{ discount_code?.code ? t("basket.receipt.codeNamed", "Code {code}", { code: discount_code.code }) : t("basket.receipt.code", "Code") }}</span>
-                <span>−<u-price :amount="discount_code_amount" :currency="basket.currency"></u-price></span>
+                <span class="k-signed">−<u-price :amount="discount_code_amount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="customer_club_discount > 0" class="k-cart__row -save">
-                <span>{{ t("basket.receipt.club", "Club") }}</span><span>−<u-price :amount="customer_club_discount" :currency="basket.currency"></u-price></span>
+                <span>{{ t("basket.receipt.club", "Club") }}</span><span class="k-signed">−<u-price :amount="customer_club_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="coupon" class="k-cart__row -save">
                 <span>{{ coupon.title || $t("global.commons.coupon") }}</span>
-                <span>−<u-price :amount="coupon_discount" :currency="basket.currency"></u-price></span>
+                <span class="k-signed">−<u-price :amount="coupon_discount" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="prize" class="k-cart__row -save">
                 <span>{{ prize.title || $t("global.commons.prize") }}</span>
-                <span v-if="prize.discount || prize.amount">−<u-price :amount="prize_discount" :currency="basket.currency"></u-price></span>
+                <span v-if="prize.discount || prize.amount" class="k-signed">−<u-price :amount="prize_discount" :currency="basket.currency"></u-price></span>
                 <span v-else-if="prize.product">{{ prize.product.title }}</span>
               </p>
               <p v-if="wallet" class="k-cart__row -save">
-                <span>{{ $t("global.commons.my_wallet") }}</span><span>−<u-price :amount="wallet" :currency="basket.currency"></u-price></span>
+                <span>{{ $t("global.commons.my_wallet") }}</span><span class="k-signed">−<u-price :amount="wallet" :currency="basket.currency"></u-price></span>
               </p>
               <p v-if="!isService && receiver_info && is_valid_location" :class="{ '-free': shipping_cost === 0 }" class="k-cart__row">
                 <span>{{ all_is_pickup ? t("basket.receipt.pickup", "Pickup") : t("basket.receipt.delivery", "Delivery") }}</span>

@@ -42,7 +42,7 @@
         <span><u-price :amount="price_draft[0]" :currency="currency" /></span>–<span><u-price :amount="price_draft[1]" :currency="currency" /></span>
       </div>
       <div class="w-rail__quick">
-        <button v-for="q in quick" :key="q.label" type="button" @click="applyPrice(q.range)">{{ q.label }}</button>
+        <button v-for="q in quick" :key="q.label" :class="{ 'k-signed': q.signed }" type="button" @click="applyPrice(q.range)">{{ q.label }}</button>
       </div>
     </details>
     <details v-for="(group, i) in groups" :key="group.kind + group.key" :open="i < 3" class="w-grp">
@@ -227,7 +227,8 @@ export default {
       const cur = (n) => formatMoney(n, this.currency, { short: true });
       return [
         { label: t("walio.filters.under", "Under {price}", { price: cur(a) }), range: [lo, a] },
-        { label: `${cur(a)} – ${cur(b)}`, range: [a, b] },
+        /* A range reads low to high, left to right, in every language. */
+        { label: `${cur(a)} – ${cur(b)}`, range: [a, b], signed: true },
         { label: t("walio.filters.andUp", "{price} & up", { price: cur(b) }), range: [b, hi] },
       ];
     },

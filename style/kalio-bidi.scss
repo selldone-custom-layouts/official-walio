@@ -77,3 +77,14 @@
   ) {
   unicode-bidi: plaintext;
 }
+
+/* Signed numbers and percentages stay one left-to-right piece on a
+   right-to-left page: "-20%" on a deal badge (not "20%-"), "+3" on a row of
+   thumbnails, "−$4.00" on a receipt row (11 November 2026). */
+.t-card__tag,
+.k-cmp__off,
+.k-board__thumb.-more,
+.k-signed {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

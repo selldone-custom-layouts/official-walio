@@ -621,6 +621,14 @@ a:hover > .t-photo .t-photo__pack.-p1 {
         background: linear-gradient(270deg, rgba(0, 32, 70, 0.72) 0%, rgba(0, 32, 70, 0.35) 55%, rgba(0, 32, 70, 0) 80%);
       }
     }
+
+    /* In a right-to-left language the words sit at the right, so the photo
+       is mirrored too: its quiet side (the bag's shade) stays under the
+       words, not the bright window (11 November 2026). Only a real photo;
+       a collage of packshots keeps its labels the right way round. */
+    [dir="rtl"] & .t-photo__img {
+      transform: scaleX(-1);
+    }
   }
 
   &__text {
@@ -786,6 +794,13 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   @media (max-width: $t-phone) {
     &__main {
       min-height: 300px;
+
+      /* On a phone the words span the width at the bottom: the shade rises
+         from the bottom, the same in both directions. */
+      &::after,
+      [dir="rtl"] &::after {
+        background: linear-gradient(0deg, rgba(0, 32, 70, 0.82) 0%, rgba(0, 32, 70, 0.55) 45%, rgba(0, 32, 70, 0) 80%);
+      }
     }
 
     &__text {
