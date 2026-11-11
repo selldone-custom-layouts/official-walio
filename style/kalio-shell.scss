@@ -1463,8 +1463,10 @@ $k-filter-gap: 36px;
       display: none !important;
     }
 
+    /* The word comes from t() (SCategoryFilter sets --k-word-filters on the
+       panel), so it follows the visitor's language. */
     .v-list-item__content::before {
-      content: "Filters";
+      content: var(--k-word-filters, "Filters");
       display: block;
       font-family: var(--k-body);
       font-size: 12px;
@@ -1472,6 +1474,12 @@ $k-filter-gap: 36px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--k-ink);
+
+      /* Joined scripts are set solid (kalio-bidi.scss sets elements, not
+         this pseudo-element). */
+      :is(:lang(ar), :lang(fa), :lang(ur), :lang(pa), :lang(hi), :lang(mr)) & {
+        letter-spacing: 0;
+      }
     }
 
     .v-btn {

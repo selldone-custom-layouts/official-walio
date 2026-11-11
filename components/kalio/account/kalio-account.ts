@@ -19,6 +19,7 @@ import { reactive } from "vue";
 import { Basket } from "@selldone/core-js";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import { locale, t } from "../i18n/kalio-i18n";
+import { gatewayName } from "../checkout/kalio-gateway";
 
 declare const window: any;
 
@@ -264,7 +265,8 @@ export function productIds(order: any): number[] {
 /** How it is paid, in a few words, from what the list knows. */
 export function paidWords(order: any): string {
   const full = account.details[order?.id];
-  const gateway = full?.payment?.gateway?.name;
+  // Cash on delivery and cash by their kind, in the visitor's language (the gateway's name is English).
+  const gateway = full?.payment?.gateway ? gatewayName(full.payment.gateway) : null;
   if (order.status === "Payed") return gateway ? t("orders.paid.with", "Paid · {gateway}", { gateway }) : t("orders.paid.paid", "Paid");
   if (order.status === "COD") return t("orders.paid.onDelivery", "Pay on delivery");
   if (order.status === "Reserved") return t("orders.paid.notYet", "Not paid yet");

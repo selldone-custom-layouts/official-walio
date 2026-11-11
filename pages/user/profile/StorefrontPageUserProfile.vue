@@ -149,7 +149,7 @@
             class="ms-1 me-2"
           />
 
-          <b>{{ customer.country }}</b>
+          <b>{{ countryName(customer.country) }}</b>
         </u-text-value-dashed>
 
         <u-text-value-dashed>
@@ -465,6 +465,7 @@
 
 <script lang="ts">
 import { t } from "../../../components/kalio/i18n/kalio-i18n";
+import { countryName as nameOfCountry } from "../../../components/kalio/checkout/kalio-countries";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
@@ -527,6 +528,10 @@ export default {
     },
   },
   methods: {
+    /* The stored code ("ES") named in the visitor's language. */
+    countryName(code) {
+      return nameOfCountry(code);
+    },
     showEditProfile() {
       this.dialog_profile = true;
       this.clone_customer = JSON.parse(JSON.stringify(this.customer));

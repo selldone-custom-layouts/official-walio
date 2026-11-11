@@ -102,6 +102,7 @@
 import UPaymentCard from "@selldone/components-vue/ui/payment/card/UPaymentCard.vue";
 import { PriceHelper } from "@selldone/core-js";
 import { t } from "../i18n/kalio-i18n";
+import { gatewayKind, gatewayName } from "../checkout/kalio-gateway";
 
 const sum = (list, pick) => (list || []).reduce((total, item) => total + (pick(item) || 0), 0);
 
@@ -208,12 +209,22 @@ export default {
       if (b.payment && b.status === "Payed") {
         const p = b.payment;
         const at = p.payment_at || p.created_at;
+        /* Cash on delivery and cash are named by their kind, in the
+           visitor's language (Selldone sends the gateway's English name). */
+        const kind = gatewayKind(p.gateway);
         return {
           ...out,
           tone: "ok",
           icon: "check",
           logo: p.gateway?.icon ? this.getShopImagePath(p.gateway.icon) : null,
-          title: p.gateway?.name ? t("order.pay.paidWith", "Paid with {gateway}", { gateway: p.gateway.name }) : t("order.pay.paidWithCard", "Paid with card"),
+          title:
+            kind === "cod"
+              ? t("order.pay.paidCod", "Paid in cash on delivery")
+              : kind === "cash"
+                ? t("order.pay.paidCash", "Paid in cash")
+                : p.gateway?.name
+                  ? t("order.pay.paidWith", "Paid with {gateway}", { gateway: p.gateway.name })
+                  : t("order.pay.paidWithCard", "Paid with card"),
           note: [money(p.amount, p.currency), at ? this.when(at) : null].filter(Boolean).join(" · "),
           test: p.livemode === false,
         };
@@ -221,15 +232,16 @@ export default {
       if (!tx) return b.status === "COD" ? { ...out, tone: "ok", icon: "payments", title: t("order.pay.cod", "Cash on delivery"), note: onDelivery(money(this.total)) } : out;
 
       const logo = tx.icon || tx.logo ? this.getShopImagePath(tx.icon || tx.logo) : null;
-      if (tx.cod)
-        return { ...out, tone: "ok", logo, icon: "payments", title: tx.name || t("order.pay.cod", "Cash on delivery"), note: onDelivery(money(tx.amount, tx.currency)), test: tx.livemode === false };
+      /* The way to pay by its kind, not the gateway's English name ("Cash on delivery"). */
+      const way = gatewayName(tx);
+      if (tx.cod) return { ...out, tone: "ok", logo, icon: "payments", title: way, note: onDelivery(money(tx.amount, tx.currency)), test: tx.livemode === false };
       if (tx.cash)
         return {
           ...out,
           tone: "ok",
           logo,
           icon: "payments",
-          title: tx.name || t("order.pay.cash", "Cash"),
+          title: way,
           note: t("order.pay.cashNote", "Pay {amount} in cash when you collect it.", { amount: money(tx.amount, tx.currency) }),
           test: tx.livemode === false,
         };
@@ -246,16 +258,16 @@ export default {
           test: tx.livemode === false,
         };
       }
-      if (tx.status === "Processing") return { ...out, tone: "busy", title: t("order.pay.checking", "Checking your payment"), note: `${tx.name} · ${money(tx.amount, tx.currency)}` };
-      if (tx.status === "Canceled") return { ...out, tone: "off", logo, icon: "error", title: t("order.pay.failed", "The payment did not go through"), note: `${tx.name} · ${money(tx.amount, tx.currency)}` };
+      if (tx.status === "Processing") return { ...out, tone: "busy", title: t("order.pay.checking", "Checking your payment"), note: `${way} · ${money(tx.amount, tx.currency)}` };
+      if (tx.status === "Canceled") return { ...out, tone: "off", logo, icon: "error", title: t("order.pay.failed", "The payment did not go through"), note: `${way} · ${money(tx.amount, tx.currency)}` };
       if (tx.expired)
         return {
           ...out,
           logo,
           title: t("order.pay.expired", "This payment has expired"),
-          note: t("order.pay.expiredNote", "{gateway} · {amount}. Message the shop below to pay another way.", { gateway: tx.name, amount: money(tx.amount, tx.currency) }),
+          note: t("order.pay.expiredNote", "{gateway} · {amount}. Message the shop below to pay another way.", { gateway: way, amount: money(tx.amount, tx.currency) }),
         };
-      return { ...out, logo, title: t("order.pay.waiting", "Waiting for payment"), note: `${tx.name} · ${money(tx.amount, tx.currency)}`, test: tx.livemode === false, canPay: true, canSwitch: true };
+      return { ...out, logo, title: t("order.pay.waiting", "Waiting for payment"), note: `${way} · ${money(tx.amount, tx.currency)}`, test: tx.livemode === false, canPay: true, canSwitch: true };
     },
   },
 

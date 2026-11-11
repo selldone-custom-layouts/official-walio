@@ -12,6 +12,10 @@
   Selldone's page was a card with a headline carousel, an "interest" slider
   and cards; its list asked the API with `extra`, which answers no posts,
   so the list under the headline stayed empty.
+
+  Language editions (11 November 2026, kalio-journal.ts): each note is
+  listed in the visitor's language when it has an edition in it
+  (blog-editions.json), and another language's edition is never listed.
 -->
 <template>
   <div class="k-journal">
@@ -149,6 +153,7 @@ import { dealsRoute } from "@app-storefront/components/kalio/kalio-catalog";
 import {
   dateParts,
   deals,
+  editionsActive,
   initials,
   isDemoPost,
   journalExtra,
@@ -157,6 +162,7 @@ import {
   postRoute,
 } from "@app-storefront/components/kalio/pages/kalio-journal";
 import { formatNumber, t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
+import { currentLanguage } from "../../../components/region-switcher/region";
 
 const PER_PAGE = 8;
 
@@ -235,6 +241,9 @@ export default {
     homeRoute() {
       return journalRoute();
     },
+    readerLang() {
+      return currentLanguage();
+    },
     dealsRoute() {
       return dealsRoute();
     },
@@ -248,19 +257,29 @@ export default {
     "$route.fullPath"() {
       this.load();
     },
+    /* A language picked on the page: the notes in their editions for it. */
+    readerLang() {
+      if (!editionsActive()) return;
+      this.load();
+      this.loadExtra();
+    },
   },
 
   created() {
     this.setPageTitle?.(t("blog.journal", "Journal"));
     this.load();
-    journalExtra().then(({ popular, categories }) => {
-      this.popular = popular;
-      this.categories = categories;
-    });
+    this.loadExtra();
     deals(4).then((list) => (this.offers = list));
   },
 
   methods: {
+    loadExtra() {
+      journalExtra().then(({ popular, categories }) => {
+        this.popular = popular;
+        this.categories = categories;
+      });
+    },
+
     dateParts,
     initials,
     postRoute,

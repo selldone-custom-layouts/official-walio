@@ -1,3 +1,105 @@
+diff --git a/storefront/category/filter/SCategoryFilter.vue b/storefront/category/filter/SCategoryFilter.vue
+index dd88ec6..c3863db 100644
+--- a/storefront/category/filter/SCategoryFilter.vue
++++ b/storefront/category/filter/SCategoryFilter.vue
+@@ -31,6 +31,7 @@
+       height: $vuetify.display.mdAndDown
+         ? 'calc(100% - 48px)'
+         : 'calc(100% - 16px)',
++      '--k-word-filters': JSON.stringify(t('listing.filter.title', 'Filters')),
+     }"
+     :theme="light ? 'light' : 'dark'"
+     :width="300"
+@@ -62,7 +63,7 @@
+                 icon
+                 variant="plain"
+                 @click="drawer = false"
+-                aria-label="Close Filter Menu"
++                :aria-label="t('listing.filter.close', 'Close the filters')"
+               >
+                 <v-icon>close</v-icon>
+               </v-btn>
+@@ -205,7 +206,7 @@
+           <v-spacer></v-spacer>
+           <v-btn
+             v-if="selected_variants[item.code + 's']"
+-            :title="`Reset filter: ${$t(item.name)}`"
++            :title="t('listing.filter.reset', 'Reset filter: {name}', { name: $t(item.name) })"
+             icon
+             size="small"
+             variant="text"
+@@ -234,12 +235,14 @@
+         <div class="s-filter-header">
+           <v-icon style="color: currentColor"> arrow_drop_down</v-icon>
+ 
+-          <span class="mx-2"> {{ item }}</span>
++          <!-- Kalio (11 November 2026): the spec's name in the visitor's
++               language; the English name stays the key sent to the server. -->
++          <span class="mx-2"> {{ kalioWord(item) }}</span>
+ 
+           <v-spacer></v-spacer>
+           <v-btn
+             v-if="selected_spec[item]"
+-            :title="`Reset filter: ${$t(item)}`"
++            :title="t('listing.filter.reset', 'Reset filter: {name}', { name: kalioWord(item) })"
+             icon
+             size="small"
+             variant="text"
+@@ -271,6 +274,7 @@ import { PriceHelper } from "@selldone/core-js/helper";
+ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+ import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
++import { shopText } from "@app-storefront/components/kalio/i18n/shop-data";
+ 
+ /**
+  *
+@@ -707,6 +711,11 @@ export default {
+       return GetNameOfColor(color);
+     },
+ 
++    /** Kalio: a shop word (a spec name) in the visitor's language, for display only. */
++    kalioWord(word) {
++      return shopText(String(word ?? ""));
++    },
++
+     clickTreeView(item) {
+       if (item.current) return;
+       if (item && item.to) {
+diff --git a/storefront/category/filter/selector/SCategoryFilterSelector.vue b/storefront/category/filter/selector/SCategoryFilterSelector.vue
+index d495e63..d1704b1 100644
+--- a/storefront/category/filter/selector/SCategoryFilterSelector.vue
++++ b/storefront/category/filter/selector/SCategoryFilterSelector.vue
+@@ -40,7 +40,10 @@
+           :value="item"
+           class="pen me-1"
+         ></u-variant-asset-image>
+-        {{ item?.removeVariantAsset()?.limitWords(5) }}
++        <!-- Kalio (11 November 2026): the value in the visitor's language;
++             the chip's value (sent to the server and kept in the address)
++             stays the shop's own word. -->
++        {{ kalioWord(item?.removeVariantAsset())?.limitWords(5) }}
+       </template>
+     </v-chip>
+   </v-chip-group>
+@@ -51,6 +54,7 @@ import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
+ import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
+ import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
+ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
++import { shopText } from "@app-storefront/components/kalio/i18n/shop-data";
+ 
+ export default {
+   name: "SCategoryFilterSelector",
+@@ -107,6 +111,10 @@ export default {
+     coloName(color) {
+       return GetNameOfColor(color);
+     },
++    /** Kalio: a shop word (a spec value, a size) in the visitor's language, for display only. */
++    kalioWord(word) {
++      return word == null ? word : shopText(String(word));
++    },
+   },
+ 
+   created() {
 diff --git a/storefront/comparison/button/SComparisonButton.vue b/storefront/comparison/button/SComparisonButton.vue
 index e7752ff..e026599 100644
 --- a/storefront/comparison/button/SComparisonButton.vue
@@ -345,7 +447,7 @@ index 579e8c9..1f5d878 100644
        </span>
      </div>
 diff --git a/storefront/products/listing/SProductsListing.vue b/storefront/products/listing/SProductsListing.vue
-index 942cd61..89f30b7 100644
+index 942cd61..c203e00 100644
 --- a/storefront/products/listing/SProductsListing.vue
 +++ b/storefront/products/listing/SProductsListing.vue
 @@ -261,19 +261,47 @@
@@ -369,13 +471,13 @@ index 942cd61..89f30b7 100644
 +                type="button"
 +                @click="filter = null; fetchData(true)"
 +              >
-+                Clear filters
++                {{ t("listing.empty.clearFilters", "Clear filters") }}
 +              </button>
 +              <router-link
 +                :to="{ name: window.$storefront.routes.SHOP_PAGE, query: { sort: 'newest' } }"
 +                class="k-btn k-btn--solid"
 +              >
-+                See all products
++                {{ t("listing.empty.seeAll", "See all products") }}
 +              </router-link>
 +            </div>
 +          </div>
@@ -407,10 +509,12 @@ index 942cd61..89f30b7 100644
  
          <s-category-filter
            v-if="has_filter"
-@@ -364,6 +392,25 @@ import { Category, Product } from "@selldone/core-js/models";
+@@ -363,6 +391,26 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
+ import { Category, Product } from "@selldone/core-js/models";
  import {ShopURLs} from "@selldone/core-js/helper";
  import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
- 
++import { titleSearchOn, withTitleMatches } from "@app-storefront/components/kalio/kalio-title-search";
++
 +/** Kalio: a filter as the "filter" watcher writes it to the address (empty
 + *  parts and prices dropped), so the $route watcher can tell the list's own
 + *  writes from a link that changed the filter. */
@@ -429,19 +533,20 @@ index 942cd61..89f30b7 100644
 +  });
 +  return out;
 +}
-+
+ 
  export default {
    name: "SProductsListing",
-   mixins: [CurrencyMixin],
-@@ -545,6 +592,7 @@ export default {
+@@ -545,6 +593,9 @@ export default {
  
      products: [],
      products_count: 0,
 +    kalio_loaded: false, // Kalio: a first answer came (for the empty state)
++    kalio_titles: null, // Kalio: products found by their translated names, waiting for the last page
++    kalio_ticket: 0, // Kalio: the latest request, so an older answer never lands after it
      sort: null /*Custom sorting*/, // "most_popular",
      only_available: true,
  
-@@ -579,6 +627,16 @@ export default {
+@@ -579,6 +630,16 @@ export default {
    }),
  
    computed: {
@@ -458,7 +563,7 @@ index 942cd61..89f30b7 100644
      ShopURLs() {
        return ShopURLs
      },
-@@ -767,6 +825,27 @@ export default {
+@@ -767,6 +828,27 @@ export default {
    },
    watch: {
      $route(to, from) {
@@ -486,11 +591,12 @@ index 942cd61..89f30b7 100644
        //console.log(to,from)
        if (
          !this.routeMode ||
-@@ -1211,13 +1290,27 @@ export default {
+@@ -1211,13 +1293,28 @@ export default {
          surrounded = null;
        }
  
 +      const shown = new Set(more ? this.products.map((product) => product.id) : []);
++      const offset = more ? this.products.length : 0;
 +
        const handleSuccessResponse = ({ products, total, folders, parent }) => {
          this.products_count = total;
@@ -514,6 +620,66 @@ index 942cd61..89f30b7 100644
          } else {
            this.products = products;
            this.folders = folders;
+@@ -1248,9 +1345,7 @@ export default {
+         );
+       };
+ 
+-      window.$storefront.products
+-        .optimize(600)
+-        .list(dir, more ? this.products.length : 0, limit, {
++      const options = {
+           categories_count: categories_count,
+ 
+           with_parent: with_parent,
+@@ -1276,9 +1371,45 @@ export default {
+           vendor_id: vendor_id === "{{vendor.id}}" ? null : vendor_id, // Show only for this vendor! A;so clear dynamic vendor id! (Used in page builder)
+ 
+           surrounded: surrounded, // true:Show only selected categories. false: Show items inside selected categories.
+-        })
+-        .cache(handleSuccessResponse)
+-        .then(handleSuccessResponse)
++        };
++
++      // Kalio (11 November 2026, ES-08): the server searches only the
++      // shop's own (English) names, so in Spanish "plátanos" found nothing.
++      // A plain search in a language with a names file also finds products
++      // by their translated names (kalio-title-search.ts): they are read
++      // with this same request minus the search words, so the aisle,
++      // filters, seller and sort still hold, and follow the server's
++      // results. English is untouched (onAnswer is handleSuccessResponse).
++      const ticket = ++this.kalio_ticket;
++      const kalio_pending = more ? this.kalio_titles : null;
++      const onAnswer =
++        !this.forcePackage && titleSearchOn(search, search_type)
++          ? (answer) =>
++              withTitleMatches(answer, {
++                search,
++                offset,
++                pending: kalio_pending,
++                list: (from, count, overrides) => {
++                  const again = window.$storefront.products
++                    .optimize(600)
++                    .list(dir, from, count, { ...options, ...overrides });
++                  again.cache(() => {}); // keep the answer for the next replay
++                  return again;
++                },
++              })
++                .catch(() => ({ page: answer, pending: null }))
++                .then(({ page, pending }) => {
++                  if (ticket !== this.kalio_ticket) return; // a newer request owns the list
++                  this.kalio_titles = pending;
++                  handleSuccessResponse(page);
++                })
++          : handleSuccessResponse;
++
++      window.$storefront.products
++        .optimize(600)
++        .list(dir, offset, limit, options)
++        .cache(onAnswer)
++        .then(onAnswer)
+         .catch((error) => {
+           NotificationService.showLaravelError(error);
+         })
 diff --git a/system/pwa/version-check/SPwaVersionCheck.vue b/system/pwa/version-check/SPwaVersionCheck.vue
 index 1c8cfde..fec7e16 100644
 --- a/system/pwa/version-check/SPwaVersionCheck.vue
@@ -547,3 +713,36 @@ index 1c8cfde..fec7e16 100644
    </v-snackbar>
  </template>
  
+diff --git a/ui/payment/form/UPaymentForm.vue b/ui/payment/form/UPaymentForm.vue
+index 6a5af76..e333f60 100644
+--- a/ui/payment/form/UPaymentForm.vue
++++ b/ui/payment/form/UPaymentForm.vue
+@@ -513,7 +513,10 @@
+                     :width="24"
+                     class="mx-2"
+                   />
+-                  {{ gateway.name }}
++                  <!-- Kalio (ES-02): the gateway's English name repeated the kind above it
++                       ("Pago contra reembolso" over "Cash on delivery"); cash on delivery
++                       and cash say how they work, in the visitor's language. -->
++                  {{ gatewayLine(gateway) }}
+ 
+                   <template v-slot:disable-reason>
+                     <v-icon class="me-1" size="18A" color="#fff"
+@@ -785,6 +788,7 @@ import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+ import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+ import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
++import { gatewayLine } from "@app-storefront/components/kalio/checkout/kalio-gateway";
+ 
+ export default {
+   name: "UPaymentForm",
+@@ -1043,6 +1047,8 @@ export default {
+   },
+ 
+   methods: {
++    gatewayLine,
++
+     /**
+      * ――――――――――――――――――――― Stripe > Load JS ――――――――――――――――――――
+      */

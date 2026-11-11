@@ -156,7 +156,7 @@ import WalioFilterRail from "../../components/walio/shop/WalioFilterRail.vue";
 import WalioRow from "../../components/walio/WalioRow.vue";
 import { fromRoute } from "../../components/walio/shop/walio-filters";
 import { t } from "../../components/kalio/i18n/kalio-i18n";
-import { aisleRoute, aisles, countProducts, offers, vendors } from "../../components/kalio/kalio-catalog";
+import { aisleInLanguage, aisleRoute, aisles, countProducts, offers, vendors } from "../../components/kalio/kalio-catalog";
 import WalioSellerSide from "../../components/walio/shop/WalioSellerSide.vue";
 import WalioSellerMain from "../../components/walio/shop/WalioSellerMain.vue";
 import WalioSortMenu from "../../components/walio/shop/WalioSortMenu.vue";
@@ -192,7 +192,8 @@ export default {
     catalogue_total: null /* The listing's total, for the aisle and catalogue headers. */,
     quick_open: false /* Kalio's quick-buy sheet, for the listing's "+". */,
     quick_pick: null,
-    listing_parent: null /* The aisle's record, as the listing read it. */,
+    listing_record: null /* The aisle's record, as the listing read it (its filters). */,
+    listing_parent: null /* The same record in the visitor's language (its title and description). */,
     listing_products: [],
     t_filter: null /* The filter the listing has (the bar shows it). */,
     t_sort: null,
@@ -224,7 +225,7 @@ export default {
 
     /* Selldone's filter record: the aisle's own, or the shop's on the catalogue. */
     filters_def() {
-      if (this.category_name) return this.listing_parent?.filters || null;
+      if (this.category_name) return this.listing_record?.filters || null;
       return this.getShop()?.filters || null;
     },
 
@@ -295,6 +296,7 @@ export default {
       this.seoNavigation = StorefrontSeo.captureNavigation();
       /* A new aisle or seller starts without a count until its listing reads. */
       this.catalogue_total = null;
+      this.listing_record = null;
       this.listing_parent = null;
       this.listing_products = [];
       this.$nextTick(() => this.readRoute());
@@ -355,9 +357,21 @@ export default {
     },
     updateProductsSeo(data) {
       this.catalogue_total = typeof data?.total === "number" ? data.total : null;
-      if (data?.parent !== undefined) this.listing_parent = data.parent && data.parent.id ? data.parent : null;
       this.listing_products = data?.products || [];
-      StorefrontSeo.updateProducts(data, this.getShop(), this.seoNavigation);
+      /* The aisle's record comes in the shop's own language (products/all
+         sends `parent` untranslated); the banner, the crumb, "in <aisle>"
+         and the tab title name it from the translated aisle list, as the
+         header's aisle bar does (ES-05, aisleInLanguage). */
+      const path = this.$route.path;
+      const shop = this.getShop();
+      const navigation = this.seoNavigation;
+      const raw = data?.parent !== undefined ? (data.parent && data.parent.id ? data.parent : null) : undefined;
+      if (raw !== undefined) this.listing_record = raw; // its filters at once, whatever the words
+      aisleInLanguage(raw || null).then((parent) => {
+        if (path !== this.$route.path) return;
+        if (raw !== undefined) this.listing_parent = parent;
+        StorefrontSeo.updateProducts(raw !== undefined ? { ...data, parent } : data, shop, navigation);
+      });
     },
 
     /* ── Walio's filter bar talks to the listing directly ── */

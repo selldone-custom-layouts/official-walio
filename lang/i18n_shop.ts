@@ -16,6 +16,7 @@ import {createI18n} from "vue-i18n";
 
 // @ts-ignore
 import en from "./en";
+import { countryMessages } from "../components/kalio/checkout/kalio-countries";
 
 const messages = {
   en: en,
@@ -66,10 +67,22 @@ export function loadLanguageAsyncShop(
   // If the language hasn't been loaded yet, import it
   return loadLanguagePack(lang).then((messages) => {
     console.log("✔ language pack loaded successfully.");
-    i18n.global.setLocaleMessage(lang, messages.default);
+    i18n.global.setLocaleMessage(lang, withCountries(lang, messages.default));
     loadedLanguages.push(lang);
     return setI18nLanguage(lang);
   });
+}
+
+/*
+ * Kalio (ES-04, 11 November 2026): Selldone names a country with
+ * $t("countries.<code>"), and only the English and Persian packs carry
+ * those names, so every other language fell back to English ("Spain" in
+ * the billing form's country list on a Spanish checkout). A pack without
+ * them gets the browser's names for its language (Intl.DisplayNames).
+ */
+function withCountries(lang: string, messages: any) {
+  if (!messages || messages.countries) return messages;
+  return { ...messages, countries: countryMessages(lang) };
 }
 
 const loadLanguagePack = (lang: string) => {

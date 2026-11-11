@@ -9,6 +9,10 @@
   three more notes follow. A note that came with Selldone's demo content
   says it is sample text (KalioSampleNote), as the owner asked.
 
+  Language editions (11 November 2026, kalio-journal.ts): the address of a
+  note that has an edition in the visitor's language (blog-editions.json)
+  opens that edition instead, also after a language pick on the page.
+
   Selldone's page was its ArticleViewer in a floating card: an editor that
   shows a note, with its own toolbar. The note is read here directly
   (GET_SHOP_BLOG_DATA) and the comments are still Selldone's own.
@@ -145,6 +149,8 @@ import { priceOf, productsById } from "@app-storefront/components/kalio/kalio-ca
 import {
   dateParts,
   deals,
+  editionFor,
+  editionsActive,
   initials,
   isDemoPost,
   journalPage,
@@ -156,6 +162,7 @@ import {
 } from "@app-storefront/components/kalio/pages/kalio-journal";
 import { plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
 import { t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
+import { currentLanguage } from "../../../components/region-switcher/region";
 
 export default {
   name: "StorefrontPageBlogsView",
@@ -187,6 +194,9 @@ export default {
     },
     blogId() {
       return this.$route.params.blog_id;
+    },
+    readerLang() {
+      return currentLanguage();
     },
     topic() {
       return this.category ? this.category.title || this.category.name : "";
@@ -255,6 +265,14 @@ export default {
     "$route.fullPath"() {
       this.seoNavigation = StorefrontSeo.captureNavigation();
     },
+    /* A language picked on the page: open the note's edition in it. */
+    readerLang() {
+      const article = this.article;
+      if (!editionsActive() || !article) return;
+      editionFor(article).then((edition) => {
+        if (edition && article === this.article) this.openEdition(edition);
+      });
+    },
   },
 
   created() {
@@ -275,8 +293,12 @@ export default {
       this.list = [];
       this.more = [];
       journalPost(asked)
+        /* The note's edition in the visitor's language, when it has one:
+           asked before anything is drawn, so the other language never shows. */
+        .then((data) => (editionsActive() ? editionFor(data.article).then((edition) => (edition ? { edition } : data)) : data))
         .then((data) => {
           if (asked !== this.blogId) return;
+          if (data.edition) return this.openEdition(data.edition);
           this.article = data.article;
           this.category = data.category || null;
           StorefrontSeo.updateArticle(data.article, this.$store.getters.getShop, this.seoNavigation);
@@ -289,6 +311,14 @@ export default {
         .finally(() => {
           if (asked === this.blogId) this.busy = false;
         });
+    },
+
+    /* The same note in the visitor's language, in place of this address
+       (the page stays busy until the new address loads it). */
+    openEdition(edition) {
+      return this.$router
+        .replace({ ...postRoute(edition), query: this.$route.query, hash: this.$route.hash })
+        .catch(() => {});
     },
 
     /* The products the note names; this week's deals when it names none. */

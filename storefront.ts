@@ -43,6 +43,7 @@ import { bootRegion } from "./components/region-switcher/region";
 import { EN as KALIO_EN, LOADERS as KALIO_LANGUAGES } from "./components/kalio/i18n";
 import { bootI18n, i18nGlobals } from "./components/kalio/i18n/kalio-i18n";
 import { installShopData } from "./components/kalio/i18n/shop-data";
+import { bootLocale, bootLocaleGate, watchLocale } from "./components/kalio/i18n/locale-boot";
 import "./components/kalio/kalio-fonts"; // Kalio typefaces, loaded by the app so they reach production
 import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
@@ -101,14 +102,25 @@ app.use(components);
 
 // ━━━ Storefront SDK (xapi) ━━━
 StorefrontSDK.Setup(); // Set up the Shop SDK.
+// The visitor's saved language from the very first request, not only once the
+// shop's info is back (ES-10, components/kalio/i18n/locale-boot.ts).
+const VISITOR_LANGUAGE = bootLocale();
 
 // The visitor's language and currency (the header pill and the phone menu's
 // row), then the Layout's own words in that language (<html lang dir> too).
 bootRegion(store);
 bootI18n(KALIO_EN, KALIO_LANGUAGES);
 // The shop's data Selldone does not translate itself (spec tables, pros,
-// rating names, sale units) in the visitor's language (components/kalio/i18n/shop-data.ts).
+// rating names, sale units, cart and order lines' names) in the visitor's
+// language (components/kalio/i18n/shop-data.ts).
 installShopData(window.axios);
+// A language pick: no cached answer from the old language, and the page held
+// while the new one loads.
+watchLocale(store);
+// A visitor in another language than English: the app is drawn once that
+// language's words and dictionaries are in, and shown once the shop is in it
+// too (at most 3.5 s), never English first.
+const LOCALE_READY = bootLocaleGate(VISITOR_LANGUAGE, store);
 
 // ━━━ Community SDK (capi) ━━━
 CapiCommunity.Setup(); // Setup community.
@@ -179,5 +191,9 @@ if(CUSTOM_HOME && isNumericNumber(CUSTOM_HOME) && !window.location.pathname?.inc
 }
 
 
-// Mount the application
-const storefrontVueApp = app.mount("#app");
+// Mount the application: English at once, as before; another language once
+// its words are in (LOCALE_READY), so the first drawing is already in it.
+let storefrontVueApp: any = null;
+const mountApp = () => (storefrontVueApp = app.mount("#app"));
+if (VISITOR_LANGUAGE === "en") mountApp();
+else LOCALE_READY.then(mountApp);

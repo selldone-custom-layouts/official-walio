@@ -32,6 +32,11 @@ export function packageWords(): string[] {
     t("listing.empty.filters.text", "Take a filter or two off to see more of the aisle."),
     t("listing.empty.none.title", "Nothing here yet"),
     t("listing.empty.none.text", "The sellers have not stocked this shelf yet. The rest of the shop is a tap away."),
+    t("listing.empty.clearFilters", "Clear filters"),
+    t("listing.empty.seeAll", "See all products"),
+    t("listing.filter.title", "Filters"),
+    t("listing.filter.close", "Close the filters"),
+    t("listing.filter.reset", "Reset filter: {name}", { name: "Type" }),
     t("update.ready", "A newer version of the shop is ready."),
     t("update.refresh", "Refresh"),
   ];

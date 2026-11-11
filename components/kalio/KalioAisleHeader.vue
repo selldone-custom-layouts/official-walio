@@ -12,6 +12,11 @@
   aisle, which returns the category itself as "parent". A stale link with no
   record shows only the crumbs and the aisle row; the listing below shows
   its own empty state.
+
+  That "parent" comes in the shop's own language whatever the visitor reads
+  (the server translates the folder lists, not the record), so its title and
+  description are taken from the translated aisle list (aisleInLanguage):
+  the title matches the header's aisle words (ES-05, 11 November 2026).
 -->
 <template>
   <kalio-shelf-head
@@ -27,8 +32,9 @@
 
 <script>
 import KalioShelfHead from "./KalioShelfHead.vue";
-import { aisleImage, aisleRoute, aisles, countProducts } from "./kalio-catalog";
+import { aisleImage, aisleInLanguage, aisleRoute, aisles, countProducts } from "./kalio-catalog";
 import { t } from "./i18n/kalio-i18n";
+import { currentLanguage } from "../region-switcher/region";
 
 export default {
   name: "KalioAisleHeader",
@@ -50,6 +56,10 @@ export default {
   },
 
   computed: {
+    /* The visitor's language: a pick reads the aisle again in it. */
+    lang() {
+      return currentLanguage();
+    },
     image() {
       return this.aisle && this.aisle.icon ? aisleImage(this.aisle, 128) : null;
     },
@@ -79,6 +89,10 @@ export default {
     categoryName() {
       this.fetch();
     },
+    lang() {
+      this.fetch();
+      aisles().then((list) => (this.list = list));
+    },
   },
 
   mounted() {
@@ -94,8 +108,9 @@ export default {
       this.busy = true;
       window.$storefront.products
         .list(name, 0, 1, { with_parent: true, products_only: true })
-        .then(({ parent }) => {
-          if (name === this.categoryName) this.aisle = parent && parent.id ? parent : null;
+        .then(({ parent }) => (parent && parent.id ? aisleInLanguage(parent) : null))
+        .then((record) => {
+          if (name === this.categoryName) this.aisle = record;
         })
         .catch(() => {
           this.aisle = null;

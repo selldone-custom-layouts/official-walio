@@ -11,6 +11,8 @@
  */
 
 import { formatDate } from "../i18n/kalio-i18n";
+import { currentLanguage } from "../../region-switcher/region";
+import EDITIONS from "../i18n/data/blog-editions.json";
 
 export interface JournalQuery {
   page?: number;
@@ -37,8 +39,142 @@ function withoutSamples(list: any[]): any[] {
   return ownPosts ? list.filter((article) => !isDemoPost(article, shop)) : list;
 }
 
+/* ━━━━━━━━━━━━ Language editions (11 November 2026) ━━━━━━━━━━━━
+   Selldone's blog has no language editions of one post: each article is a
+   record of its own with a `lang`, and the list neither filters by language
+   nor sends `lang`. A Spanish edition is therefore a second article, and
+   i18n/data/blog-editions.json pairs it with the original:
+
+     { "<original article id>": { "es": <Spanish article id> | null } }
+
+   Ids are the articles' own ids (the list's `id`), not the blog ids in the
+   address. null means "not published yet". For a visitor reading L:
+   - every list (the journal, Most read, More from the journal) shows a
+     post's L edition in its place, and never another language's edition:
+     without an L edition the original stands for every language;
+   - an address of any edition opens the one for L (router.replace).
+   An edition counts only once it is in the published list, so an id put in
+   the file before its article is published changes nothing. With every
+   value null none of this runs: the journal reads and shows what it always
+   did. */
+type Family = { original: string; editions: Record<string, string> };
+
+const FAMILIES = new Map<string, Family>(); // any member's article id → its family
+for (const [original, langs] of Object.entries(EDITIONS as Record<string, Record<string, number | string | null>>)) {
+  const editions: Record<string, string> = {};
+  for (const [lang, id] of Object.entries(langs || {})) if (id !== null && id !== undefined && String(id).trim()) editions[lang] = String(id).trim();
+  if (!Object.keys(editions).length) continue;
+  const family = { original: String(original), editions };
+  FAMILIES.set(family.original, family);
+  for (const id of Object.values(editions)) FAMILIES.set(id, family);
+}
+
+/** Whether any language edition is named in blog-editions.json. */
+export function editionsActive(): boolean {
+  return FAMILIES.size > 0;
+}
+
+/* Every published post, by article id: the editions' own list entries
+   (blog id and slug for their address). One call, kept for the visit. */
+const INDEX_LIMIT = 100;
+let indexRead: Promise<Map<string, any>> | null = null;
+let indexTotal = 0;
+
+function journalIndex(): Promise<Map<string, any>> {
+  if (!indexRead) {
+    indexRead = listCall({ offset: 0, limit: INDEX_LIMIT })
+      .then(({ articles, total }) => {
+        indexTotal = total;
+        return new Map(articles.map((article: any) => [String(article.id), article]));
+      })
+      .catch((e) => {
+        indexRead = null;
+        throw e;
+      });
+  }
+  return indexRead;
+}
+
+/** The article id a visitor reading `lang` should see for this post, or
+ *  null when the post has no editions (or neither member is published). */
+function shownId(id: any, index: Map<string, any>, lang = currentLanguage()): string | null {
+  const family = FAMILIES.get(String(id));
+  if (!family) return null;
+  const own = family.editions[lang];
+  if (own && index.has(own)) return own;
+  if (index.has(family.original)) return family.original;
+  return null;
+}
+
+/* Each post in the visitor's edition, each post once, in the list's order. */
+function localise(list: any[], index: Map<string, any>): any[] {
+  if (!Array.isArray(list)) return list || [];
+  const seen = new Set<string>();
+  const out: any[] = [];
+  for (const article of list) {
+    const want = shownId(article?.id, index);
+    const shown = want && want !== String(article.id) ? index.get(want) : article;
+    const key = String(shown?.id);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(shown);
+  }
+  return out;
+}
+
+/** The post this visitor should read instead of `article` (its edition in
+ *  their language, or the original), or null to stay. */
+export function editionFor(article: any): Promise<any | null> {
+  if (!editionsActive() || !FAMILIES.has(String(article?.id))) return Promise.resolve(null);
+  return journalIndex()
+    .then((index) => {
+      const want = shownId(article.id, index);
+      return want && want !== String(article.id) ? index.get(want) || null : null;
+    })
+    .catch(() => null);
+}
+
+function listCall(params: Record<string, any>): Promise<{ articles: any[]; total: number }> {
+  return window.axios.get(window.XAPI.GET_SHOP_BLOGS(window.$storefront.name), { params }).then(({ data }: any) => {
+    if (data?.error) throw new Error(data.error_msg);
+    return { articles: data.articles || [], total: data.total || 0 };
+  });
+}
+
+/* With editions, a page is cut from the whole list once each post is in the
+   visitor's edition, so pages and the count only hold what is shown. */
+function localisedPage(q: JournalQuery, limit: number): Promise<{ articles: any[]; total: number }> {
+  const filtered = !!(q.category || q.author || q.author_id || q.tag || q.search);
+  const read = filtered
+    ? listCall({
+        offset: 0,
+        limit: INDEX_LIMIT,
+        category: q.category || undefined,
+        author: q.author || undefined,
+        author_id: q.author_id || undefined,
+        tags: q.tag ? [q.tag] : undefined,
+        search: q.search || undefined,
+      })
+    : journalIndex().then((index) => ({ articles: [...index.values()], total: indexTotal }));
+  return Promise.all([read, journalIndex()]).then(([{ articles: all, total }, index]) => {
+    const kept = withoutSamples(localise(all, index));
+    const start = ((q.page || 1) - 1) * limit;
+    const complete = all.length >= total;
+    return {
+      articles: kept.slice(start, start + limit),
+      total: complete ? kept.length : Math.max(kept.length, total - (all.length - kept.length)),
+    };
+  });
+}
+
 export function journalPage(q: JournalQuery): Promise<{ articles: any[]; total: number }> {
   const limit = q.limit || 10;
+  /* Should the whole list not come (a busy server), the page as before. */
+  if (editionsActive()) return localisedPage(q, limit).catch(() => plainPage(q, limit));
+  return plainPage(q, limit);
+}
+
+function plainPage(q: JournalQuery, limit: number): Promise<{ articles: any[]; total: number }> {
   return window.axios
     .get(window.XAPI.GET_SHOP_BLOGS(window.$storefront.name), {
       params: {
@@ -60,6 +196,7 @@ export function journalPage(q: JournalQuery): Promise<{ articles: any[]; total: 
 }
 
 let extraRead: Promise<{ popular: any[]; categories: any[]; latest: any[] }> | null = null;
+let extraRaw: any = null; // the answer as it came, for the editions
 
 /** The most read posts and the journal's categories, read once. */
 export function journalExtra() {
@@ -67,6 +204,7 @@ export function journalExtra() {
     extraRead = window.axios
       .get(window.XAPI.GET_SHOP_BLOGS(window.$storefront.name), { params: { extra: true, offset: 0, limit: 1 } })
       .then(({ data }: any) => {
+        extraRaw = data || null;
         const latest = withoutSamples(data?.last_articles || []);
         return { popular: withoutSamples(data?.popular || []), categories: data?.categories || [], latest };
       })
@@ -75,7 +213,20 @@ export function journalExtra() {
         return { popular: [], categories: [], latest: [] };
       });
   }
-  return extraRead!;
+  if (!editionsActive()) return extraRead!;
+  /* Each post in the visitor's edition, worked out on every call: the
+     visitor may have picked another language since the first read. */
+  return extraRead!.then((plain) =>
+    !extraRaw
+      ? plain
+      : journalIndex()
+          .then((index) => ({
+            popular: withoutSamples(localise(extraRaw.popular || [], index)),
+            categories: plain.categories,
+            latest: withoutSamples(localise(extraRaw.last_articles || [], index)),
+          }))
+          .catch(() => plain),
+  );
 }
 
 export function journalPost(blogId: string | number): Promise<any> {
@@ -160,14 +311,24 @@ export function deals(count = 4): Promise<any[]> {
 }
 
 /* A product's everyday name, for finding it in a post: "FreshArc Baby
-   Spinach 10 oz" is "baby spinach" — the brand and the size are dropped. */
-function everydayName(title: string): string {
+   Spinach 10 oz" is "baby spinach" — the brand and the size are dropped.
+   In Spanish the brand follows the product words ("Espinacas baby FreshArc
+   10 oz" is "espinacas baby") and a count is "uds.": the brand is the
+   product's `brand` when it has one, else its CamelCase word, else (as
+   before) the first word. In English the first word is the brand, so the
+   names are the same as they always were. */
+const CAMEL = /^\p{Lu}\p{Ll}+\p{Lu}/u;
+
+function everydayName(title: string, brand?: string): string {
   const words = String(title || "")
-    .replace(/\b\d+(\.\d+)?\s*(oz|fl oz|lb|lbs|g|kg|ml|l|ct|pack|pk|gal|qt|count)\b/gi, " ")
+    .replace(/\b\d+(\.\d+)?\s*(oz|fl oz|lb|lbs|g|kg|ml|l|ct|pack|pk|gal|qt|count|uds?|unidades)\b/gi, " ")
     .replace(/[^\p{L}\p{N}&' -]/gu, " ")
     .split(/\s+/)
     .filter(Boolean);
-  return words.slice(1).join(" ").toLowerCase();
+  const named = typeof brand === "string" && brand.trim() ? words.findIndex((word) => word.toLowerCase() === brand.trim().toLowerCase()) : -1;
+  const at = named >= 0 ? named : words.findIndex((word) => CAMEL.test(word));
+  words.splice(at > 0 ? at : 0, 1);
+  return words.join(" ").toLowerCase();
 }
 
 /** The shop's products a post names, at most `count`. */
@@ -178,7 +339,7 @@ export function productsIn(html: string, catalogue: Iterable<any>, count = 4): a
     .replace(/\s+/g, " ")} `;
   const found: any[] = [];
   for (const product of catalogue) {
-    const name = everydayName(product.title);
+    const name = everydayName(product.title, product.brand);
     if (name.length < 4 || !product.icon) continue;
     if (text.includes(` ${name}`)) found.push(product);
     if (found.length >= count) break;

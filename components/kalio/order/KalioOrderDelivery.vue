@@ -187,6 +187,7 @@ import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import { Basket, ShopOptionsHelper } from "@selldone/core-js";
 import KalioAddressSheet from "../checkout/KalioAddressSheet.vue";
+import { countryName as nameOfCountry } from "../checkout/kalio-countries";
 import { locale, t } from "../i18n/kalio-i18n";
 
 /* Selldone keeps the days in English; these match them, dayName() shows them. */
@@ -452,12 +453,10 @@ export default {
           : t("order.trip.tookHours", "{h} h on the road", { h: hours });
       return t("order.trip.tookDays", { one: "{n} day on the road", other: "{n} days on the road" }, { n: Math.round(hours / 24) });
     },
+    /* The country from its stored code, in the visitor's language
+       ("ES" → "España"); Selldone's names are English only. */
     countryName(code) {
-      try {
-        return this.getCountryName(code) || code;
-      } catch (e) {
-        return code;
-      }
+      return nameOfCountry(code);
     },
     signed() {
       return { signature: this.$route.query.signature, timestamp: this.$route.query.timestamp };

@@ -13,6 +13,7 @@
  */
 
 import { PriceHelper } from "@selldone/core-js";
+import { currentLanguage } from "../region-switcher/region";
 
 declare const window: any;
 
@@ -53,10 +54,15 @@ export function tintFor(aisle: { id?: number; title?: string; name?: string } | 
 /* ━━━━━━━━━━━━ Aisles ━━━━━━━━━━━━ */
 
 let aislesRead: Promise<any[]> | null = null;
+let aislesLang = "";
 
-/** The shop's root categories, in the merchant's order. */
+/** The shop's root categories, in the merchant's order, in the visitor's
+ *  language (read again after a language pick: the server names them in the
+ *  language of the request). */
 export function aisles(): Promise<any[]> {
-  if (!aislesRead) {
+  const lang = currentLanguage();
+  if (!aislesRead || aislesLang !== lang) {
+    aislesLang = lang;
     aislesRead = window.$storefront.products
       .list(null, 0, 1, { categories_only: true, categories_count: 48 })
       .then(({ folders }: any) =>
@@ -70,6 +76,40 @@ export function aisles(): Promise<any[]> {
       });
   }
   return aislesRead!;
+}
+
+/**
+ * A category record in the visitor's language (ES-05, 11 November 2026).
+ * products/all answers the aisle itself (`parent`, asked with with_parent)
+ * in the shop's own language, with no `translations` beside it, while the
+ * same endpoint's folder lists come in the language of the request. So the
+ * title and description are taken from the list that holds the aisle: the
+ * root aisles (aisles(), already read for the header) or its parent's
+ * folders. Returns a copy; the English stays as _title_en and
+ * _description_en, and the slug, id and filters are untouched.
+ */
+export function aisleInLanguage<T extends Record<string, any> | null | undefined>(record: T): Promise<T> {
+  if (!record || !record.id) return Promise.resolve(record);
+  const holder: Promise<any[]> = record.parent?.name
+    ? window.$storefront.products
+        .list(record.parent.name, 0, 1, { categories_only: true, categories_count: 48 })
+        .then((answer: any) => answer?.folders || [])
+    : aisles();
+  return holder
+    .then((list) => {
+      const own = (list || []).find((folder: any) => folder && folder.id === record.id);
+      if (!own) return record;
+      const out: any = { ...record };
+      for (const field of ["title", "description"]) {
+        const value = own[field];
+        if (typeof value === "string" && value.trim() && value !== record[field]) {
+          out[`_${field}_en`] = record[field];
+          out[field] = value;
+        }
+      }
+      return out as T;
+    })
+    .catch(() => record);
 }
 
 /** Aisle by category id, for tinting a product by its category_id. */

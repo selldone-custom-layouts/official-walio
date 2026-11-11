@@ -10,9 +10,18 @@
    and the listing takes a filter in the shape SCategoryFilter emits:
      { only_is_original, only_has_discount, prices: { USD: [lo, hi] } | null,
        brands: [], selected_spec: { Key: [v] }, selected_variants: { volumes: [v] } }
-   Pills in one group are OR, groups are AND (Selldone's own rule). */
+   Pills in one group are OR, groups are AND (Selldone's own rule).
+
+   The words are shown in the visitor's language (ES-06, 11 November 2026):
+   a spec key ("Type") and its values ("Fruit") are the shop's own English
+   words, so the group's `label` and valueLabel() pass them through
+   shopText() (the shop dictionary, data/<lang>.json). Only what is drawn
+   changes: the group's `key` and its `values` stay the shop's words, and
+   they are what goes to the server and into the address, so "Fruta" and
+   "Fruit" send the same selected_spec. */
 
 import { t } from "../../kalio/i18n/kalio-i18n";
+import { shopText } from "../../kalio/i18n/shop-data";
 
 export interface WalioGroup {
   /** "spec" groups live in selected_spec, "variant" ones in selected_variants. */
@@ -61,7 +70,7 @@ export function groupsOf(filters: any): WalioGroup[] {
   for (const key of Object.keys(filters)) {
     if (RESERVED.includes(key) || VARIANT_LABEL[key]) continue;
     const values = list(filters[key]);
-    if (values.length) out.push({ kind: "spec", key, label: key, values });
+    if (values.length) out.push({ kind: "spec", key, label: shopText(key), values });
   }
   const brands = list(filters.brands);
   if (brands.length > 1) out.push({ kind: "brand", key: "brands", label: t("walio.filters.brand", "Brand"), values: brands });
@@ -119,9 +128,10 @@ export function fromRoute(query: any): WalioFilter | null {
 }
 
 /** A value as the shopper reads it: Selldone stores a variant's picture
- *  after a "|" in the value itself. */
+ *  after a "|" in the value itself; the shop's word in the visitor's
+ *  language (display only, the value itself is what is sent). */
 export function valueLabel(value: string): string {
-  return String(value).split("|")[0].trim();
+  return shopText(String(value).split("|")[0].trim());
 }
 
 export const SORTS = [

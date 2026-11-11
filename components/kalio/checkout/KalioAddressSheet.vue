@@ -284,8 +284,8 @@
 
 <script>
 import Mapbox from "@selldone/components-vue/ui/map/providers/mapbox/MapBox";
-import { Countries } from "@selldone/core-js/models/general/country/country.model";
 import { t } from "../i18n/kalio-i18n";
+import { countryName, countryOptions } from "./kalio-countries";
 
 /* Streets in colour: a shopper finds their door by the parks, the water
    and the road colours (the light style read as a grey, broken map). */
@@ -368,12 +368,11 @@ export default {
     steps() {
       return !this.noMap && this.$vuetify.display.width <= 760;
     },
+    /* The shop's countries (all when it names none), in the visitor's
+       language and its alphabetical order ("Alemania", "España"…). The
+       value stays the ISO code the address keeps. */
     countryList() {
-      if (this.countries?.length) {
-        const allowed = new Set(this.countries.map((c) => (typeof c === "string" ? c : c.code || c.alpha2)));
-        return Countries.filter((c) => allowed.has(c.code));
-      }
-      return Countries;
+      return countryOptions(this.countries?.length ? this.countries : null);
     },
     names() {
       return NAMES();
@@ -569,7 +568,7 @@ export default {
     },
 
     resultLine(item) {
-      return [item.city, item.state, item.postal, item.country].filter(Boolean).join(", ");
+      return [item.city, item.state, item.postal, item.country ? countryName(item.country) : null].filter(Boolean).join(", ");
     },
 
     /* The keyboard's search key: the first street listed, or the search
