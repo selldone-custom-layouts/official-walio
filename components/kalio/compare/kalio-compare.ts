@@ -98,11 +98,11 @@ export function specGroups(products: any[]): SpecGroup[] {
 
 /** A Material icon for a group, by what its title says. */
 export function groupIcon(title: string): string {
-  if (/glance|overview|summary/i.test(title)) return "info";
-  if (/storage|keep|use|care/i.test(title)) return "kitchen";
-  if (/allerg|nutrition|diet|ingredient/i.test(title)) return "health_and_safety";
-  if (/serv|prep|cook|recipe/i.test(title)) return "restaurant";
-  if (/size|option|pick/i.test(title)) return "straighten";
+  if (/glance|overview|summary|vistazo|resumen/i.test(title)) return "info";
+  if (/storage|keep|use|care|conserva|uso|cuidado/i.test(title)) return "kitchen";
+  if (/allerg|nutrition|diet|ingredient|alérg|nutric|dieta/i.test(title)) return "health_and_safety";
+  if (/serv|prep|cook|recipe|consumo|cocin|receta/i.test(title)) return "restaurant";
+  if (/size|option|pick|tamaño|opci/i.test(title)) return "straighten";
   return "inventory_2";
 }
 
@@ -110,13 +110,15 @@ export function groupIcon(title: string): string {
    From the product's size: a variant's own volume, weight or pack, the
    "Pack Size" detail, then its name ("… 32 oz"). "Size range" is skipped:
    "1-2 lb" is a band, not the pack. */
-const UNIT = /(\d+(?:\.\d+)?)\s*(fl\.?\s?oz|oz|lbs?|kg|g|ml|l|ct|count|pk|pack)\b/i;
+/* "uds." / "unidades": a count in Spanish names (shop-data.ts, 11 November 2026). */
+const UNIT = /(\d+(?:\.\d+)?)\s*(fl\.?\s?oz|oz|lbs?|kg|g|ml|l|ct|count|pk|pack|uds?\.?|unidades)(?![a-záéíóúñ])/i;
 const SIZE_KEYS = /^(pack size|net (weight|contents?)|weight|volume|size|count)$/i;
 
 export function unitSize(product: any, variant: any = null): { n: number; unit: string } | null {
   const sources: string[] = [];
   if (variant) for (const k of ["volume", "weight", "pack"]) if (variant[k]) sources.push(String(variant[k]));
-  const spec = product?.spec;
+  /* The English spec when the shop data is shown in another language (its keys are English). */
+  const spec = product?._spec_en || product?.spec;
   if (spec && !Array.isArray(spec)) for (const key of Object.keys(spec)) if (SIZE_KEYS.test(key)) sources.push(specText(spec[key]));
   if (product?.title) sources.push(product.title);
   for (const text of sources) {
@@ -127,7 +129,7 @@ export function unitSize(product: any, variant: any = null): { n: number; unit: 
     let unit = m[2].toLowerCase().replace(/\./g, "").replace(/\s+/g, " ");
     if (unit === "floz") unit = "fl oz";
     if (unit === "lbs") unit = "lb";
-    if (["ct", "count", "pk", "pack"].includes(unit)) unit = "each";
+    if (["ct", "count", "pk", "pack", "ud", "uds", "unidades"].includes(unit)) unit = "each";
     return { n, unit };
   }
   return null;
