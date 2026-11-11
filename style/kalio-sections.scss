@@ -1590,6 +1590,9 @@ $k-shelf-pic-phone: 150px;
   &__tabs {
     display: flex;
     gap: 28px;
+    /* Room for the active pill's 12px at both ends inside the scroller. */
+    margin-inline: -12px;
+    padding-inline: 12px;
     overflow-x: auto;
     scrollbar-width: none;
     white-space: nowrap;
@@ -1625,20 +1628,14 @@ $k-shelf-pic-phone: 150px;
       color: var(--k-ink) !important;
     }
 
+    /* Active tab: a tinted pill, colour and weight; never a bar under the words (the owner's rule, 11 November 2026). */
     &.-on {
+      margin-inline: -12px;
+      padding-inline: 12px;
+      border-radius: var(--k-pill);
+      background: var(--k-green-soft);
       font-weight: 700;
-      color: var(--k-ink) !important;
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        bottom: -1px;
-        height: 2px;
-        border-radius: 2px;
-        background: var(--w-ink-bg);
-      }
+      color: var(--w-link) !important;
     }
   }
 

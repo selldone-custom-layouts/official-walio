@@ -285,14 +285,17 @@
     min-height: var(--k-tap);
   }
 
+  /* Active tab: a tinted pill, colour and weight; never a bar under the words (the owner's rule, 11 November 2026). */
   .v-tab--selected,
   .v-btn--active {
+    border-radius: var(--k-pill) !important;
+    background: var(--k-green-soft) !important;
+    font-weight: 700 !important;
     color: var(--w-link) !important;
   }
 
   .v-tab__slider {
-    background: var(--k-green) !important;
-    height: 3px !important;
+    display: none !important;
   }
 }
 

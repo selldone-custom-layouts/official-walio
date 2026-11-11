@@ -285,29 +285,31 @@ $k-header-strip: 46px;
     white-space: nowrap;
     text-decoration: none;
 
+    isolation: isolate;
+
+    /* Active tab: a tinted pill, colour and weight; never a bar under the words (the owner's rule, 11 November 2026). */
     &::after {
       content: "";
       position: absolute;
-      inset-inline: 12px;
-      bottom: 0;
-      height: 3px;
-      border-radius: 3px 3px 0 0;
-      background: var(--k-green);
-      transform: scaleX(0);
-      transition: transform 160ms ease;
+      inset: 7px 4px;
+      z-index: -1;
+      border-radius: var(--k-pill);
+      background: var(--k-green-soft);
+      opacity: 0;
+      transition: opacity 160ms ease;
     }
 
     &:hover,
     &.-on {
       color: var(--w-link) !important;
-
-      &::after {
-        transform: scaleX(1);
-      }
     }
 
     &.-on {
-      font-weight: 600;
+      font-weight: 700;
+
+      &::after {
+        opacity: 1;
+      }
     }
 
     &.-deals {
@@ -315,7 +317,7 @@ $k-header-strip: 46px;
       font-weight: 600;
 
       &::after {
-        background: var(--w-sale-solid);
+        background: var(--k-coral-soft);
       }
     }
   }

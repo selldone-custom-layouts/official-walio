@@ -333,6 +333,10 @@
     display: flex;
     gap: 22px;
     margin-bottom: 8px;
+    /* Room for the active pill's 12px at both ends inside the scroller
+       (it would be clipped on the first tab); the words stay in line. */
+    margin-inline: -12px;
+    padding-inline: 12px;
     border-bottom: 1px solid var(--k-line);
     overflow-x: auto;
     scrollbar-width: none;
@@ -354,9 +358,14 @@
         color: var(--k-ink) !important;
       }
 
+      /* Active tab: a tinted pill, colour and weight; never a bar under the words (the owner's rule, 11 November 2026). */
       &.-on {
-        color: var(--k-ink) !important;
-        box-shadow: inset 0 -3px 0 var(--k-green);
+        margin-inline: -12px;
+        padding-inline: 12px;
+        border-radius: var(--k-pill);
+        background: var(--k-green-soft);
+        font-weight: 700;
+        color: var(--w-link) !important;
       }
     }
   }

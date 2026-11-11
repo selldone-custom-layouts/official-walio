@@ -88,3 +88,11 @@
   direction: ltr;
   unicode-bidi: isolate;
 }
+
+/* ▆▆▆▆▆▆▆▆ Active tabs: pill or tint, never a bar (11 November 2026) ▆▆▆▆▆▆▆▆
+   The owner's rule is absolute: no line under any text. Vuetify's tab
+   slider is hidden everywhere (Kalio's own tabs are tinted pills). */
+.v-tab__slider,
+.v-slide-group-item--active > .v-tab__slider {
+  display: none !important;
+}
