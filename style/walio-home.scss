@@ -611,14 +611,23 @@ a:hover > .t-photo .t-photo__pack.-p1 {
       border-radius: 0;
     }
 
+    /* The shade under the words. It is strong across the words' column
+       (they end by 470px: 28px in, 440px wide), so the white subtitle reads
+       at 4.5:1 or more against the brightest photo pixel behind it (the
+       lemons and apples), then fades out by 600px; the mask fades it from
+       the top, so the photo above and beyond the words stays bright
+       (11 November 2026, measured on the rendered pixels at 1440 and 1024
+       in English and Arabic). */
     &::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(0, 32, 70, 0.72) 0%, rgba(0, 32, 70, 0.35) 55%, rgba(0, 32, 70, 0) 80%);
+      background: linear-gradient(90deg, rgba(0, 32, 70, 0.72) 0, rgba(0, 32, 70, 0.68) 470px, rgba(0, 32, 70, 0) 600px);
+      -webkit-mask-image: linear-gradient(0deg, #000 0, #000 230px, transparent 340px);
+      mask-image: linear-gradient(0deg, #000 0, #000 230px, transparent 340px);
 
       [dir="rtl"] & {
-        background: linear-gradient(270deg, rgba(0, 32, 70, 0.72) 0%, rgba(0, 32, 70, 0.35) 55%, rgba(0, 32, 70, 0) 80%);
+        background: linear-gradient(270deg, rgba(0, 32, 70, 0.72) 0, rgba(0, 32, 70, 0.68) 470px, rgba(0, 32, 70, 0) 600px);
       }
     }
 
@@ -796,10 +805,13 @@ a:hover > .t-photo .t-photo__pack.-p1 {
       min-height: 300px;
 
       /* On a phone the words span the width at the bottom: the shade rises
-         from the bottom, the same in both directions. */
+         from the bottom, the same in both directions, strong up to the
+         heading's first line, and the top of the photo stays bright. */
       &::after,
       [dir="rtl"] &::after {
-        background: linear-gradient(0deg, rgba(0, 32, 70, 0.82) 0%, rgba(0, 32, 70, 0.55) 45%, rgba(0, 32, 70, 0) 80%);
+        background: linear-gradient(0deg, rgba(0, 32, 70, 0.76) 0%, rgba(0, 32, 70, 0.68) 60%, rgba(0, 32, 70, 0) 92%);
+        -webkit-mask-image: none;
+        mask-image: none;
       }
     }
 
