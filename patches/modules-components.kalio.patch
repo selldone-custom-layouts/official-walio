@@ -312,6 +312,42 @@ index 009f831..9d48ba6 100644
      show() {
        this.step = 1;
        this.email = this.predefine_email;
+diff --git a/storefront/order/billing/SShopBillingAddressForm.vue b/storefront/order/billing/SShopBillingAddressForm.vue
+index fd420b9..29670ec 100644
+--- a/storefront/order/billing/SShopBillingAddressForm.vue
++++ b/storefront/order/billing/SShopBillingAddressForm.vue
+@@ -57,12 +57,14 @@
+       </v-btn>
+     </v-btn-toggle>
+ 
++    <!-- Kalio: addressLine() names the country in the visitor's language
++         ("…, España", not "…, ES"; the owner's Spanish test order, 12 November 2026). -->
+     <div v-if="same_billing" class="small">
+       {{
+         no_receiver_address
+           ? $t("basket_page.no_billing_desc")
+           : receiverInfo?.address
+-            ? MapHelper.GenerateFullAddressFromMapInfo(receiverInfo)
++            ? addressLine(receiverInfo)
+             : $t("basket_page.same_billing_address_desc")
+       }}
+     </div>
+@@ -162,6 +164,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
+ import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
+ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
+ import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
++import { addressLine } from "@app-storefront/components/kalio/checkout/kalio-countries";
+ 
+ export default {
+   name: "SShopBillingAddressForm",
+@@ -250,6 +253,7 @@ export default {
+   },
+ 
+   methods: {
++    addressLine,
+     loadValue() {
+       if (this.modelValue) {
+         this.billing_name = this.modelValue.name;
 diff --git a/storefront/product/card/SShopProductCard.vue b/storefront/product/card/SShopProductCard.vue
 index 337d45a..68b8640 100644
 --- a/storefront/product/card/SShopProductCard.vue

@@ -161,7 +161,7 @@
             </v-list-subheader>
           </template>
           <b>{{
-            MapHelper.GenerateFullAddressFromMapInfo(customer.address)
+            addressLine(customer.address)
           }}</b>
         </u-text-value-dashed>
 
@@ -423,7 +423,7 @@
               :title="$t('global.commons.address')"
               variant="underlined"
               :model-value="
-                MapHelper.GenerateFullAddressFromMapInfo(clone_customer.address)
+                addressLine(clone_customer.address)
               "
               readonly
               @click="showSelectLocation()"
@@ -465,12 +465,12 @@
 
 <script lang="ts">
 import { t } from "../../../components/kalio/i18n/kalio-i18n";
-import { countryName as nameOfCountry } from "../../../components/kalio/checkout/kalio-countries";
+import { MapHelper } from "@selldone/core-js";
+import { countryName as nameOfCountry, addressLine } from "../../../components/kalio/checkout/kalio-countries";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UTextValueDashed from "@selldone/components-vue/ui/text/value-dashed/UTextValueDashed.vue";
-import { MapHelper } from "@selldone/core-js";
 import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import UDateInput from "@selldone/components-vue/ui/date/input/UDateInput.vue";
@@ -528,6 +528,7 @@ export default {
     },
   },
   methods: {
+    addressLine,
     /* The stored code ("ES") named in the visitor's language. */
     countryName(code) {
       return nameOfCountry(code);

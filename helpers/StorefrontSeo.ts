@@ -9,6 +9,8 @@ import type { Shop } from "@selldone/core-js/models/shop/shop.model";
 import type { Product } from "@selldone/core-js/models/shop/product/product.model";
 import type { Article } from "@selldone/core-js/models/article/article.model";
 import type { Category } from "@selldone/core-js/models/shop/category/category.model";
+import { SetupService } from "@selldone/core-js/server/SetupService";
+import { currentLanguage } from "../components/region-switcher/region";
 
 type JsonLd = Record<string, unknown>;
 type Content = {
@@ -85,6 +87,18 @@ export class StorefrontSeo {
     return navigation > 0 && navigation === this.navigation;
   }
 
+  /** The first document keeps the server's head for crawlers (ticket zero
+   *  writes no meta), but its <title> is in the server's language. A shopper
+   *  reading another language got the browser tab in English over a Spanish
+   *  page ("FreshArc Cavendish Bananas 2 lb", the owner's Spanish test order,
+   *  12 November 2026): the tab title alone follows the page's language. */
+  private static firstTitle(navigation: number, title?: string | null): void {
+    if (navigation !== 0 || this.navigation !== 0 || !title) return;
+    const server = SetupService.DefaultLanguageCode() || "en";
+    if (currentLanguage() === server) return;
+    document.title = this.text(title);
+  }
+
   static updateRoute(
     shop: Partial<Shop> | null,
     title?: string,
@@ -109,7 +123,7 @@ export class StorefrontSeo {
   }
 
   static setTitle(title: string, navigation = this.navigation): void {
-    if (!this.canUpdate(navigation)) return;
+    if (!this.canUpdate(navigation)) return this.firstTitle(navigation, title);
     document.title = this.text(title);
     this.meta("property", "og:title", this.text(title));
     this.meta("name", "twitter:title", this.text(title));
@@ -127,7 +141,13 @@ export class StorefrontSeo {
     navigation: number,
     currency = product.currency,
   ): void {
-    if (!this.canUpdate(navigation) || !product?.title) return;
+    if (!this.canUpdate(navigation) || !product?.title)
+      return this.firstTitle(
+        navigation,
+        product?.title &&
+          (product.article_pack?.article?.page_title ||
+            this.shopTitle(shop, product.title)),
+      );
     const article = product.article_pack?.article;
     const url = this.productUrl(product, shop);
     const description = article?.description || shop.description;
@@ -191,7 +211,8 @@ export class StorefrontSeo {
     shop: Partial<Shop>,
     navigation: number,
   ): void {
-    if (!this.canUpdate(navigation)) return;
+    if (!this.canUpdate(navigation))
+      return this.firstTitle(navigation, this.shopTitle(shop, data.parent?.title));
     const category = data.parent;
     const name = category?.title || shop.title || "";
     const description = category?.description || shop.description;
@@ -233,10 +254,11 @@ export class StorefrontSeo {
       augment?: { type?: string; value?: unknown }[];
     },
   ): void {
-    if (!this.canUpdate(navigation) || !page) return;
+    if (!page) return;
     const resource = data?.asset?.vendor || data?.asset?.include;
     const name =
       resource?.title || resource?.name || page.title || shop.title || "";
+    if (!this.canUpdate(navigation)) return this.firstTitle(navigation, name);
     const description =
       resource?.description || page.description || shop.description;
     const augmentImage = data?.augment?.find(
@@ -268,7 +290,12 @@ export class StorefrontSeo {
     shop: Partial<Shop>,
     navigation: number,
   ): void {
-    if (!this.canUpdate(navigation) || !article?.title) return;
+    if (!this.canUpdate(navigation) || !article?.title)
+      return this.firstTitle(
+        navigation,
+        article?.title &&
+          (article.page_title || this.shopTitle(shop, article.title)),
+      );
     const url =
       article.slug && article.parent_id
         ? this.canonical(
@@ -333,9 +360,10 @@ export class StorefrontSeo {
     navigation: number,
     category?: Content | null,
   ): void {
-    if (!this.canUpdate(navigation)) return;
     const name =
       category?.title || category?.name || listing?.title || shop.title || "";
+    if (!this.canUpdate(navigation))
+      return this.firstTitle(navigation, this.shopTitle(shop, name));
     const description =
       category?.description || listing?.description || shop.description;
     const url = this.canonical(shop);
@@ -368,7 +396,11 @@ export class StorefrontSeo {
     shop: Partial<Shop>,
     navigation: number,
   ): void {
-    if (!this.canUpdate(navigation) || !item?.title) return;
+    if (!this.canUpdate(navigation) || !item?.title)
+      return this.firstTitle(
+        navigation,
+        item?.title && this.shopTitle(shop, item.title),
+      );
     const url = this.canonical(shop);
     const graph = [this.webPage("WebPage", item.title, item.description, url)];
     this.addBreadcrumb(graph, shop, [{ name: item.title, url }]);

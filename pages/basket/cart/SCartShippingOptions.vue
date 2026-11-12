@@ -81,7 +81,7 @@
           <span aria-hidden="true" class="k-ship__ico -pickup"><v-icon size="20">storefront</v-icon></span>
           <span class="k-ship__name">
             <b>{{ t("shipping.pickupAt", "Pickup · {place}", { place: pickup.title || pickup.name || pickup.address }) }}</b>
-            <small>{{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}<template v-if="pickup.phone"> · {{ pickup.phone }}</template></small>
+            <small>{{ addressLine(pickup) }}<template v-if="pickup.phone"> · {{ pickup.phone }}</template></small>
           </span>
           <span class="k-ship__free">{{ t("shipping.free", "Free") }}</span>
         </button>
@@ -179,6 +179,7 @@ import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans.ts";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import { addressLine } from "../../../components/kalio/checkout/kalio-countries";
 
 export default defineComponent({
   name: "SCartShippingOptions",
@@ -249,7 +250,7 @@ export default defineComponent({
       );
     },
     warehouse_address() {
-      return MapHelper.GenerateFullAddressFromMapInfo(this.warehouse);
+      return addressLine(this.warehouse);
     },
     // transport_types -> transportations
     //delivery_info->deliveryInfo
@@ -468,6 +469,8 @@ export default defineComponent({
   },
 
   methods: {
+
+    addressLine,
     money,
     getShopTransportationObject(type) {
       return ShopTransportations[type];

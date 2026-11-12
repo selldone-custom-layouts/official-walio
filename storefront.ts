@@ -39,10 +39,11 @@ import "@selldone/components-vue/style/fonts/material-design-fonts/material-desi
 import "@selldone/components-vue/style/fonts/lang/fa/lang-fa-iransans.css";
 import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher";
 import { WALIO_THEME } from "./components/walio/walio-theme";
-import { bootRegion } from "./components/region-switcher/region";
+import { bootRegion, prepareLanguage } from "./components/region-switcher/region";
 import { EN as KALIO_EN, LOADERS as KALIO_LANGUAGES } from "./components/kalio/i18n";
-import { bootI18n, i18nGlobals } from "./components/kalio/i18n/kalio-i18n";
-import { installShopData } from "./components/kalio/i18n/shop-data";
+import { bootI18n, i18nGlobals, loadLanguage } from "./components/kalio/i18n/kalio-i18n";
+import { installShopData, loadShopData } from "./components/kalio/i18n/shop-data";
+import { priceText } from "./components/kalio/i18n/price-text";
 import { bootLocale, bootLocaleGate, watchLocale } from "./components/kalio/i18n/locale-boot";
 import "./components/kalio/kalio-fonts"; // Kalio typefaces, loaded by the app so they reach production
 import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
@@ -108,8 +109,11 @@ const VISITOR_LANGUAGE = bootLocale();
 
 // The visitor's language and currency (the header pill and the phone menu's
 // row), then the Layout's own words in that language (<html lang dir> too).
-bootRegion(store);
+// language + currency. Money is written as Selldone's u-price writes it ("$26.42"),
+// one way per page in every language (price-text.ts).
+bootRegion(store, { format: (amount, code, decimals) => priceText(amount, code, store.getters.getShop, { decimals }) });
 bootI18n(KALIO_EN, KALIO_LANGUAGES);
+prepareLanguage((code) => Promise.all([loadLanguage(code), loadShopData(code)])); // a picked language arrives with its words, never English first
 // The shop's data Selldone does not translate itself (spec tables, pros,
 // rating names, sale units, cart and order lines' names) in the visitor's
 // language (components/kalio/i18n/shop-data.ts).

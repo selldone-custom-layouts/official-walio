@@ -160,6 +160,7 @@ import {
   userKnown,
   when,
 } from "./kalio-account";
+import { priceText } from "../i18n/price-text";
 
 const LINES = 4;
 
@@ -323,12 +324,9 @@ export default {
     lineTotal(item) {
       return (item.price || 0) * (item.count || 0) - (item.offer_amount || 0);
     },
+    /* As u-price writes money ("$26.42"): one way per page (price-text.ts). */
     money(amount, currency) {
-      try {
-        return new Intl.NumberFormat(document.documentElement.lang || "en", { style: "currency", currency: currency || "USD" }).format(amount || 0);
-      } catch (e) {
-        return `${amount}`;
-      }
+      return priceText(amount, currency, this.$shop);
     },
     addressLine(a) {
       const street = [a.address, a.no ? t("account.address.no", "No. {no}", { no: String(a.no) }) : null, a.unit ? t("account.address.unit", "Unit {unit}", { unit: String(a.unit) }) : null].filter(Boolean).join(", ");

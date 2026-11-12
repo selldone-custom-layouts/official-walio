@@ -189,6 +189,7 @@ import { Basket, ShopOptionsHelper } from "@selldone/core-js";
 import KalioAddressSheet from "../checkout/KalioAddressSheet.vue";
 import { countryName as nameOfCountry } from "../checkout/kalio-countries";
 import { locale, t } from "../i18n/kalio-i18n";
+import { priceText } from "../i18n/price-text";
 
 /* Selldone keeps the days in English; these match them, dayName() shows them. */
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -430,12 +431,9 @@ export default {
   },
 
   methods: {
+    /* As u-price writes money ("$26.42"): one way per page (price-text.ts). */
     money(amount) {
-      try {
-        return new Intl.NumberFormat(this.$i18n?.locale || "en", { style: "currency", currency: this.basket?.currency || "USD" }).format(amount || 0);
-      } catch (e) {
-        return `${amount}`;
-      }
+      return priceText(amount, this.basket?.currency, this.$shop);
     },
     when(at) {
       return new Date(at).toLocaleString(this.$i18n?.locale || "en", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });

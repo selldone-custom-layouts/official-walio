@@ -236,7 +236,8 @@ import { quickAdd } from "../kalio-basket";
 import { aisleIndex, catalogueRoute, dropSrcset, productImage, productSrcset } from "../kalio-catalog";
 import { compareListParam, groupIcon, parseCompareList, specGroups, specText, specValue, unitLabel, unitSize } from "./kalio-compare";
 import { SKIN } from "./compare-skin";
-import { t, locale } from "../i18n/kalio-i18n";
+import { t } from "../i18n/kalio-i18n";
+import { priceText } from "../i18n/price-text";
 
 const MAX = 4;
 /* A variant's own sizes, as rows of their own when a pick is a variant
@@ -568,13 +569,10 @@ export default {
         .filter(Boolean);
     },
     /** A small amount in full ("$0.10"): u-price shrinks the cents, which
-     *  left "$0" big in front of a tiny ".10". */
+     *  left "$0" big in front of a tiny ".10". Written as u-price writes
+     *  money ("$26.42"), one way per page (price-text.ts). */
     money(amount) {
-      try {
-        return new Intl.NumberFormat(locale(), { style: "currency", currency: this.currency || "USD" }).format(amount);
-      } catch {
-        return `${Number(amount).toFixed(2)} ${this.currency || ""}`.trim();
-      }
+      return priceText(amount, this.currency, this.$shop);
     },
     productRoute(it) {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: it.product.id } };

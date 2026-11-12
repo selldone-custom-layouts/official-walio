@@ -75,7 +75,7 @@
           }}</b>
           {{
             pickup.address
-              ? MapHelper.GenerateFullAddressFromMapInfo(pickup)
+              ? addressLine(pickup)
               : $t("global.commons.empty")
           }}
         </v-list-item-title>
@@ -94,6 +94,7 @@ import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransp
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 import {MapHelper, ShadeColor} from "@selldone/core-js/helper";
+import { addressLine } from "../../../components/kalio/checkout/kalio-countries";
 
 export default defineComponent({
   name: "SCartShippingPickups",
@@ -146,6 +147,8 @@ export default defineComponent({
   },
 
   methods: {
+
+    addressLine,
     ShadeColor,
     // ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pickup ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
     selectPickup(pickup) {

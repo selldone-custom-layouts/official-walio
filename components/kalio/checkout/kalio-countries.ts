@@ -16,6 +16,7 @@
 import { Countries } from "@selldone/core-js/models/general/country/country.model";
 import { getCountryName } from "@selldone/core-js/models/general/country/country-helper";
 import { currentLanguage } from "../../region-switcher/region";
+import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 
 const namers = new Map<string, Intl.DisplayNames | null>();
 
@@ -46,6 +47,15 @@ export function countryName(code: string | null | undefined, lang: string = curr
     /* not a region code the browser accepts */
   }
   return getCountryName(c) || c;
+}
+
+/** Selldone's one-line address (MapHelper.GenerateFullAddressFromMapInfo) with
+ *  the country named in the visitor's language: "…, Madrid, España", not
+ *  "…, Madrid, ES" (the cart's billing line in the owner's Spanish test order,
+ *  12 November 2026). */
+export function addressLine(info: any, lang: string = currentLanguage()): string | null {
+  if (!info) return null;
+  return MapHelper.GenerateFullAddressFromMapInfo({ ...info, country: info.country ? countryName(info.country, lang) : info.country });
 }
 
 export interface CountryOption {

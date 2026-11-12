@@ -151,11 +151,11 @@ export default {
   },
 
   watch: {
-    type(type) {
-      if (type)
-        this.setPageTitle(
-          t("order.pageTitle", "Order {code}", { code: `${type.basket_code}-${this.$route.params.basket_id}` }),
-        ); // Set Page Title!
+    type() {
+      this.titleOrder();
+    },
+    basket() {
+      this.titleOrder();
     },
     "$route.params.basket_id"() {
       this.basket = null; // Force re-render page!
@@ -187,6 +187,15 @@ export default {
   },
 
   methods: {
+    /* The tab says the number the page says: the shop's own order label
+       ("SM-355") once the order is read, not the basket id ("SM-30034") the
+       address carries (the owner's Spanish test order, 12 November 2026). */
+    titleOrder() {
+      if (!this.type || !this.basket) return;
+      const code = this.getBasketOrderCode({ ...this.basket, type: this.basket.type || this.type.code });
+      this.setPageTitle(t("order.pageTitle", "Order {code}", { code })); // Set Page Title!
+    },
+
     /** Kalio: sign in from the "can't open" message; the order is read
      *  again once the shopper is known (watch USER). */
     signIn() {

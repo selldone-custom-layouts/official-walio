@@ -48,9 +48,15 @@ export interface RegionOptions {
   currencyDisplay?: "symbol" | "code" | "narrowSymbol";
   /** Show the language chips only when the shop has at least this many. */
   minLanguages?: number;
+  /** The Layout's own writer for an amount, so this package's money matches
+   *  the prices Selldone's components draw beside it (u-price: "$26.42" in
+   *  every language). Without it: Intl in numberLocale ("26,42 US$" in
+   *  Spanish next to u-price's "$26.42", the owner's Spanish test order,
+   *  12 November 2026). */
+  format?: ((amount: number, code: string, decimals: number) => string) | null;
 }
 
-const DEFAULTS: Required<RegionOptions> = { numberLocale: "language", currencyDisplay: "symbol", minLanguages: 2 };
+const DEFAULTS: Required<RegionOptions> = { numberLocale: "language", currencyDisplay: "symbol", minLanguages: 2, format: null };
 
 /* The package's own words, in English. A Layout overrides them (and adds
    other languages) through defineMessages(). */
@@ -186,7 +192,8 @@ export function formatMoney(amount: number, code: string = currentCurrency(), op
   const floats = short ? 0 : ((Currency as any)[code]?.floats ?? 2);
   let out: string;
   try {
-    out = new Intl.NumberFormat(locale(), {
+    if (opts.format) out = opts.format(n, code, floats);
+    else out = new Intl.NumberFormat(locale(), {
       style: "currency",
       currency: code,
       currencyDisplay: opts.currencyDisplay,
@@ -271,10 +278,31 @@ export function isRtl(code: string = currentLanguage()): boolean {
   return RTL.has(code) || (Language as any)[code]?.dir === "rtl";
 }
 
+/* What a language needs before it takes over (the Layout's words for it).
+   Without it the sheet kept "Language & currency" in English after Español
+   was picked, while the words loaded (the owner's Spanish test order,
+   12 November 2026). Waits PREPARE_WAIT at most. */
+const PREPARE_WAIT = 2500;
+let prepare: ((code: string) => Promise<unknown>) | null = null;
+
+/** The Layout hands what to fetch before a language takes over:
+ *  prepareLanguage((code) => loadLanguage(code)). */
+export function prepareLanguage(fn: (code: string) => Promise<unknown>): void {
+  prepare = fn;
+}
+
 /** Pick a language: Selldone's setCurrentLanguage(code, true) on the global
- *  mixin (pack, header, storage, Vuetify RTL). */
+ *  mixin (pack, header, storage, Vuetify RTL), once prepareLanguage's words
+ *  are in. */
 export async function setLanguage(code: string, vm?: any): Promise<void> {
   if (!code || code === state.language) return;
+  if (prepare) {
+    try {
+      await Promise.race([prepare(code), new Promise((done) => setTimeout(done, PREPARE_WAIT))]);
+    } catch {
+      /* the words come later: t() redraws when they do */
+    }
+  }
   state.language = code;
   try {
     if (vm && typeof vm.setCurrentLanguage === "function") await vm.setCurrentLanguage(code, true);

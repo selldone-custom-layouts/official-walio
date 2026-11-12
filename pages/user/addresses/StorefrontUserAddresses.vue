@@ -116,11 +116,10 @@
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
-import { MapHelper } from "@selldone/core-js/helper";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import KalioAddressSheet from "@app-storefront/components/kalio/checkout/KalioAddressSheet.vue";
 import { t } from "../../../components/kalio/i18n/kalio-i18n";
-import { countryName } from "../../../components/kalio/checkout/kalio-countries";
+import { addressLine } from "../../../components/kalio/checkout/kalio-countries";
 
 /* The fields an address keeps (Selldone's address book). */
 const FIELDS = ["country", "state", "state_code", "city", "address", "location", "no", "unit", "name", "phone", "message", "postal"];
@@ -165,7 +164,7 @@ export default {
     /* Selldone's line, with the country named in the visitor's language
        (it wrote the stored code: "…, Madrid, ES"). */
     getFullAddress(address) {
-      return MapHelper.GenerateFullAddressFromMapInfo(address ? { ...address, country: countryName(address.country) } : address);
+      return addressLine(address);
     },
 
     /* The spot on a small map, with Kalio's green pin (Mapbox's static

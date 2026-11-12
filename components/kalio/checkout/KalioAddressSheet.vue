@@ -72,7 +72,7 @@
             <li v-for="(item, i) in results" :key="i">
               <button type="button" @click="pickResult(item)">
                 <v-icon size="18">place</v-icon>
-                <span><b>{{ item.title || item.address }}</b><small>{{ resultLine(item) }}</small></span>
+                <span><b>{{ streetOf(item) || item.title }}</b><small>{{ resultLine(item) }}</small></span>
               </button>
             </li>
           </ul>
@@ -157,7 +157,7 @@
             <li v-for="(item, i) in results" :key="i">
               <button type="button" @click="pickResult(item)">
                 <v-icon size="18">place</v-icon>
-                <span><b>{{ item.title || item.address }}</b><small>{{ resultLine(item) }}</small></span>
+                <span><b>{{ streetOf(item) || item.title }}</b><small>{{ resultLine(item) }}</small></span>
               </button>
             </li>
           </ul>
@@ -304,6 +304,29 @@ function NAMES() {
   ];
 }
 
+/* The street of a place found by the search. Selldone's autocomplete writes
+   the whole line in English whatever language is asked ("Calle De Alcalá 50,
+   28014 Madrid, Madrid, Spain"); city, province, postcode and country have
+   their own fields (the country named in the visitor's language), so the
+   street stays and the rest goes (the owner's Spanish test order, 12 November
+   2026). */
+function streetOf(item) {
+  const parts = String(item?.address || item?.title || "").split(",").map((x) => x.trim()).filter(Boolean);
+  let english = "";
+  try {
+    english = item?.country ? new Intl.DisplayNames(["en"], { type: "region" }).of(item.country) || "" : "";
+  } catch (e) {}
+  const place = [item?.city, item?.state, item?.postal, item?.country, english, item?.country ? countryName(item.country) : ""]
+    .filter(Boolean)
+    .map((x) => String(x).toLowerCase());
+  while (parts.length > 1) {
+    const last = parts[parts.length - 1].toLowerCase();
+    if (place.some((word) => last === word || last.includes(word))) parts.pop();
+    else break;
+  }
+  return parts.join(", ");
+}
+
 function blank() {
   return { title: "", address: "", no: "", unit: "", name: "", phone: "", city: "", state: "", postal: "", country: null, message: "" };
 }
@@ -409,6 +432,8 @@ export default {
   },
 
   methods: {
+
+    streetOf,
     /* Each time the sheet opens: the form from the basket, the map where
        the basket's address is (or where the shopper is). */
     start() {
@@ -581,7 +606,7 @@ export default {
 
     pickResult(item) {
       Object.assign(this.form, {
-        address: item.address || item.title || this.form.address,
+        address: streetOf(item) || this.form.address,
         city: item.city || "",
         state: item.state || "",
         postal: item.postal || "",

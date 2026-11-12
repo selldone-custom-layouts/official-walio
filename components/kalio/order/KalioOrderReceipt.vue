@@ -103,6 +103,7 @@ import UPaymentCard from "@selldone/components-vue/ui/payment/card/UPaymentCard.
 import { PriceHelper } from "@selldone/core-js";
 import { t } from "../i18n/kalio-i18n";
 import { gatewayKind, gatewayName } from "../checkout/kalio-gateway";
+import { priceText } from "../i18n/price-text";
 
 const sum = (list, pick) => (list || []).reduce((total, item) => total + (pick(item) || 0), 0);
 
@@ -275,12 +276,9 @@ export default {
     fix(value) {
       return PriceHelper.FixPrecisionForCurrency(value, this.basket?.currency);
     },
+    /* As u-price writes money ("$26.42"): one way per page (price-text.ts). */
     money(amount, currency) {
-      try {
-        return new Intl.NumberFormat(this.$i18n?.locale || "en", { style: "currency", currency: currency || "USD" }).format(amount || 0);
-      } catch (e) {
-        return `${amount} ${currency}`;
-      }
+      return priceText(amount, currency, this.$shop);
     },
     when(at) {
       return new Date(at).toLocaleString(this.$i18n?.locale || "en", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
