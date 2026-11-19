@@ -1218,7 +1218,33 @@ export default {
         return;
       }
       if (this.is_service_need_pricing) return this.submitServiceOrder();
+      /* Selldone's payment window takes the bill the page holds: go there only once the last update has come
+         back, so a way chosen a moment ago is the one priced and ordered (19 Nov 2026). */
+      if (this.busy_save || this.busy_bill) return this.payWhenSettled();
       this.goToPaymentBasket(null);
+    },
+    /* Pay pressed while the bill is still settling: once it settles, Pay again (every check runs on the new
+       bill); after 15 s, the payment window anyway. */
+    payWhenSettled() {
+      if (this.ly_pay_waiting) return;
+      this.ly_pay_waiting = true;
+      let stop = () => {};
+      let timer = null;
+      const go = (settled) => {
+        if (!this.ly_pay_waiting) return;
+        this.ly_pay_waiting = false;
+        stop();
+        clearTimeout(timer);
+        if (settled) this.onPay();
+        else this.goToPaymentBasket(null);
+      };
+      stop = this.$watch(
+        () => this.busy_save || this.busy_bill,
+        (busy: boolean) => {
+          if (!busy) go(true);
+        },
+      );
+      timer = setTimeout(() => go(false), 15000);
     },
     selectLottery(lottery) {
       // console.log("---selectLottery---", lottery);
@@ -1307,11 +1333,17 @@ export default {
 
     setBasketConfig() {
       this.PENDING_UPDATE = true;
+      /* (19 Nov 2026) the bill is not settled while an update waits for the throttle or is on its way. The
+         answer to an update is dropped when a newer one waits (below), so without this Pay stayed open on the
+         old bill for up to ~3 s after two quick changes (a way, then another way), and the payment window
+         got the way chosen first. */
+      this.busy_save = true;
       this.setBasketConfigThrottle();
     },
     setBasketConfigThrottle: throttle(
       function setBasketConfig() {
         this.PENDING_UPDATE = false;
+        this.ly_inflight = (this.ly_inflight || 0) + 1;
 
         this.busy_save = true;
         //console.log("🧨 setBasketConfig");
@@ -1359,7 +1391,9 @@ export default {
             NotificationService.showLaravelError(error);
           })
           .finally(() => {
-            this.busy_save = false;
+            this.ly_inflight = Math.max(0, (this.ly_inflight || 0) - 1);
+            /* settled only when no update waits and none is on its way */
+            if (!this.PENDING_UPDATE && !this.ly_inflight) this.busy_save = false;
           });
       },
       3000,

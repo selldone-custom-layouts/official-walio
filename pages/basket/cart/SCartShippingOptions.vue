@@ -75,7 +75,7 @@
           :class="{ '-on': selectedPickup?.address && selectedPickup.address === pickup.address }"
           class="k-ship__way"
           type="button"
-          @click="$emit('pickupSelected', { pickup, transportation: pickup_transportation })"
+          @click="pickPickup(pickup)"
         >
           <span aria-hidden="true" class="k-ship__radio"></span>
           <span aria-hidden="true" class="k-ship__ico -pickup"><v-icon size="20">storefront</v-icon></span>
@@ -180,6 +180,9 @@ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 import { addressLine } from "../../../components/kalio/checkout/kalio-countries";
+
+/* The buyer's own delivery address per basket, kept while a pickup point stands in receiver_info (19 Nov 2026). */
+const homeAddress = new Map<string | number, Record<string, any>>();
 
 export default defineComponent({
   name: "SCartShippingOptions",
@@ -531,7 +534,33 @@ export default defineComponent({
     },
 
     // ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Kalio ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+    /* What in receiver_info is the buyer's own: Selldone's selectPickup copies the whole pickup point (its
+       address, name, phone) into receiver_info. */
+    buyerBits() {
+      const r = this.basket?.receiver_info || {};
+      const point = r.address ? (this.pickups || []).find((p) => p.address === r.address && (p.name || "") === (r.name || "")) : null;
+      return {
+        point,
+        phone: point && r.phone === point.phone ? "" : r.phone || "",
+        message: point && r.message === point.message ? "" : r.message || "",
+      };
+    },
+    pickPickup(pickup) {
+      const me = this.buyerBits();
+      /* leaving a delivery address for the counter: keep the buyer's address for a way back (19 Nov 2026) */
+      const r = this.basket?.receiver_info;
+      if (!me.point && r?.address && this.basket?.id != null) homeAddress.set(this.basket.id, JSON.parse(JSON.stringify(r)));
+      this.$emit("pickupSelected", { pickup: { ...pickup, phone: me.phone || pickup.phone, message: me.message || pickup.message }, transportation: this.pickup_transportation });
+    },
     pickWay(item) {
+      /* leaving pickup (19 Nov 2026): the pickup point's address and phone are not a delivery address; before,
+         a courier after a pickup was sent to the shop. The buyer's own address comes back when they had one
+         before the pickup (with the phone and note they gave since); otherwise they add one. */
+      const me = this.buyerBits();
+      if (me.point && this.basket) {
+        const home = this.basket.id != null ? homeAddress.get(this.basket.id) : null;
+        this.basket.receiver_info = home ? { ...home, phone: me.phone || home.phone, message: me.message || home.message } : { phone: me.phone, message: me.message };
+      }
       this.$emit("update:transportation", item);
       this.$nextTick(() => this.setBasketConfig());
     },
